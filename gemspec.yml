@@ -1,0 +1,30 @@
+name: ronin-vuln
+summary:
+  Tests URLs for Local File Inclusion (LFI), Remove File Inclusion (RFI),
+  SQL injection (SQLi), and Cross Site Scripting (XSS).
+description: |
+  ronin-vuln is a Ruby library for blind vulnerability testing.
+  It currently supports testing for Local File Inclusion (LFI),
+  Remote File Inclusion (RFI), SQL injection (SQLi), and
+  reflective Cross Site Scripting (XSS).
+
+license: LGPL-3.0
+authors: Postmodern
+email: postmodern.mod3@gmail.com
+homepage: https://ronin-rb.dev/
+has_yard: true
+
+metadata:
+  documentation_uri: https://rubydoc.info/gems/ronin-vuln
+  source_code_uri:   https://github.com/ronin-rb/ronin-vuln
+  bug_tracker_uri:   https://github.com/ronin-rb/ronin-vuln/issues
+  changelog_uri:     https://github.com/ronin-rb/ronin-vuln/blob/master/ChangeLog.md
+  rubygems_mfa_required: 'true'
+
+required_ruby_version: ">= 3.0.0"
+
+dependencies:
+  ronin-support: ~> 1.0
+
+development_dependencies:
+  bundler: ~> 2.0

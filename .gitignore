@@ -1,0 +1,13 @@
+/coverage
+/doc
+/pkg
+/man/*.[1-9]
+/vendor/bundle
+/Gemfile.lock
+/.bundle
+/.yardoc
+.DS_Store
+*.db
+*.log
+*.swp
+*~
