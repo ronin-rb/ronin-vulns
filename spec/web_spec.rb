@@ -217,6 +217,21 @@ describe Ronin::Vuln::Web do
 
           subject.exploit(payload)
         end
+
+        context "when #request_method is not :get" do
+          let(:request_method) { :post }
+
+          subject do
+            described_class.new(url, query_param:    query_param,
+                                     request_method: request_method)
+          end
+
+          it "must send a request with the method of #request_method" do
+            stub_request(request_method, "#{url}?#{query_param}=#{payload}")
+
+            subject.exploit(payload)
+          end
+        end
       end
 
       context "when the URL does have additional query params" do
@@ -226,6 +241,21 @@ describe Ronin::Vuln::Web do
           stub_request(subject.request_method, "https://example.com/page?#{query_param}=#{payload}&foo=bar")
 
           subject.exploit(payload)
+        end
+
+        context "when #request_method is not :get" do
+          let(:request_method) { :post }
+
+          subject do
+            described_class.new(url, query_param:    query_param,
+                                     request_method: request_method)
+          end
+
+          it "must send a request with the method of #request_method" do
+            stub_request(request_method, "https://example.com/page?#{query_param}=#{payload}&foo=bar")
+
+            subject.exploit(payload)
+          end
         end
       end
     end
@@ -241,6 +271,21 @@ describe Ronin::Vuln::Web do
           stub_request(subject.request_method, url).with(headers: {header_name => payload})
 
           subject.exploit(payload)
+        end
+
+        context "when #request_method is not :get" do
+          let(:request_method) { :post }
+
+          subject do
+            described_class.new(url, header_name:    header_name,
+                                     request_method: request_method)
+          end
+
+          it "must send a request with the method of #request_method" do
+            stub_request(request_method, url).with(headers: {header_name => payload})
+
+            subject.exploit(payload)
+          end
         end
       end
 
@@ -258,6 +303,22 @@ describe Ronin::Vuln::Web do
 
           subject.exploit(payload)
         end
+
+        context "when #request_method is not :get" do
+          let(:request_method) { :post }
+
+          subject do
+            described_class.new(url, header_name:    header_name,
+                                     request_method: request_method,
+                                     headers:        headers)
+          end
+
+          it "must send a request with the method of #request_method" do
+            stub_request(request_method, url).with(headers: headers.merge(header_name => payload))
+
+            subject.exploit(payload)
+          end
+        end
       end
     end
 
@@ -274,6 +335,23 @@ describe Ronin::Vuln::Web do
           )
 
           subject.exploit(payload)
+        end
+
+        context "when #request_method is not :get" do
+          let(:request_method) { :post }
+
+          subject do
+            described_class.new(url, cookie_param:   cookie_param,
+                                     request_method: request_method)
+          end
+
+          it "must send a request with the method of #request_method" do
+            stub_request(request_method, url).with(
+              headers: {'Cookie' => "#{cookie_param}=#{payload}"}
+            )
+
+            subject.exploit(payload)
+          end
         end
       end
 
@@ -293,6 +371,24 @@ describe Ronin::Vuln::Web do
 
           subject.exploit(payload)
         end
+
+        context "when #request_method is not :get" do
+          let(:request_method) { :post }
+
+          subject do
+            described_class.new(url, cookie_param:   cookie_param,
+                                     request_method: request_method,
+                                     cookie:         cookie)
+          end
+
+          it "must send a request with the method of #request_method" do
+            stub_request(request_method, url).with(
+              headers: {'Cookie' => "#{cookie_param}=#{payload}; bar=baz"}
+            )
+
+            subject.exploit(payload)
+          end
+        end
       end
     end
 
@@ -307,6 +403,21 @@ describe Ronin::Vuln::Web do
           stub_request(subject.request_method, url).with(body: "#{form_param}=#{payload}")
 
           subject.exploit(payload)
+        end
+
+        context "when #request_method is not :get" do
+          let(:request_method) { :post }
+
+          subject do
+            described_class.new(url, form_param:     form_param,
+                                     request_method: request_method)
+          end
+
+          it "must send a request with the method of #request_method" do
+            stub_request(request_method, url).with(body: "#{form_param}=#{payload}")
+
+            subject.exploit(payload)
+          end
         end
       end
 
@@ -323,6 +434,22 @@ describe Ronin::Vuln::Web do
           stub_request(subject.request_method, url).with(body: "#{form_param}=#{payload}&bar=baz")
 
           subject.exploit(payload)
+        end
+
+        context "when #request_method is not :get" do
+          let(:request_method) { :post }
+
+          subject do
+            described_class.new(url, form_param:     form_param,
+                                     request_method: request_method,
+                                     form_data:      form_data)
+          end
+
+          it "must send a request with the method of #request_method" do
+            stub_request(request_method, url).with(body: "#{form_param}=#{payload}&bar=baz")
+
+            subject.exploit(payload)
+          end
         end
       end
     end
