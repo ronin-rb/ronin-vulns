@@ -20,7 +20,7 @@
 require 'ronin/support/network/http'
 
 module Ronin
-  module Vuln
+  module Vulns
     #
     # The base class for all web vulnerabilities.
     #

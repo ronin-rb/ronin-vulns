@@ -1,10 +1,10 @@
 require 'spec_helper'
 require 'web_vuln_examples'
-require 'ronin/vuln/rfi'
+require 'ronin/vulns/rfi'
 
 require 'webmock/rspec'
 
-describe Ronin::Vuln::RFI do
+describe Ronin::Vulns::RFI do
   describe "TEST_SCRIPT_URL" do
     subject { described_class::TEST_SCRIPT_URL }
 
@@ -46,7 +46,7 @@ describe Ronin::Vuln::RFI do
   subject { described_class.new(url, query_param: query_param) }
 
   describe "#initialize" do
-    include_examples "Ronin::Vuln::Web#initialize examples"
+    include_examples "Ronin::Vulns::Web#initialize examples"
 
     it "must default #test_script_url to TEST_SCRIPT_URL" do
       expect(subject.test_script_url).to eq(described_class::TEST_SCRIPT_URL)
@@ -122,7 +122,7 @@ describe Ronin::Vuln::RFI do
   describe "#exploit" do
     let(:payload) { rfi_url }
 
-    include_examples "Ronin::Vuln::Web#exploit examples"
+    include_examples "Ronin::Vulns::Web#exploit examples"
   end
 
   describe "#vulnerable?" do

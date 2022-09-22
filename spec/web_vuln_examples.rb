@@ -1,6 +1,6 @@
 require 'rspec'
 
-RSpec.shared_examples_for "Ronin::Vuln::Web#initialize examples" do
+RSpec.shared_examples_for "Ronin::Vulns::Web#initialize examples" do
   let(:param) { 'vuln' }
   let(:url)   { URI("https://example.com/page.php?q=foo&#{param}=bar") }
 
@@ -123,7 +123,7 @@ RSpec.shared_examples_for "Ronin::Vuln::Web#initialize examples" do
   end
 end
 
-RSpec.shared_examples_for "Ronin::Vuln::Web#exploit examples" do
+RSpec.shared_examples_for "Ronin::Vulns::Web#exploit examples" do
   context "when #query_param is set" do
     let(:query_param)     { 'id' }
     let(:encoded_payload) { URI::QueryParams.escape(payload) }

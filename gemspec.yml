@@ -1,4 +1,4 @@
-name: ronin-vuln
+name: ronin-vulns
 summary:
   Tests URLs for Local File Inclusion (LFI), Remove File Inclusion (RFI),
   SQL injection (SQLi), and Cross Site Scripting (XSS).
