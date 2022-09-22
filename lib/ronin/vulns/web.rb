@@ -19,6 +19,8 @@
 
 require 'ronin/support/network/http'
 
+require 'chars'
+
 module Ronin
   module Vulns
     #
@@ -622,6 +624,19 @@ module Ronin
         elsif @form_param
           @form_data[@form_param]
         end
+      end
+
+      #
+      # Returns a random value.
+      #
+      # @param [Integer] length
+      #   The desired length of the String.
+      #
+      # @return [String]
+      #   The random value.
+      #
+      def random_value(length=4)
+        Chars::ALPHA.random_string(length)
       end
 
       #

@@ -693,6 +693,18 @@ describe Ronin::Vulns::Web do
     end
   end
 
+  describe "#random_value" do
+    it "must return a random four character alphabetic value" do
+      expect(subject.random_value).to match(/\A[A-Za-z]{4}\z/)
+    end
+
+    it "must return a random String each time" do
+      strings = Array.new(3) { subject.random_value }
+
+      expect(strings.uniq.length).to be > 1
+    end
+  end
+
   describe "#vulnerable?" do
     it do
       expect {
