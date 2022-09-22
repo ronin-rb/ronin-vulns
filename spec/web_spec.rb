@@ -625,6 +625,74 @@ describe Ronin::Vulns::Web do
     end
   end
 
+  describe "#original_value" do
+    context "when #query_param is set" do
+      let(:query_param) { 'bar' }
+      let(:query_params) do
+        {'foo' => 'a', query_param => 'b', 'baz' => '3'}
+      end
+
+      let(:url) do
+        url = URI(super())
+        url.query_params = query_params
+        url
+      end
+
+      subject do
+        described_class.new(url, query_param: query_param)
+      end
+
+      it "must return the #query_param from #query_params" do
+        expect(subject.original_value).to eq(query_params[query_param])
+      end
+    end
+
+    context "when #header_name is set" do
+      let(:header_name) { 'X-Bar' }
+      let(:headers) do
+        {'X-Foo' => 'a', header_name => 'b', 'X-Baz' => 'c'}
+      end
+
+      subject do
+        described_class.new(url, header_name: header_name, headers: headers)
+      end
+
+      it "must return the #header_name from #headers" do
+        expect(subject.original_value).to eq(headers[header_name])
+      end
+    end
+
+    context "when #cookie_param is set" do
+      let(:cookie_param) { 'bar' }
+      let(:cookie) do
+        {'foo' => 'a', cookie_param => 'b', 'baz' => 'c'}
+      end
+
+      subject do
+        described_class.new(url, cookie_param: cookie_param, cookie: cookie)
+      end
+
+      it "must return the #cookie_param from #cookie" do
+        expect(subject.original_value).to eq(cookie[cookie_param])
+      end
+    end
+
+    context "when #form_param is set" do
+      let(:form_param) { 'bar' }
+      let(:form_data) do
+        {'foo' => 'a', form_param => 'b', 'baz' => 'c'}
+      end
+
+      subject do
+        described_class.new(url, form_param: form_param, form_data: form_data)
+      end
+
+      it "must return the #form_param from #form_data" do
+        expect(subject.original_value).to eq(form_data[form_param])
+      end
+    end
+  end
+
   describe "#vulnerable?" do
     it do
       expect {

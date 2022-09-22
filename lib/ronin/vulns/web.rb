@@ -607,6 +607,24 @@ module Ronin
       end
 
       #
+      # The original value of the vulnerable query param, header, cookie param,
+      # or form param.
+      #
+      # @return [String, nil]
+      #
+      def original_value
+        if @query_param
+          @url.query_params[@query_param]
+        elsif @header_name
+          @headers[@header_name]
+        elsif @cookie_param
+          @cookie[@cookie_param]
+        elsif @form_param
+          @form_data[@form_param]
+        end
+      end
+
+      #
       # Determines if the {#url} is vulnerable.
       #
       # @return [Boolean]
