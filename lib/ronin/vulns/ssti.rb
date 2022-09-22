@@ -34,7 +34,7 @@ module Ronin
         ->(payload) { "{{#{payload}}}" },
         ->(payload) { "${#{payload}}" },
         ->(payload) { "${{#{payload}}}" },
-        ->(payload) { "#\{#{payload}\}}" },
+        ->(payload) { "\#{#{payload}}" },
         ->(payload) { "<%= #{payload} %>" }
       ]
 
