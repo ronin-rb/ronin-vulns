@@ -17,7 +17,7 @@ describe Ronin::Vulns::SSTI do
     end
 
     it "must initialize #test_result to the result value of #test_payload" do
-      expect(test.test_result).to eq(eval(subject.test_payload).to_s)
+      expect(subject.test_result).to eq(eval(subject.test_payload).to_s)
     end
 
     context "when the escape: keyword argument is given" do
