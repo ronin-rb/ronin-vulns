@@ -84,7 +84,7 @@ module Ronin
       attr_reader :headers
 
       # Additional `Cookie` header. If a `Hash` is given, it will be converted
-      # to a `String` using {Cookie}.
+      # to a `String` using `Ronin::Support::Network::HTTP::Cookie`.
       #
       # @return [String, Hash{String => String}, nil]
       attr_reader :cookie
@@ -136,7 +136,7 @@ module Ronin
       #
       # @param [String, Hash{String => String}, nil] cookie
       #   Additional `Cookie` header. If a `Hash` is given, it will be
-      #   converted to a `String` using {Cookie}.
+      #   converted to a `String` using `Ronin::Support::Network::HTTP::Cookie`.
       #
       # @param [Hash, String, nil] form_data
       #   The form data that may be sent in the body of the request.
