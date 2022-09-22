@@ -8,6 +8,10 @@ describe Ronin::Vulns::RFI do
   describe "TEST_SCRIPT_URL" do
     subject { described_class::TEST_SCRIPT_URL }
 
+    it "must equal 'https://raw.githubusercontent.com/ronin-rb/ronin-vuln/\#{VERSION}/data/rfi_test.php'" do
+      expect(subject).to eq("https://raw.githubusercontent.com/ronin-rb/ronin-vuln/#{Ronin::Vulns::VERSION}/data/rfi_test.php")
+    end
+
     it "must be a publically accessible URL", :network do
       response = Net::HTTP.get_response(URI(subject))
 
