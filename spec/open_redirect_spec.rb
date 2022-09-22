@@ -83,6 +83,30 @@ describe Ronin::Vulns::OpenRedirect do
             end
           end
 
+          context "and it starts with #test_url but with additional ?params" do
+            let(:location) { "#{subject.test_url}?foo=bar" }
+
+            before do
+              allow(response).to receive(:get_fields).with('Location').and_return([location])
+            end
+
+            it "must return true" do
+              expect(subject.vulnerable?).to be_truthy
+            end
+          end
+
+          context "and it starts with #test_url but with additional &params" do
+            let(:location) { "#{subject.test_url}&foo=bar" }
+
+            before do
+              allow(response).to receive(:get_fields).with('Location').and_return([location])
+            end
+
+            it "must return true" do
+              expect(subject.vulnerable?).to be_truthy
+            end
+          end
+
           context "but it does not match #test_url" do
             let(:location) { "https://example.com/" }
 

@@ -75,7 +75,10 @@ module Ronin
         case response.code
         when '301', '302', '303', '307', '308'
           if (locations = response.get_fields('Location'))
-            locations.last == @test_url
+            escaped_test_url = Regexp.escape(@test_url)
+            regexp = %r{\A#{escaped_test_url}(?:[\?&].+)?\z}
+
+            locations.last =~ regexp
           end
         else
           content_type = response.content_type
