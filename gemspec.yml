@@ -16,10 +16,10 @@ homepage: https://ronin-rb.dev/
 has_yard: true
 
 metadata:
-  documentation_uri: https://rubydoc.info/gems/ronin-vuln
-  source_code_uri:   https://github.com/ronin-rb/ronin-vuln
-  bug_tracker_uri:   https://github.com/ronin-rb/ronin-vuln/issues
-  changelog_uri:     https://github.com/ronin-rb/ronin-vuln/blob/master/ChangeLog.md
+  documentation_uri: https://rubydoc.info/gems/ronin-vulns
+  source_code_uri:   https://github.com/ronin-rb/ronin-vulns
+  bug_tracker_uri:   https://github.com/ronin-rb/ronin-vulns/issues
+  changelog_uri:     https://github.com/ronin-rb/ronin-vulns/blob/master/ChangeLog.md
   rubygems_mfa_required: 'true'
 
 required_ruby_version: ">= 3.0.0"
