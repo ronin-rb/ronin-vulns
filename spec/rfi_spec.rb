@@ -120,7 +120,7 @@ describe Ronin::Vulns::RFI do
   end
 
   describe "#exploit" do
-    let(:payload) { rfi_url }
+    let(:payload) { subject.encode_payload(rfi_url) }
 
     include_examples "Ronin::Vulns::Web#exploit examples"
   end
