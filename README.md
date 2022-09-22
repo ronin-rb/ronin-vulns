@@ -15,7 +15,8 @@
 
 ronin-vulns is a Ruby library for blind vulnerability testing. It currently
 supports testing for Local File Inclusion (LFI), Remote File Inclusion (RFI),
-SQL injection (SQLi), and reflective Cross Site Scripting (XSS).
+SQL injection (SQLi), reflective Cross Site Scripting (XSS), and Server Side
+Template Injection (SSTI), and Open Redirects.
 
 ## Features
 
@@ -24,6 +25,8 @@ SQL injection (SQLi), and reflective Cross Site Scripting (XSS).
   * Remote File Inclusion (RFI)
   * SQL Injection (SQLi)
   * reflected Cross Site Scripting (XSS)
+  * Server Side Template Injection (SSTI)
+  * Open Redirects
 * Supports testing:
   * URL query parameters.
   * HTTP Headers.
