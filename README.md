@@ -103,6 +103,29 @@ end
 # => [#<Ronin::Vulns::SSTI: ...>, ...]
 ```
 
+### Open Redirect
+
+Test a URL for an Open Redirect vulnerability:
+
+```ruby
+require 'ronin/vulns/open_redirect'
+
+vuln = Ronin::Vulns::OpenRedirect.test('http://www.example.com/page.php?lang=en')
+# => #<Ronin::Vulns::OpenRedirect: ...>
+```
+
+Finds all Open Redirect vulnerabilities for a given URL:
+
+```ruby
+vulns = Ronin::Vulns::OpenRedirect.scan('http://www.example.com/page.php?lang=en')
+# => [#<Ronin::Vulns::OpenRedirect: ...>, ...]
+
+vulns = Ronin::Vulns::OpenRedirect.scan('http://www.example.com/page.php?lang=en') do |vuln|
+  puts "Found OpenRedirect on #{vuln.url} query param #{vuln.query_param}"
+end
+# => [#<Ronin::Vulns::OpenRedirect: ...>, ...]
+```
+
 ## Requirements
 
 * [Ruby] >= 3.0.0
