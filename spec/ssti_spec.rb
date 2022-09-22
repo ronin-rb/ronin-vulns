@@ -12,6 +12,14 @@ describe Ronin::Vulns::SSTI do
       expect(subject.escape).to be(nil)
     end
 
+    it "must initialize #test_payload to a random N*M payload" do
+      expect(subject.test_payload).to match(/\A\d+\*\d+\z/)
+    end
+
+    it "must initialize #test_result to the result value of #test_payload" do
+      expect(test.test_result).to eq(eval(subject.test_payload).to_s)
+    end
+
     context "when the escape: keyword argument is given" do
       let(:escape) { described_class::ESCAPES[1] }
 
@@ -31,6 +39,12 @@ describe Ronin::Vulns::SSTI do
 
       expect(test[0]).to match(/\A\d+\*\d+\z/)
       expect(test[1]).to eq(eval(test[0]).to_s)
+    end
+
+    it "must return a random test playload and result each time" do
+      payloads = Array.new(3) { subject.random_test }
+
+      expect(payloads.uniq.length).to be > 1
     end
   end
 
