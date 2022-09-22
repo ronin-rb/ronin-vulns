@@ -326,6 +326,10 @@ describe Ronin::Vulns::LFI do
       expect(subject).to receive(:exploit).with(subject.test_file.path).and_return(response)
     end
 
+    it "must call #exploit with #test_file.path" do
+      subject.vulnerable?
+    end
+
     let(:etc_passwd) do
       <<~FILE
         root:x:0:0:root:/root:/bin/ash
@@ -433,6 +437,7 @@ describe Ronin::Vulns::LFI do
         described_class.new(url, query_param:   query_param,
                                  filter_bypass: :base64)
       end
+
       context "and when the response contains the included Base64 encoed /etc/passwd file" do
         let(:response_body) do
           <<~HTML
