@@ -52,8 +52,8 @@ describe Ronin::Vuln::RFI do
       expect(subject.test_script_url).to eq(described_class::TEST_SCRIPT_URL)
     end
 
-    it "must default #evasion to nil" do
-      expect(subject.evasion).to be(nil)
+    it "must default #filter_bypass to nil" do
+      expect(subject.filter_bypass).to be(nil)
     end
 
     context "when given the test_script_url: keyword argument" do
@@ -69,15 +69,16 @@ describe Ronin::Vuln::RFI do
       end
     end
 
-    context "when given the evasion: keyword argument" do
-      let(:evasion) { :null_byte }
+    context "when given the filter_bypass: keyword argument" do
+      let(:filter_bypass) { :null_byte }
 
       subject do
-        described_class.new(url, query_param: query_param, evasion: evasion)
+        described_class.new(url, query_param:   query_param,
+                                 filter_bypass: filter_bypass)
       end
 
-      it "must set #evasion" do
-        expect(subject.evasion).to eq(evasion)
+      it "must set #filter_bypass" do
+        expect(subject.filter_bypass).to eq(filter_bypass)
       end
     end
   end
@@ -91,9 +92,10 @@ describe Ronin::Vuln::RFI do
       expect(subject.encode_payload(rfi_url)).to eq(rfi_url)
     end
 
-    context "when #evasion is :null_byte" do
+    context "when #filter_bypass is :null_byte" do
       subject do
-        described_class.new(url, query_param: query_param, evasion: :null_byte)
+        described_class.new(url, query_param:   query_param,
+                                 filter_bypass: :null_byte)
       end
 
       it "must append %00 to the RFI URL" do
@@ -101,10 +103,10 @@ describe Ronin::Vuln::RFI do
       end
     end
 
-    context "when #evasion is :double_encode" do
+    context "when #filter_bypass is :double_encode" do
       subject do
-        described_class.new(url, query_param: query_param,
-                                 evasion:     :double_encode)
+        described_class.new(url, query_param:   query_param,
+                                 filter_bypass: :double_encode)
       end
 
       let(:double_uri_escaped_rfi_url) do

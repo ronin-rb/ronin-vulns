@@ -36,10 +36,10 @@ module Ronin
       # script is executed.
       VULN_RESPONSE_STRING = "Remote File Inclusion (RFI) Detected: eval(\"1 + 1\") = 2"
 
-      # The evasion technique to use.
+      # The filter bypass technique to use.
       #
       # @return [nil, :null_byte, :double_encode]
-      attr_reader :evasion
+      attr_reader :filter_bypass
 
       # URL of the Remote File Inclusion (RFI) Test script
       # 
@@ -52,8 +52,8 @@ module Ronin
       # @param [String, URI::HTTP] url
       #   The URL to attempt to exploit.
       #
-      # @param [:null_byte, :double_encode, nil] evasion
-      #   Specifies which evasion technique to use.
+      # @param [:null_byte, :double_encode, nil] filter_bypass
+      #   Specifies which filter bypass technique to use.
       #   * `:null_byte` - will cause the inclusion URL to be appended with a
       #     `%00` character.
       #   * `:double_encode` - will cause the inclusion URL to be URI escaped
@@ -63,12 +63,12 @@ module Ronin
       #   The URL of the RFI test script.
       #
       def initialize(url, test_script_url: self.class.test_script_url,
-                          evasion:         nil,
+                          filter_bypass:   nil,
                           **kwargs)
         super(url,**kwargs)
 
         @test_script_url = test_script_url
-        @evasion         = evasion
+        @filter_bypass   = filter_bypass
       end
 
       #
@@ -95,7 +95,7 @@ module Ronin
       end
 
       #
-      # Optionally applies evasion to the RFI URL.
+      # Optionally applies a filter bypass technique to the RFI URL.
       #
       # @param [URI::HTTP, String] url
       #   The RFI URL to optionall encode before it will be injected into a
@@ -107,7 +107,7 @@ module Ronin
       def encode_payload(url)
         url = url.to_s
 
-        case @evasion
+        case @filter_bypass
         when :null_byte
           # Optionally append a null-byte
           # NOTE: uri-query_params will automatically URI encode the null byte
