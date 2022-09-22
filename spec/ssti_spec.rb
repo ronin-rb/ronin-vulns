@@ -193,7 +193,7 @@ describe Ronin::Vulns::SSTI do
     end
 
     context "when the response does not contain #test_result" do
-      it "must return true" do
+      it "must return false" do
         expect(subject.vulnerable?).to be_falsy
       end
     end
