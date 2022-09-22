@@ -218,6 +218,48 @@ describe Ronin::Vulns::OpenRedirect do
             end
           end
 
+          context "when there is a space after http-equiv attribute name" do
+            let(:response_body) do
+              <<~HTML
+              <html>
+                <head>
+                  <meta http-equiv ="refresh" content="10;url='#{subject.test_url}'"/>
+                </head>
+                <body>
+                  <p>example content</p>
+                  <p>included content</p>
+                  <p>more content</p>
+                </body>
+              </html>
+              HTML
+            end
+
+            it "must return true" do
+              expect(subject.vulnerable?).to be_truthy
+            end
+          end
+
+          context "when there is a space after 'http-equiv=' name" do
+            let(:response_body) do
+              <<~HTML
+              <html>
+                <head>
+                  <meta http-equiv= "refresh" content="10;url='#{subject.test_url}'"/>
+                </head>
+                <body>
+                  <p>example content</p>
+                  <p>included content</p>
+                  <p>more content</p>
+                </body>
+              </html>
+              HTML
+            end
+
+            it "must return true" do
+              expect(subject.vulnerable?).to be_truthy
+            end
+          end
+
           context "when the http-equiv attribute is single quoted" do
             let(:response_body) do
               <<~HTML
@@ -433,6 +475,153 @@ url='#{subject.test_url}'"/>
             end
           end
 
+          context "when there is a space after the content attribute name" do
+            let(:response_body) do
+              <<~HTML
+                <html>
+                  <head>
+                    <meta http-equiv="refresh" content ="0;url='#{subject.test_url}'"/>
+                  </head>
+                  <body>
+                    <p>example content</p>
+                    <p>included content</p>
+                    <p>more content</p>
+                  </body>
+                </html>
+              HTML
+            end
+
+            it "must return true" do
+              expect(subject.vulnerable?).to be_truthy
+            end
+          end
+
+          context "when there is a space after 'content='" do
+            let(:response_body) do
+              <<~HTML
+                <html>
+                  <head>
+                    <meta http-equiv="refresh" content= "0;url='#{subject.test_url}'"/>
+                  </head>
+                  <body>
+                    <p>example content</p>
+                    <p>included content</p>
+                    <p>more content</p>
+                  </body>
+                </html>
+              HTML
+            end
+
+            it "must return true" do
+              expect(subject.vulnerable?).to be_truthy
+            end
+          end
+
+          context "when there is a space after the url name" do
+            let(:response_body) do
+              <<~HTML
+                <html>
+                  <head>
+                    <meta http-equiv="refresh" content="0;url ='#{subject.test_url}'"/>
+                  </head>
+                  <body>
+                    <p>example content</p>
+                    <p>included content</p>
+                    <p>more content</p>
+                  </body>
+                </html>
+              HTML
+            end
+
+            it "must return true" do
+              expect(subject.vulnerable?).to be_truthy
+            end
+          end
+
+          context "when there is a space after 'url='" do
+            let(:response_body) do
+              <<~HTML
+                <html>
+                  <head>
+                    <meta http-equiv="refresh" content= "0;url= '#{subject.test_url}'"/>
+                  </head>
+                  <body>
+                    <p>example content</p>
+                    <p>included content</p>
+                    <p>more content</p>
+                  </body>
+                </html>
+              HTML
+            end
+
+            it "must return true" do
+              expect(subject.vulnerable?).to be_truthy
+            end
+          end
+
+          context "when there is a space before the url value'" do
+            let(:response_body) do
+              <<~HTML
+                <html>
+                  <head>
+                    <meta http-equiv="refresh" content= "0;url=' #{subject.test_url}'"/>
+                  </head>
+                  <body>
+                    <p>example content</p>
+                    <p>included content</p>
+                    <p>more content</p>
+                  </body>
+                </html>
+              HTML
+            end
+
+            it "must return true" do
+              expect(subject.vulnerable?).to be_truthy
+            end
+          end
+
+          context "when there is a space after the url value'" do
+            let(:response_body) do
+              <<~HTML
+                <html>
+                  <head>
+                    <meta http-equiv="refresh" content= "0;url='#{subject.test_url} '"/>
+                  </head>
+                  <body>
+                    <p>example content</p>
+                    <p>included content</p>
+                    <p>more content</p>
+                  </body>
+                </html>
+              HTML
+            end
+
+            it "must return true" do
+              expect(subject.vulnerable?).to be_truthy
+            end
+          end
+
+          context "when there is a space at the end the content attribute's value'" do
+            let(:response_body) do
+              <<~HTML
+                <html>
+                  <head>
+                    <meta http-equiv="refresh" content= "0;url='#{subject.test_url}' "/>
+                  </head>
+                  <body>
+                    <p>example content</p>
+                    <p>included content</p>
+                    <p>more content</p>
+                  </body>
+                </html>
+              HTML
+            end
+
+            it "must return true" do
+              expect(subject.vulnerable?).to be_truthy
+            end
+          end
+
           context "when the meta tag ends with '/>'" do
             let(:response_body) do
               <<~HTML
@@ -459,6 +648,48 @@ url='#{subject.test_url}'"/>
                 <html>
                   <head>
                     <meta http-equiv="refresh" content="0;url='#{subject.test_url}'" />
+                  </head>
+                  <body>
+                    <p>example content</p>
+                    <p>included content</p>
+                    <p>more content</p>
+                  </body>
+                </html>
+                HTML
+              end
+
+              it "must return true" do
+                expect(subject.vulnerable?).to be_truthy
+              end
+            end
+          end
+
+          context "when the meta tag ends with '/ >'" do
+            let(:response_body) do
+              <<~HTML
+                <html>
+                  <head>
+                    <meta http-equiv="refresh" content="0;url='#{subject.test_url}'"/ >
+                  </head>
+                  <body>
+                    <p>example content</p>
+                    <p>included content</p>
+                    <p>more content</p>
+                  </body>
+                </html>
+              HTML
+            end
+
+            it "must return true" do
+              expect(subject.vulnerable?).to be_truthy
+            end
+
+            context "when there is a space before the '/ >'" do
+              let(:response_body) do
+                <<~HTML
+                <html>
+                  <head>
+                    <meta http-equiv="refresh" content="0;url='#{subject.test_url}'" / >
                   </head>
                   <body>
                     <p>example content</p>
