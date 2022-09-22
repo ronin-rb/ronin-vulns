@@ -31,10 +31,10 @@ module Ronin
       # @api private
       ESCAPES = [
         nil, # does not escape the payload
-        ->(payload) { "{{#{payload}}}" },
-        ->(payload) { "${#{payload}}" },
-        ->(payload) { "${{#{payload}}}" },
-        ->(payload) { "\#{#{payload}}" },
+        ->(payload) { "{{#{payload}}}"    },
+        ->(payload) { "${#{payload}}"     },
+        ->(payload) { "${{#{payload}}}"   },
+        ->(payload) { "\#{#{payload}}"    },
         ->(payload) { "<%= #{payload} %>" }
       ]
 
