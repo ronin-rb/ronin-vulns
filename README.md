@@ -34,25 +34,25 @@ SQL injection (SQLi), and reflective Cross Site Scripting (XSS).
 
 ### Remote File Inclusion (RFI)
 
-Test a URL for Local File Inclusion (LFI):
+Test a URL for Remote File Inclusion (RFI):
 
 ```ruby
-require 'ronin/vulns/lfi'
+require 'ronin/vulns/rfi'
 
-vuln = Ronin::Vuln::LFI.test('http://www.example.com/page.php?lang=en')
-# => #<Ronin::Vuln::LFI: ...>
+vuln = Ronin::Vuln::RFI.test('http://www.example.com/page.php?lang=en')
+# => #<Ronin::Vuln::RFI: ...>
 ```
 
-Finds all Local File Inclusion (LFI) vulnerabilities for a given URL:
+Finds all Remote File Inclusion (RFI) vulnerabilities for a given URL:
 
 ```ruby
-vulns = Ronin::Vuln::LFI.scan('http://www.example.com/page.php?lang=en')
-# => [#<Ronin::Vuln::LFI: ...>, ...]
+vulns = Ronin::Vuln::RFI.scan('http://www.example.com/page.php?lang=en')
+# => [#<Ronin::Vuln::RFI: ...>, ...]
 
-vulns = Ronin::Vuln::LFI.scan('http://www.example.com/page.php?lang=en') do |vuln|
-  puts "Found LFI on #{vuln.url} query param #{vuln.query_param}"
+vulns = Ronin::Vuln::RFI.scan('http://www.example.com/page.php?lang=en') do |vuln|
+  puts "Found RFI on #{vuln.url} query param #{vuln.query_param}"
 end
-# => [#<Ronin::Vuln::LFI: ...>, ...]
+# => [#<Ronin::Vuln::RFI: ...>, ...]
 ```
 
 ### Local File Inclusion (LFI)
