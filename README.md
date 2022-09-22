@@ -39,20 +39,20 @@ Test a URL for Remote File Inclusion (RFI):
 ```ruby
 require 'ronin/vulns/rfi'
 
-vuln = Ronin::Vuln::RFI.test('http://www.example.com/page.php?lang=en')
-# => #<Ronin::Vuln::RFI: ...>
+vuln = Ronin::Vulns::RFI.test('http://www.example.com/page.php?lang=en')
+# => #<Ronin::Vulns::RFI: ...>
 ```
 
 Finds all Remote File Inclusion (RFI) vulnerabilities for a given URL:
 
 ```ruby
-vulns = Ronin::Vuln::RFI.scan('http://www.example.com/page.php?lang=en')
-# => [#<Ronin::Vuln::RFI: ...>, ...]
+vulns = Ronin::Vulns::RFI.scan('http://www.example.com/page.php?lang=en')
+# => [#<Ronin::Vulns::RFI: ...>, ...]
 
-vulns = Ronin::Vuln::RFI.scan('http://www.example.com/page.php?lang=en') do |vuln|
+vulns = Ronin::Vulns::RFI.scan('http://www.example.com/page.php?lang=en') do |vuln|
   puts "Found RFI on #{vuln.url} query param #{vuln.query_param}"
 end
-# => [#<Ronin::Vuln::RFI: ...>, ...]
+# => [#<Ronin::Vulns::RFI: ...>, ...]
 ```
 
 ### Local File Inclusion (LFI)
@@ -62,17 +62,17 @@ Test a URL for Remote File Inclusion (RFI):
 ```ruby
 require 'ronin/vulns/rfi'
 
-vuln = Ronin::Vuln::RFI.test('http://www.example.com/page.php?lang=en')
-# => #<Ronin::Vuln::RFI: ...>
+vuln = Ronin::Vulns::RFI.test('http://www.example.com/page.php?lang=en')
+# => #<Ronin::Vulns::RFI: ...>
 ```
 
 Finds all Remote File Inclusion (RFI) vulnerabilities for a given URL:
 
 ```ruby
-vulns = Ronin::Vuln::RFI.scan('http://www.example.com/page.php?lang=en')
-# => [#<Ronin::Vuln::RFI: ...>, ...]
+vulns = Ronin::Vulns::RFI.scan('http://www.example.com/page.php?lang=en')
+# => [#<Ronin::Vulns::RFI: ...>, ...]
 
-vulns = Ronin::Vuln::RFI.scan('http://www.example.com/page.php?lang=en') do |vuln|
+vulns = Ronin::Vulns::RFI.scan('http://www.example.com/page.php?lang=en') do |vuln|
   puts "Found RFI on #{vuln.url} query param #{vuln.query_param}"
 end
 ```
@@ -84,20 +84,20 @@ Test a URL for Server Side Template Injection (SSTI):
 ```ruby
 require 'ronin/vulns/rfi'
 
-vuln = Ronin::Vuln::SSTI.test('http://www.example.com/page.php?lang=en')
-# => #<Ronin::Vuln::SSTI: ...>
+vuln = Ronin::Vulns::SSTI.test('http://www.example.com/page.php?lang=en')
+# => #<Ronin::Vulns::SSTI: ...>
 ```
 
 Finds all Server Side Template Injection (SSTI) vulnerabilities for a given URL:
 
 ```ruby
-vulns = Ronin::Vuln::SSTI.scan('http://www.example.com/page.php?lang=en')
-# => [#<Ronin::Vuln::SSTI: ...>, ...]
+vulns = Ronin::Vulns::SSTI.scan('http://www.example.com/page.php?lang=en')
+# => [#<Ronin::Vulns::SSTI: ...>, ...]
 
-vulns = Ronin::Vuln::SSTI.scan('http://www.example.com/page.php?lang=en') do |vuln|
+vulns = Ronin::Vulns::SSTI.scan('http://www.example.com/page.php?lang=en') do |vuln|
   puts "Found SSTI on #{vuln.url} query param #{vuln.query_param}"
 end
-# => [#<Ronin::Vuln::SSTI: ...>, ...]
+# => [#<Ronin::Vulns::SSTI: ...>, ...]
 ```
 
 ## Requirements
