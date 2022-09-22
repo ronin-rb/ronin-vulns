@@ -85,7 +85,7 @@ module Ronin
 
           if content_type && content_type.include?('text/html')
             escaped_test_url = Regexp.escape(CGI.escapeHTML(@test_url))
-            regexp = %r{<meta\s+http-equiv=(?:"refresh"|'refresh'|refresh)\s+content=(?:"\d+;\s*url='#{escaped_test_url}'"|'\d+;\s*url="#{escaped_test_url}"'|\d+;url=(?:"#{escaped_test_url}"|'#{escaped_test_url}'))\s*/>}i
+            regexp = %r{<meta\s+http-equiv=(?:"refresh"|'refresh'|refresh)\s+content=(?:"\d+;\s*url='#{escaped_test_url}'"|'\d+;\s*url="#{escaped_test_url}"'|\d+;url=(?:"#{escaped_test_url}"|'#{escaped_test_url}'))\s*[/]?>}i
 
             response.body =~ regexp
           end
