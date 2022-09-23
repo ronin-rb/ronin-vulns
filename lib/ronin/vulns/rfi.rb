@@ -31,7 +31,7 @@ module Ronin
     class RFI < Web
 
       # Default URL of the Remote File Inclusion (RFI) Test script.
-      TEST_SCRIPT_URL = "https://raw.githubusercontent.com/ronin-rb/ronin-vuln/#{VERSION}/data/rfi_test.php"
+      TEST_SCRIPT_URL = "https://raw.githubusercontent.com/ronin-rb/ronin-vulns/#{VERSION}/data/rfi_test.php"
 
       # The string that will be returned if the Remote File Inclusion (RFI)
       # script is executed.
