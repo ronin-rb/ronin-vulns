@@ -35,7 +35,7 @@ module Ronin
 
       # The string that will be returned if the Remote File Inclusion (RFI)
       # script is executed.
-      VULN_RESPONSE_STRING = "Remote File Inclusion (RFI) Detected: eval(\"1 + 1\") = 2"
+      VULN_RESPONSE_STRING = "Security Alert: Remote File Inclusion Detected!"
 
       # The filter bypass technique to use.
       #

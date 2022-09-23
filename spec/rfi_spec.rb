@@ -152,13 +152,13 @@ describe Ronin::Vulns::RFI do
       subject.vulnerable?
     end
 
-    context "when the response body contains 'Remote File Inclusion (RFI) Detected: eval(\"1 + 1\") = 2'" do
+    context "when the response body contains 'Security Alert: Remote File Inclusion Detected!''" do
       let(:response_body) do
         <<~HTML
           <html>
             <body>
               <p>example content</p>
-              Remote File Inclusion (RFI) Detected: eval("1 + 1") = 2
+              Security Alert: Remote File Inclusion Detected!
               <p>more content</p>
             </body>
           </html>
@@ -170,7 +170,7 @@ describe Ronin::Vulns::RFI do
       end
     end
 
-    context "when the response body does not contain 'Remote File Inclusion (RFI) Detected: eval(\"1 + 1\") = 2'" do
+    context "when the response body does not contain 'Security Alert: Remote File Inclusion Detected!'" do
       it "must return false" do
         expect(subject.vulnerable?).to be(false)
       end
