@@ -30,6 +30,17 @@ module Ronin
     #
     class RFI < Web
 
+      # The script extensions and their languages
+      URL_EXTS = {
+        '.asp'  => :asp,
+        '.aspx' => :asp,
+        '.cfm'  => :cold_fusion,
+        '.cfml' => :cold_fusion,
+        '.jsp'  => :jsp,
+        '.php'  => :php,
+        '.pl'   => :perl
+      }
+
       # Default URL of the Remote File Inclusion (RFI) Test script.
       TEST_SCRIPT_URL = "https://raw.githubusercontent.com/ronin-rb/ronin-vulns/#{VERSION}/data/rfi_test.php"
 
