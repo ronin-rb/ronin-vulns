@@ -60,7 +60,7 @@ module Ronin
 
       # The filter bypass technique to use.
       #
-      # @return [nil, :double_encode, :null_byte]
+      # @return [nil, :double_encode, :suffix_escape, :null_byte]
       attr_reader :filter_bypass
 
       # URL of the Remote File Inclusion (RFI) Test script
@@ -78,6 +78,10 @@ module Ronin
       #   Specifies which filter bypass technique to use.
       #   * `:double_encode` - will cause the inclusion URL to be URI escaped
       #     twice.
+      #   * `:suffix_escape` - escape any appended suffix (ex: `param + ".php"`)
+      #     by adding a URI fragment character (`#`) to the end of the RFI
+      #     script URL. The fragment component of the URI is not sent to the
+      #     web server.
       #   * `:null_byte` - will cause the inclusion URL to be appended with a
       #     `%00` character. **Note:* this technique only works on PHP < 5.3.
       #
@@ -139,13 +143,17 @@ module Ronin
         url = url.to_s
 
         case @filter_bypass
+        when :double_encode
+          # Optionally double URI encodes the script URL
+          url = URI::QueryParams.escape(url)
+        when :suffix_escape
+          # Optionally append a '#' character to escape any appended suffixes
+          # (ex: `param + ".php"`).
+          url = "#{url}#"
         when :null_byte
           # Optionally append a null-byte
           # NOTE: uri-query_params will automatically URI encode the null byte
           url = "#{url}\0"
-        when :double_encode
-          # Optionally double URI encodes the script URL
-          url = URI::QueryParams.escape(url)
         end
 
         return url

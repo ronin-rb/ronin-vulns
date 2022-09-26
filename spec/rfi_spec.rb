@@ -222,17 +222,6 @@ describe Ronin::Vulns::RFI do
       expect(subject.encode_payload(rfi_url)).to eq(rfi_url)
     end
 
-    context "when #filter_bypass is :null_byte" do
-      subject do
-        described_class.new(url, query_param:   query_param,
-                                 filter_bypass: :null_byte)
-      end
-
-      it "must append %00 to the RFI URL" do
-        expect(subject.encode_payload(rfi_url)).to eq("#{rfi_url}\0")
-      end
-    end
-
     context "when #filter_bypass is :double_encode" do
       subject do
         described_class.new(url, query_param:   query_param,
@@ -245,6 +234,28 @@ describe Ronin::Vulns::RFI do
 
       it "must URI escape the RFI URL twice" do
         expect(subject.encode_payload(rfi_url)).to eq(double_uri_escaped_rfi_url)
+      end
+    end
+
+    context "when #filter_bypass is :suffix_escape" do
+      subject do
+        described_class.new(url, query_param:   query_param,
+                                 filter_bypass: :suffix_escape)
+      end
+
+      it "must append a '#' to the RFI URL" do
+        expect(subject.encode_payload(rfi_url)).to eq("#{rfi_url}#")
+      end
+    end
+
+    context "when #filter_bypass is :null_byte" do
+      subject do
+        described_class.new(url, query_param:   query_param,
+                                 filter_bypass: :null_byte)
+      end
+
+      it "must append %00 to the RFI URL" do
+        expect(subject.encode_payload(rfi_url)).to eq("#{rfi_url}\0")
       end
     end
   end
