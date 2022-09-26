@@ -107,6 +107,22 @@ module Ronin
       end
 
       #
+      # Attempts to infer the programming language used for the web page at the
+      # given URL.
+      #
+      # @param [String, URI::HTTP] url
+      #   The URL to infer from.
+      #
+      # @return [:asp, :cold_fusion, :jsp, :php, :perl, nil]
+      #   The programming language inferred from the URL.
+      #
+      def self.infer_scripting_lang(url)
+        url = URI(url)
+
+        return URL_EXTS[File.extname(url.path)]
+      end
+
+      #
       # Optionally applies a filter bypass technique to the RFI URL.
       #
       # @param [URI::HTTP, String] url

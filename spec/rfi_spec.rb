@@ -44,6 +44,66 @@ describe Ronin::Vulns::RFI do
     after { subject.test_script_url = described_class::TEST_SCRIPT_URL }
   end
 
+  describe ".infer_scripting_lang" do
+    subject { described_class }
+
+    context "when the given URL's path ends in '.asp'" do
+      let(:url) { "https://example.com/page.asp?id=1" }
+
+      it "must return :asp" do
+        expect(subject.infer_scripting_lang(url)).to be(:asp)
+      end
+    end
+
+    context "when the given URL's path ends in '.aspx'" do
+      let(:url) { "https://example.com/page.aspx?id=1" }
+
+      it "must return :asp" do
+        expect(subject.infer_scripting_lang(url)).to be(:asp)
+      end
+    end
+
+    context "when the given URL's path ends in '.cfm'" do
+      let(:url) { "https://example.com/page.cfm?id=1" }
+
+      it "must return :cold_fusion" do
+        expect(subject.infer_scripting_lang(url)).to be(:cold_fusion)
+      end
+    end
+
+    context "when the given URL's path ends in '.cfml'" do
+      let(:url) { "https://example.com/page.cfml?id=1" }
+
+      it "must return :cold_fusion" do
+        expect(subject.infer_scripting_lang(url)).to be(:cold_fusion)
+      end
+    end
+
+    context "when the given URL's path ends in '.jsp'" do
+      let(:url) { "https://example.com/page.jsp?id=1" }
+
+      it "must return :jsp" do
+        expect(subject.infer_scripting_lang(url)).to be(:jsp)
+      end
+    end
+
+    context "when the given URL's path ends in '.php'" do
+      let(:url) { "https://example.com/page.php?id=1" }
+
+      it "must return :php" do
+        expect(subject.infer_scripting_lang(url)).to be(:php)
+      end
+    end
+
+    context "when the given URL's path ends in '.pl'" do
+      let(:url) { "https://example.com/page.pl?id=1" }
+
+      it "must return :perl" do
+        expect(subject.infer_scripting_lang(url)).to be(:perl)
+      end
+    end
+  end
+
   let(:query_param) { 'bar' }
   let(:url)         { "https://example.com/page?foo=1&bar=2&baz=3" }
 
