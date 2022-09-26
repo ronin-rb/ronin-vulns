@@ -58,8 +58,8 @@ describe Ronin::Vulns::RFI do
     context "when the given URL's path ends in '.aspx'" do
       let(:url) { "https://example.com/page.aspx?id=1" }
 
-      it "must return :asp" do
-        expect(subject.infer_scripting_lang(url)).to be(:asp)
+      it "must return :asp_net" do
+        expect(subject.infer_scripting_lang(url)).to be(:asp_net)
       end
     end
 

@@ -33,7 +33,7 @@ module Ronin
       # The script extensions and their languages
       URL_EXTS = {
         '.asp'  => :asp,
-        '.aspx' => :asp,
+        '.aspx' => :asp_net,
         '.cfm'  => :cold_fusion,
         '.cfml' => :cold_fusion,
         '.jsp'  => :jsp,
