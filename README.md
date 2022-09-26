@@ -29,7 +29,7 @@ Template Injection (SSTI), and Open Redirects.
     * ColdFusion
     * Perl
   * SQL Injection (SQLi)
-  * reflected Cross Site Scripting (XSS)
+  * Reflected Cross Site Scripting (XSS)
   * Server Side Template Injection (SSTI)
   * Open Redirects
 * Supports testing:
