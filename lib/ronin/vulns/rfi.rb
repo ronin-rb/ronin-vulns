@@ -60,7 +60,7 @@ module Ronin
 
       # The filter bypass technique to use.
       #
-      # @return [nil, :null_byte, :double_encode]
+      # @return [nil, :double_encode, :null_byte]
       attr_reader :filter_bypass
 
       # URL of the Remote File Inclusion (RFI) Test script
@@ -76,10 +76,10 @@ module Ronin
       #
       # @param [:null_byte, :double_encode, nil] filter_bypass
       #   Specifies which filter bypass technique to use.
-      #   * `:null_byte` - will cause the inclusion URL to be appended with a
-      #     `%00` character.
       #   * `:double_encode` - will cause the inclusion URL to be URI escaped
       #     twice.
+      #   * `:null_byte` - will cause the inclusion URL to be appended with a
+      #     `%00` character.
       #
       # @param [String, URI::HTTP, nil] test_script_url
       #   The URL of the RFI test script. If not specified, it will default to
