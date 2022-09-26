@@ -23,6 +23,11 @@ Template Injection (SSTI), and Open Redirects.
 * Supports testing for:
   * Local File Inclusion (LFI)
   * Remote File Inclusion (RFI)
+    * PHP
+    * ASP Class / ASP.NET
+    * JSP
+    * ColdFusion
+    * Perl
   * SQL Injection (SQLi)
   * reflected Cross Site Scripting (XSS)
   * Server Side Template Injection (SSTI)
