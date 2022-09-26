@@ -41,8 +41,18 @@ module Ronin
         '.pl'   => :perl
       }
 
-      # Default URL of the Remote File Inclusion (RFI) Test script.
-      TEST_SCRIPT_URL = "https://raw.githubusercontent.com/ronin-rb/ronin-vulns/#{VERSION}/data/rfi_test.php"
+      # The github.com base URL for all RFI test scripts.
+      GITHUB_BASE_URL = "https://raw.githubusercontent.com/ronin-rb/ronin-vulns/#{VERSION}/data"
+
+      # Mapping of scripting languages to RFI test scripts.
+      TEST_SCRIPT_URLS = {
+        asp:         "#{GITHUB_BASE_URL}/rfi_test.asp",
+        asp_net:     "#{GITHUB_BASE_URL}/rfi_test.aspx",
+        cold_fusion: "#{GITHUB_BASE_URL}/rfi_test.cfm",
+        jsp:         "#{GITHUB_BASE_URL}/rfi_test.jsp",
+        php:         "#{GITHUB_BASE_URL}/rfi_test.php",
+        perl:        "#{GITHUB_BASE_URL}/rfi_test.pl"
+      }
 
       # The string that will be returned if the Remote File Inclusion (RFI)
       # script is executed.
@@ -74,36 +84,13 @@ module Ronin
       # @param [String, URI::HTTP] test_script_url
       #   The URL of the RFI test script.
       #
-      def initialize(url, test_script_url: self.class.test_script_url,
+      def initialize(url, test_script_url: self.class.test_script_for(url),
                           filter_bypass:   nil,
                           **kwargs)
         super(url,**kwargs)
 
         @test_script_url = test_script_url
         @filter_bypass   = filter_bypass
-      end
-
-      #
-      # Specifies the URL to the Remote File Inclusion (RFI) testing script.
-      #
-      # @return [String]
-      #   The URL to the RFI testing script.
-      #
-      def self.test_script_url
-        @test_script_url ||= TEST_SCRIPT_URL
-      end
-
-      #
-      # Uses a new URL for the Remote File Inclusion (RFI) testing script.
-      #
-      # @param [String] new_url
-      #   The new URL to the RFI testing script.
-      #
-      # @return [String]
-      #   The new URL to the RFI testing script.
-      #
-      def self.test_script_url=(new_url)
-        @test_script_url = new_url
       end
 
       #
@@ -120,6 +107,23 @@ module Ronin
         url = URI(url)
 
         return URL_EXTS[File.extname(url.path)]
+      end
+
+      #
+      # Selects the RFI test script for the scripting language used by the given
+      # URL.
+      #
+      # @param [String, URI::HTTP] url
+      #   The URL to test.
+      #
+      # @return [String, nil]
+      #   The RFI test script URL or `nil` if the scripting language could not
+      #   be inferred from the URL.
+      #
+      def self.test_script_for(url)
+        if (lang = infer_scripting_lang(url))
+          TEST_SCRIPT_URLS.fetch(lang)
+        end
       end
 
       #

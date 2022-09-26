@@ -5,43 +5,35 @@ require 'ronin/vulns/rfi'
 require 'webmock/rspec'
 
 describe Ronin::Vulns::RFI do
-  describe "TEST_SCRIPT_URL" do
-    subject { described_class::TEST_SCRIPT_URL }
+  describe "TEST_SCRIPT_URLS" do
+    subject { described_class::TEST_SCRIPT_URLS }
 
-    it "must equal 'https://raw.githubusercontent.com/ronin-rb/ronin-vulns/\#{VERSION}/data/rfi_test.php'" do
-      expect(subject).to eq("https://raw.githubusercontent.com/ronin-rb/ronin-vulns/#{Ronin::Vulns::VERSION}/data/rfi_test.php")
+    {
+      asp:         ".asp",
+      asp_net:     ".aspx",
+      cold_fusion: ".cfm",
+      jsp:         ".jsp",
+      php:         ".php",
+      perl:        ".pl"
+    }.each do |key,ext|
+      describe "#{key.inspect}" do
+        let(:key) { key }
+        let(:ext) { ext }
+
+        subject { super()[key] }
+
+        it "must equal 'https://raw.githubusercontent.com/ronin-rb/ronin-vulns/\#{VERSION}/data/rfi_test.#{ext}'" do
+          expect(subject).to eq("https://raw.githubusercontent.com/ronin-rb/ronin-vulns/#{Ronin::Vulns::VERSION}/data/rfi_test#{ext}")
+        end
+
+        it "must be a publically accessible URL", :network do
+          response = Net::HTTP.get_response(URI(subject))
+
+          expect(response.code.to_i).to eq(200)
+          expect(response.body).to_not be_empty
+        end
+      end
     end
-
-    it "must be a publically accessible URL", :network do
-      response = Net::HTTP.get_response(URI(subject))
-
-      expect(response.code.to_i).to eq(200)
-      expect(response.body).to_not be_empty
-    end
-  end
-
-  describe ".test_script_url" do
-    subject { described_class }
-
-    it "must have a default test_script URL" do
-      expect(subject.test_script_url).to eq(described_class::TEST_SCRIPT_URL)
-    end
-  end
-
-  describe ".test_script_url=" do
-    subject { described_class }
-
-    let(:new_url) { 'http://www.example.com/test.php' }
-
-    before do
-      subject.test_script_url = new_url
-    end
-
-    it "must set .test_script_url URL" do
-      expect(subject.test_script_url).to eq(new_url)
-    end
-
-    after { subject.test_script_url = described_class::TEST_SCRIPT_URL }
   end
 
   describe ".infer_scripting_lang" do
@@ -104,6 +96,80 @@ describe Ronin::Vulns::RFI do
     end
   end
 
+  describe ".test_script_for" do
+    subject { described_class }
+
+    context "when the given URL's path ends in '.asp'" do
+      let(:url) { "https://example.com/page.asp?id=1" }
+
+      it "must return 'https://raw.githubusercontent.com/ronin-rb/ronin-vulns/#{Ronin::Vulns::VERSION}/data/rfi_test.asp'" do
+        expect(subject.test_script_for(url)).to eq(
+          "https://raw.githubusercontent.com/ronin-rb/ronin-vulns/#{Ronin::Vulns::VERSION}/data/rfi_test.asp"
+        )
+      end
+    end
+
+    context "when the given URL's path ends in '.aspx'" do
+      let(:url) { "https://example.com/page.aspx?id=1" }
+
+      it "must return 'https://raw.githubusercontent.com/ronin-rb/ronin-vulns/#{Ronin::Vulns::VERSION}/data/rfi_test.aspx'" do
+        expect(subject.test_script_for(url)).to eq(
+          "https://raw.githubusercontent.com/ronin-rb/ronin-vulns/#{Ronin::Vulns::VERSION}/data/rfi_test.aspx"
+        )
+      end
+    end
+
+    context "when the given URL's path ends in '.cfm'" do
+      let(:url) { "https://example.com/page.cfm?id=1" }
+
+      it "must return 'https://raw.githubusercontent.com/ronin-rb/ronin-vulns/#{Ronin::Vulns::VERSION}/data/rfi_test.cfm'" do
+        expect(subject.test_script_for(url)).to eq(
+          "https://raw.githubusercontent.com/ronin-rb/ronin-vulns/#{Ronin::Vulns::VERSION}/data/rfi_test.cfm"
+        )
+      end
+    end
+
+    context "when the given URL's path ends in '.cfml'" do
+      let(:url) { "https://example.com/page.cfml?id=1" }
+
+      it "must return 'https://raw.githubusercontent.com/ronin-rb/ronin-vulns/#{Ronin::Vulns::VERSION}/data/rfi_test.cfm'" do
+        expect(subject.test_script_for(url)).to eq(
+          "https://raw.githubusercontent.com/ronin-rb/ronin-vulns/#{Ronin::Vulns::VERSION}/data/rfi_test.cfm"
+        )
+      end
+    end
+
+    context "when the given URL's path ends in '.jsp'" do
+      let(:url) { "https://example.com/page.jsp?id=1" }
+
+      it "must return 'https://raw.githubusercontent.com/ronin-rb/ronin-vulns/#{Ronin::Vulns::VERSION}/data/rfi_test.jsp'" do
+        expect(subject.test_script_for(url)).to eq(
+          "https://raw.githubusercontent.com/ronin-rb/ronin-vulns/#{Ronin::Vulns::VERSION}/data/rfi_test.jsp"
+        )
+      end
+    end
+
+    context "when the given URL's path ends in '.php'" do
+      let(:url) { "https://example.com/page.php?id=1" }
+
+      it "must return 'https://raw.githubusercontent.com/ronin-rb/ronin-vulns/#{Ronin::Vulns::VERSION}/data/rfi_test.php'" do
+        expect(subject.test_script_for(url)).to eq(
+          "https://raw.githubusercontent.com/ronin-rb/ronin-vulns/#{Ronin::Vulns::VERSION}/data/rfi_test.php"
+        )
+      end
+    end
+
+    context "when the given URL's path ends in '.pl'" do
+      let(:url) { "https://example.com/page.pl?id=1" }
+
+      it "must return 'https://raw.githubusercontent.com/ronin-rb/ronin-vulns/#{Ronin::Vulns::VERSION}/data/rfi_test.pl'" do
+        expect(subject.test_script_for(url)).to eq(
+          "https://raw.githubusercontent.com/ronin-rb/ronin-vulns/#{Ronin::Vulns::VERSION}/data/rfi_test.pl"
+        )
+      end
+    end
+  end
+
   let(:query_param) { 'bar' }
   let(:url)         { "https://example.com/page?foo=1&bar=2&baz=3" }
 
@@ -112,8 +178,8 @@ describe Ronin::Vulns::RFI do
   describe "#initialize" do
     include_examples "Ronin::Vulns::Web#initialize examples"
 
-    it "must default #test_script_url to TEST_SCRIPT_URL" do
-      expect(subject.test_script_url).to eq(described_class::TEST_SCRIPT_URL)
+    it "must default #test_script_url to .test_script_for(url)" do
+      expect(subject.test_script_url).to eq(described_class.test_script_for(url))
     end
 
     it "must default #filter_bypass to nil" do
