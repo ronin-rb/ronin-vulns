@@ -81,16 +81,17 @@ module Ronin
       #   * `:double_encode` - will cause the inclusion URL to be URI escaped
       #     twice.
       #
-      # @param [String, URI::HTTP] test_script_url
-      #   The URL of the RFI test script.
+      # @param [String, URI::HTTP, nil] test_script_url
+      #   The URL of the RFI test script. If not specified, it will default to
+      #   {test_script_for}.
       #
-      def initialize(url, test_script_url: self.class.test_script_for(url),
+      def initialize(url, test_script_url: nil,
                           filter_bypass:   nil,
                           **kwargs)
         super(url,**kwargs)
 
-        @test_script_url = test_script_url
-        @filter_bypass   = filter_bypass
+        @test_script_url ||= self.class.test_script_for(@url)
+        @filter_bypass     = filter_bypass
       end
 
       #
