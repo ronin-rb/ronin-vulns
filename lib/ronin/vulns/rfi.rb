@@ -79,7 +79,7 @@ module Ronin
       #   * `:double_encode` - will cause the inclusion URL to be URI escaped
       #     twice.
       #   * `:null_byte` - will cause the inclusion URL to be appended with a
-      #     `%00` character.
+      #     `%00` character. **Note:* this technique only works on PHP < 5.3.
       #
       # @param [String, URI::HTTP, nil] test_script_url
       #   The URL of the RFI test script. If not specified, it will default to
