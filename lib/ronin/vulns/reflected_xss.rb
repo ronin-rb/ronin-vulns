@@ -105,7 +105,7 @@ module Ronin
       def test_chars(test_string)
         test_string(test_string) do |body,match|
           @allowed_chars ||= Set.new
-          @allowed_chars.merge(match.to_a[1..].compact)
+          @allowed_chars.merge(match[1..match.length].compact)
 
           yield body, match if block_given?
         end
