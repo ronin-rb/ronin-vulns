@@ -92,8 +92,8 @@ module Ronin
       def initialize(url, test_script_url: nil, filter_bypass: nil, **kwargs)
         super(url,**kwargs)
 
-        @test_script_url ||= self.class.test_script_for(@url)
-        @filter_bypass     = filter_bypass
+        @test_script_url = test_script_url || self.class.test_script_for(@url)
+        @filter_bypass   = filter_bypass
       end
 
       #
