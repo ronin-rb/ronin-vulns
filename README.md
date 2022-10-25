@@ -135,6 +135,7 @@ end
 
 * [Ruby] >= 3.0.0
 * [ronin-support] ~> 1.0
+* [ronin-core] ~> 0.1
 
 ## Install
 
@@ -184,3 +185,4 @@ along with ronin-vulns.  If not, see <https://www.gnu.org/licenses/>.
 
 [Ruby]: https://www.ruby-lang.org
 [ronin-support]: https://github.com/ronin-rb/ronin-support#readme
+[ronin-core]: https://github.com/ronin-rb/ronin-core#readme
