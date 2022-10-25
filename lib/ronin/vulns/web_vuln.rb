@@ -369,6 +369,17 @@ module Ronin
       # @param [Hash{Symbol => Object}] kwargs
       #   Additional keyword arguments for {#initialize}.
       #
+      # @option kwargs [:copy, :delete, :get, :head, :lock, :mkcol, :move,
+      #                 :options, :patch, :post, :propfind, :proppatch, :put,
+      #                 :trace, :unlock] :request_method
+      #   The HTTP request mehtod for each request.
+      #
+      # @option kwargs [String, nil] :user
+      #   The user to authenticate as.
+      #
+      # @option kwargs [String, nil] :password
+      #   The password to authenticate with.
+      #
       # @option kwargs [Hash{String => String}, nil] :headers
       #   Additional headers to send with requests.
       #
@@ -466,6 +477,17 @@ module Ronin
       #
       # @option kwargs [Ronin::Support::Network::HTTP, nil] :http
       #   An HTTP session to use for testing the LFI.
+      #
+      # @option kwargs [:copy, :delete, :get, :head, :lock, :mkcol, :move,
+      #                 :options, :patch, :post, :propfind, :proppatch, :put,
+      #                 :trace, :unlock] :request_method
+      #   The HTTP request mehtod for each request.
+      #
+      # @option kwargs [String, nil] :user
+      #   The user to authenticate as.
+      #
+      # @option kwargs [String, nil] :password
+      #   The password to authenticate with.
       #
       # @option kwargs [Hash{String => String}, nil] :headers
       #   Additional headers to send with requests.
