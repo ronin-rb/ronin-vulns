@@ -18,7 +18,7 @@
 # along with ronin-vulns.  If not, see <https://www.gnu.org/licenses/>.
 #
 
-require 'ronin/vulns/web'
+require 'ronin/vulns/web_vuln'
 require 'ronin/vulns/reflected_xss/test_string'
 require 'ronin/vulns/reflected_xss/context'
 
@@ -37,7 +37,7 @@ module Ronin
     # * Determines viability of XSS based on the context.
     # * Includes random data in the test values.
     #
-    class ReflectedXSS < Web
+    class ReflectedXSS < WebVuln
 
       # The characters that are allowed and will not be escaped or filtered.
       #

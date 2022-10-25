@@ -18,11 +18,11 @@
 # along with ronin-vulns.  If not, see <https://www.gnu.org/licenses/>.
 #
 
-require 'ronin/vulns/web'
+require 'ronin/vulns/web_vuln'
 
 module Ronin
   module Vulns
-    class ReflectedXSS < Web
+    class ReflectedXSS < WebVuln
       #
       # A test string of characters to determine which special characters are
       # escaped/filtered and which are passed through.

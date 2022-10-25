@@ -1,17 +1,17 @@
 require 'spec_helper'
 require 'web_vuln_examples'
-require 'ronin/vulns/web'
+require 'ronin/vulns/web_vuln'
 
 require 'webmock/rspec'
 
-describe Ronin::Vulns::Web do
+describe Ronin::Vulns::WebVuln do
   let(:query_param)  { 'id' }
   let(:url) { "https://example.com/page?#{query_param}=1" }
 
   subject { described_class.new(url, query_param: query_param) }
 
   describe "#initialize" do
-    include_examples "Ronin::Vulns::Web#initialize examples"
+    include_examples "Ronin::Vulns::WebVuln#initialize examples"
   end
 
   let(:payload) { 'injection' }
@@ -204,10 +204,10 @@ describe Ronin::Vulns::Web do
   end
 
   describe "#exploit" do
-    include_examples "Ronin::Vulns::Web#exploit examples"
+    include_examples "Ronin::Vulns::WebVuln#exploit examples"
   end
 
-  class TestWebVuln < Ronin::Vulns::Web
+  class TestWebVuln < Ronin::Vulns::WebVuln
 
     def vulnerable?
       response = exploit('injection')

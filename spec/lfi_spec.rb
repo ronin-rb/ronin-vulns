@@ -19,7 +19,7 @@ describe Ronin::Vulns::LFI do
   subject { described_class.new(url, query_param: query_param) }
 
   describe "#initialize" do
-    include_examples "Ronin::Vulns::Web#initialize examples"
+    include_examples "Ronin::Vulns::WebVuln#initialize examples"
 
     it "must default #os to :unix" do
       expect(subject.os).to be(:unix)
@@ -303,7 +303,7 @@ describe Ronin::Vulns::LFI do
   describe "#exploit" do
     let(:payload) { subject.escape('/etc/passwd') }
 
-    include_examples "Ronin::Vulns::Web#exploit examples"
+    include_examples "Ronin::Vulns::WebVuln#exploit examples"
   end
 
   describe "#vulnerable?" do

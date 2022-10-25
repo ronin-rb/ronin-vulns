@@ -18,11 +18,11 @@
 # along with ronin-vulns.  If not, see <https://www.gnu.org/licenses/>.
 #
 
-require 'ronin/vulns/web'
+require 'ronin/vulns/web_vuln'
 
 module Ronin
   module Vulns
-    class ReflectedXSS < Web
+    class ReflectedXSS < WebVuln
       #
       # Represents information about the context which the XSS occurs within.
       #

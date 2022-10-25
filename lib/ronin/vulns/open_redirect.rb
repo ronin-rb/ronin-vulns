@@ -17,7 +17,7 @@
 # along with ronin-vulns.  If not, see <https://www.gnu.org/licenses/>.
 #
 
-require 'ronin/vulns/web'
+require 'ronin/vulns/web_vuln'
 
 require 'chars'
 require 'cgi'
@@ -33,7 +33,7 @@ module Ronin
     # * Checks `meta` refresh redirects.
     # * Includes random alpha-numeric data in the test values.
     #
-    class OpenRedirect < Web
+    class OpenRedirect < WebVuln
 
       # The desired redirect URL to use in the test.
       #

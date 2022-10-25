@@ -17,11 +17,11 @@
 # along with ronin-vuln.  If not, see <https://www.gnu.org/licenses/>.
 #
 
-require 'ronin/vulns/web'
+require 'ronin/vulns/web_vuln'
 
 module Ronin
   module Vulns
-    class LFI < Web
+    class LFI < WebVuln
       #
       # Represents a single Local File Inclusion (LFI) test for a given file
       # path and a regexp that matches the file.

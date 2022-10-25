@@ -6,7 +6,7 @@ require 'webmock/rspec'
 
 describe Ronin::Vulns::OpenRedirect do
   describe "#initialize" do
-    include_examples "Ronin::Vulns::Web#initialize examples"
+    include_examples "Ronin::Vulns::WebVuln#initialize examples"
 
     it "must set #test_url" do
       expect(subject.test_url).to match(%r{\Ahttps://ronin-rb\.dev/vulns/open_redirect\.html\?id=[A-Za-z0-9]+\z})

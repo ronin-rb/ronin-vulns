@@ -6,7 +6,7 @@ require 'webmock/rspec'
 
 describe Ronin::Vulns::ReflectedXSS do
   describe "#initialize" do
-    include_examples "Ronin::Vulns::Web#initialize examples"
+    include_examples "Ronin::Vulns::WebVuln#initialize examples"
   end
 
   let(:query_param) { 'bar' }

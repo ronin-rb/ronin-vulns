@@ -17,7 +17,7 @@
 # along with ronin-vulns.  If not, see <https://www.gnu.org/licenses/>.
 #
 
-require 'ronin/vulns/web'
+require 'ronin/vulns/web_vuln'
 require 'ronin/vulns/version'
 
 require 'ronin/support/network/http'
@@ -28,7 +28,7 @@ module Ronin
     #
     # Represents a Remote File Inclusion (RFI) vulnerability.
     #
-    class RFI < Web
+    class RFI < WebVuln
 
       # The script extensions and their languages
       URL_EXTS = {

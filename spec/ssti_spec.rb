@@ -6,7 +6,7 @@ require 'webmock/rspec'
 
 describe Ronin::Vulns::SSTI do
   describe "#initialize" do
-    include_examples "Ronin::Vulns::Web#initialize examples"
+    include_examples "Ronin::Vulns::WebVuln#initialize examples"
 
     it "must default #escape to nil" do
       expect(subject.escape).to be(nil)
@@ -147,7 +147,7 @@ describe Ronin::Vulns::SSTI do
   describe "#exploit" do
     let(:payload) { subject.encode_payload('/etc/passwd') }
 
-    include_examples "Ronin::Vulns::Web#exploit examples"
+    include_examples "Ronin::Vulns::WebVuln#exploit examples"
   end
 
   describe "#vulnerable?" do

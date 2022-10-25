@@ -26,7 +26,7 @@ module Ronin
     #
     # The base class for all web vulnerabilities.
     #
-    class Web
+    class WebVuln
 
       # The URL to test or exploit.
       #

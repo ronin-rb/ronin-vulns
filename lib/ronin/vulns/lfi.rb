@@ -17,7 +17,7 @@
 # along with ronin-vuln.  If not, see <https://www.gnu.org/licenses/>.
 #
 
-require 'ronin/vulns/web'
+require 'ronin/vulns/web_vuln'
 require 'ronin/vulns/lfi/test_file'
 
 require 'ronin/support/text/patterns'
@@ -37,7 +37,7 @@ module Ronin
     # * Supports `%00` null terminator trick (fixed in PHP 5.3).
     # * Supports Base64, ROT13, and Zlib `php://filter/`s.
     #
-    class LFI < Web
+    class LFI < WebVuln
 
       include Ronin::Support
 
@@ -102,7 +102,7 @@ module Ronin
       #     file.
       #
       # @param [Hash{Symbol => Object}] kwargs
-      #   Additional keyword arguments for {Web#initialize}.
+      #   Additional keyword arguments for {WebVuln#initialize}.
       #
       def initialize(url, os:            :unix,
                           depth:         6,

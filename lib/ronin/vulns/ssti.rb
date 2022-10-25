@@ -17,14 +17,14 @@
 # along with ronin-vulns.  If not, see <https://www.gnu.org/licenses/>.
 #
 
-require 'ronin/vulns/web'
+require 'ronin/vulns/web_vuln'
 
 module Ronin
   module Vulns
     #
     # Represents a Server Side Template Injection (SSTI) vulnerability.
     #
-    class SSTI < Web
+    class SSTI < WebVuln
 
       # List of common Server Side Template Injection (SSTI) escapes.
       #

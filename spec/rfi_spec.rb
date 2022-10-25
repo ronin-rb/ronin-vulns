@@ -176,7 +176,7 @@ describe Ronin::Vulns::RFI do
   subject { described_class.new(url, query_param: query_param) }
 
   describe "#initialize" do
-    include_examples "Ronin::Vulns::Web#initialize examples"
+    include_examples "Ronin::Vulns::WebVuln#initialize examples"
 
     it "must default #test_script_url to .test_script_for(url)" do
       expect(subject.test_script_url).to eq(described_class.test_script_for(url))
@@ -263,7 +263,7 @@ describe Ronin::Vulns::RFI do
   describe "#exploit" do
     let(:payload) { subject.encode_payload(rfi_url) }
 
-    include_examples "Ronin::Vulns::Web#exploit examples"
+    include_examples "Ronin::Vulns::WebVuln#exploit examples"
   end
 
   describe "#vulnerable?" do
