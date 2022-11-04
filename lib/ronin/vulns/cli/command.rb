@@ -30,6 +30,8 @@ module Ronin
 
         man_dir File.join(ROOT,'man')
 
+        bug_report_url 'https://github.com/ronin-rb/ronin-vulns/issues/new'
+
       end
     end
   end
