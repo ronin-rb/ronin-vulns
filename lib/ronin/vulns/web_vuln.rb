@@ -397,10 +397,10 @@ module Ronin
       # @yield [vuln]
       #   If a block is given it will be yielded each discovered vulnerability.
       #
-      # @yieldparam [Web] vuln
+      # @yieldparam [WebVuln] vuln
       #   A discovered vulnerability in the URL.
       #
-      # @return [Array<Web>]
+      # @return [Array<WebVuln>]
       #   All discovered Web vulnerabilities.
       #
       def self.scan(url, query_params:  nil,
