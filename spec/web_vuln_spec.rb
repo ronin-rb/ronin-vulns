@@ -270,6 +270,9 @@ describe Ronin::Vulns::WebVuln do
   end
 
   describe "#exploit" do
+    let(:payload)         { 'test'  }
+    let(:escaped_payload) { payload }
+
     include_examples "Ronin::Vulns::WebVuln#exploit examples"
   end
 

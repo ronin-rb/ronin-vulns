@@ -301,7 +301,8 @@ describe Ronin::Vulns::LFI do
   end
 
   describe "#exploit" do
-    let(:payload) { subject.escape('/etc/passwd') }
+    let(:payload)         { '/etc/passwd' }
+    let(:escaped_payload) { subject.escape(payload) }
 
     include_examples "Ronin::Vulns::WebVuln#exploit examples"
   end

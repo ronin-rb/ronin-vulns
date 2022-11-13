@@ -233,8 +233,9 @@ end
 
 RSpec.shared_examples_for "Ronin::Vulns::WebVuln#exploit examples" do
   context "when #query_param is set" do
-    let(:query_param)     { 'id' }
-    let(:encoded_payload) { URI::QueryParams.escape(payload) }
+    let(:query_param) { 'id' }
+
+    let(:uri_encoded_payload) { URI::QueryParams.escape(escaped_payload) }
 
     subject { described_class.new(url, query_param: query_param) }
 
@@ -242,7 +243,7 @@ RSpec.shared_examples_for "Ronin::Vulns::WebVuln#exploit examples" do
       let(:url) { "https://example.com/page" }
 
       it "must make a request for the URL with #query_param set to the payload" do
-        stub_request(subject.request_method, "#{url}?#{query_param}=#{encoded_payload}")
+        stub_request(subject.request_method, "#{url}?#{query_param}=#{uri_encoded_payload}")
 
         subject.exploit(payload)
       end
@@ -256,7 +257,7 @@ RSpec.shared_examples_for "Ronin::Vulns::WebVuln#exploit examples" do
         end
 
         it "must send a request with the method of #request_method" do
-          stub_request(request_method, "#{url}?#{query_param}=#{encoded_payload}")
+          stub_request(request_method, "#{url}?#{query_param}=#{uri_encoded_payload}")
 
           subject.exploit(payload)
         end
@@ -267,7 +268,7 @@ RSpec.shared_examples_for "Ronin::Vulns::WebVuln#exploit examples" do
       let(:url) { "https://example.com/page?#{query_param}=1&foo=bar" }
 
       it "must make a request for the URL with #query_params, but with #query_param overridden to the payload" do
-        stub_request(subject.request_method, "https://example.com/page?#{query_param}=#{encoded_payload}&foo=bar")
+        stub_request(subject.request_method, "https://example.com/page?#{query_param}=#{uri_encoded_payload}&foo=bar")
 
         subject.exploit(payload)
       end
@@ -281,7 +282,7 @@ RSpec.shared_examples_for "Ronin::Vulns::WebVuln#exploit examples" do
         end
 
         it "must send a request with the method of #request_method" do
-          stub_request(request_method, "https://example.com/page?#{query_param}=#{encoded_payload}&foo=bar")
+          stub_request(request_method, "https://example.com/page?#{query_param}=#{uri_encoded_payload}&foo=bar")
 
           subject.exploit(payload)
         end
@@ -292,13 +293,16 @@ RSpec.shared_examples_for "Ronin::Vulns::WebVuln#exploit examples" do
   context "when #header_name is set" do
     let(:url)             { "https://example.com/page" }
     let(:header_name)     { 'X-Foo' }
-    let(:encoded_payload) { URI.encode_www_form_component(payload) }
+
+    let(:http_encoded_payload) do
+      URI.encode_www_form_component(escaped_payload)
+    end
 
     context "when #headers is not set" do
       subject { described_class.new(url, header_name: header_name) }
 
       it "must make a request for the URL with #header_name set to the payload" do
-        stub_request(subject.request_method, url).with(headers: {header_name => payload})
+        stub_request(subject.request_method, url).with(headers: {header_name => escaped_payload})
 
         subject.exploit(payload)
       end
@@ -312,7 +316,7 @@ RSpec.shared_examples_for "Ronin::Vulns::WebVuln#exploit examples" do
         end
 
         it "must send a request with the method of #request_method" do
-          stub_request(request_method, url).with(headers: {header_name => payload})
+          stub_request(request_method, url).with(headers: {header_name => escaped_payload})
 
           subject.exploit(payload)
         end
@@ -329,7 +333,7 @@ RSpec.shared_examples_for "Ronin::Vulns::WebVuln#exploit examples" do
       end
 
       it "must make a request for the URL with the #headers, but with #header_name overridden with the payload" do
-        stub_request(subject.request_method, url).with(headers: headers.merge(header_name => payload))
+        stub_request(subject.request_method, url).with(headers: headers.merge(header_name => escaped_payload))
 
         subject.exploit(payload)
       end
@@ -344,7 +348,7 @@ RSpec.shared_examples_for "Ronin::Vulns::WebVuln#exploit examples" do
         end
 
         it "must send a request with the method of #request_method" do
-          stub_request(request_method, url).with(headers: headers.merge(header_name => payload))
+          stub_request(request_method, url).with(headers: headers.merge(header_name => escaped_payload))
 
           subject.exploit(payload)
         end
@@ -355,14 +359,17 @@ RSpec.shared_examples_for "Ronin::Vulns::WebVuln#exploit examples" do
   context "when #cookie_param is set" do
     let(:url)             { "https://example.com/page" }
     let(:cookie_param)    { 'foo' }
-    let(:encoded_payload) { URI.encode_www_form_component(payload) }
+
+    let(:http_encoded_payload) do
+      URI.encode_www_form_component(escaped_payload)
+    end
 
     context "when #cookie is not set" do
       subject { described_class.new(url, cookie_param: cookie_param) }
 
       it "must make a request for the URL with a 'Cookie' header and with #cookie_param set to the payload" do
         stub_request(subject.request_method, url).with(
-          headers: {'Cookie' => "#{cookie_param}=#{encoded_payload}"}
+          headers: {'Cookie' => "#{cookie_param}=#{http_encoded_payload}"}
         )
 
         subject.exploit(payload)
@@ -378,7 +385,7 @@ RSpec.shared_examples_for "Ronin::Vulns::WebVuln#exploit examples" do
 
         it "must send a request with the method of #request_method" do
           stub_request(request_method, url).with(
-            headers: {'Cookie' => "#{cookie_param}=#{encoded_payload}"}
+            headers: {'Cookie' => "#{cookie_param}=#{http_encoded_payload}"}
           )
 
           subject.exploit(payload)
@@ -397,7 +404,9 @@ RSpec.shared_examples_for "Ronin::Vulns::WebVuln#exploit examples" do
 
       it "must make a request for the URL with the #cookie value, but with #cookie_param overridden with the payload" do
         stub_request(subject.request_method, url).with(
-          headers: {'Cookie' => "#{cookie_param}=#{encoded_payload}; bar=baz"}
+          headers: {
+            'Cookie' => "#{cookie_param}=#{http_encoded_payload}; bar=baz"
+          }
         )
 
         subject.exploit(payload)
@@ -414,7 +423,9 @@ RSpec.shared_examples_for "Ronin::Vulns::WebVuln#exploit examples" do
 
         it "must send a request with the method of #request_method" do
           stub_request(request_method, url).with(
-            headers: {'Cookie' => "#{cookie_param}=#{encoded_payload}; bar=baz"}
+            headers: {
+              'Cookie' => "#{cookie_param}=#{http_encoded_payload}; bar=baz"
+            }
           )
 
           subject.exploit(payload)
@@ -426,13 +437,16 @@ RSpec.shared_examples_for "Ronin::Vulns::WebVuln#exploit examples" do
   context "when #form_param is set" do
     let(:url)             { "https://example.com/page" }
     let(:form_param)      { 'foo' }
-    let(:encoded_payload) { URI.encode_www_form_component(payload) }
+
+    let(:form_encoded_payload) do
+      URI.encode_www_form_component(escaped_payload)
+    end
 
     context "when #form_data is not set" do
       subject { described_class.new(url, form_param: form_param) }
 
       it "must make a request for the URL with a body and with #form_param set to the payload" do
-        stub_request(subject.request_method, url).with(body: "#{form_param}=#{encoded_payload}")
+        stub_request(subject.request_method, url).with(body: "#{form_param}=#{form_encoded_payload}")
 
         subject.exploit(payload)
       end
@@ -446,7 +460,7 @@ RSpec.shared_examples_for "Ronin::Vulns::WebVuln#exploit examples" do
         end
 
         it "must send a request with the method of #request_method" do
-          stub_request(request_method, url).with(body: "#{form_param}=#{encoded_payload}")
+          stub_request(request_method, url).with(body: "#{form_param}=#{form_encoded_payload}")
 
           subject.exploit(payload)
         end
@@ -463,7 +477,7 @@ RSpec.shared_examples_for "Ronin::Vulns::WebVuln#exploit examples" do
       end
 
       it "must make a request for the URL with a body containing #form_data, but with #form_param overridden with the payload" do
-        stub_request(subject.request_method, url).with(body: "#{form_param}=#{encoded_payload}&bar=baz")
+        stub_request(subject.request_method, url).with(body: "#{form_param}=#{form_encoded_payload}&bar=baz")
 
         subject.exploit(payload)
       end
@@ -478,7 +492,7 @@ RSpec.shared_examples_for "Ronin::Vulns::WebVuln#exploit examples" do
         end
 
         it "must send a request with the method of #request_method" do
-          stub_request(request_method, url).with(body: "#{form_param}=#{encoded_payload}&bar=baz")
+          stub_request(request_method, url).with(body: "#{form_param}=#{form_encoded_payload}&bar=baz")
 
           subject.exploit(payload)
         end
