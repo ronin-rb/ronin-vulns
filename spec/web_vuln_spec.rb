@@ -16,6 +16,71 @@ describe Ronin::Vulns::WebVuln do
 
   let(:payload) { 'injection' }
 
+  describe "#request" do
+    let(:request_method) { :put }
+    let(:user)           { 'bob' }
+    let(:password)       { 'p@ssword' }
+
+    let(:cookie_param)   { 'session_id' }
+    let(:cookie_value)   { '1234'       }
+    let(:cookie)         { {cookie_param => cookie_value} }
+
+    let(:referer)        { 'https://example.com/' }
+
+    let(:header_name1)  { 'X-Foo' }
+    let(:header_value1) { 'foo'   }
+    let(:header_name2)  { 'X-Bar' }
+    let(:header_value2) { 'bar'   }
+    let(:headers) do
+      {
+        'X-Foo' => 'foo',
+        'X-Bar' => 'bar'
+      }
+    end
+
+    let(:form_param1) { 'a'   }
+    let(:form_value1) { 'foo' }
+    let(:form_param2) { 'b'   }
+    let(:form_value2) { 'bar' }
+    let(:form_data) do
+      {
+        form_param1 => form_value1,
+        form_param2 => form_value2
+      }
+    end
+
+    subject do
+      described_class.new(
+        url,
+        request_method: request_method,
+        user:           user,
+        password:       password,
+        cookie:         cookie,
+        referer:        referer,
+        headers:        headers,
+        form_data:      form_data
+      )
+    end
+
+    it "must call #http.request with the #request_method, #url.path, #user, #password, #query_params, #cookie, #referer, #headers, #form_data" do
+      stub_request(request_method, url).with(
+        headers: {
+          'Accept'          => '*/*',
+          'Accept-Encoding' => 'gzip;q=1.0,deflate;q=0.6,identity;q=0.3',
+          'Content-Type'    => 'application/x-www-form-urlencoded',
+          'Cookie'          => "#{cookie_param}=#{cookie_value}",
+          'Referer'         => referer,
+          'User-Agent'      => 'Ruby',
+          header_name1      => header_value1,
+          header_name2      => header_value2
+        },
+        body: form_data
+      )
+
+      subject.request
+    end
+  end
+
   describe "#exploit_query_params" do
     context "when #query_param is not set" do
       subject { described_class.new(url, header_name: 'X-Foo') }

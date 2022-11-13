@@ -512,6 +512,28 @@ module Ronin
       end
 
       #
+      # Performs a normal request for the URL to test.
+      #
+      # @param [Hash{Symbol => Object}] kwargs
+      #   Additional keyword arguments for
+      #   `Ronin::Support::Network::HTTP#request`.
+      #
+      # @return [Net::HTTPResponse]
+      #
+      def request(**kwargs)
+        @http.request(
+          @request_method, @url.path, user:         @user,
+                                      password:     @password,
+                                      query_params: @query_params,
+                                      cookie:       @cookie,
+                                      referer:      @referer,
+                                      headers:      @headers,
+                                      form_data:    @form_data,
+                                      **kwargs
+        )
+      end
+
+      #
       # The exploit query params with the payload injected.
       #
       # @param [#to_s] payload
@@ -613,20 +635,12 @@ module Ronin
       # @return [Net::HTTPResponse]
       #
       def exploit(payload,**kwargs)
-        query_params = exploit_query_params(payload)
-        headers      = exploit_headers(payload)
-        cookie       = exploit_cookie(payload)
-        form_data    = exploit_form_data(payload)
-
-        @http.request(
-          @request_method, @url.path, user:         @user,
-                                      password:     @password,
-                                      query_params: query_params,
-                                      cookie:       cookie,
-                                      referer:      @referer,
-                                      headers:      headers,
-                                      form_data:    form_data,
-                                      **kwargs
+        request(
+          query_params: exploit_query_params(payload),
+          cookie:       exploit_cookie(payload),
+          headers:      exploit_headers(payload),
+          form_data:    exploit_form_data(payload),
+          **kwargs
         )
       end
 
