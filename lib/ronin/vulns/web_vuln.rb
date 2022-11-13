@@ -161,10 +161,10 @@ module Ronin
                           referer:        nil)
         @url = URI(url)
 
-        @query_param  = query_param
-        @header_name  = header_name
-        @cookie_param = cookie_param
-        @form_param   = form_param
+        @query_param  = String(query_param)  if query_param
+        @header_name  = String(header_name)  if header_name
+        @cookie_param = String(cookie_param) if cookie_param
+        @form_param   = String(form_param)   if form_param
 
         @http = http || Support::Network::HTTP.connect_uri(@url)
 

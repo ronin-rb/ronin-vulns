@@ -25,34 +25,122 @@ RSpec.shared_examples_for "Ronin::Vulns::WebVuln#initialize examples" do
   end
 
   context "when the query_param: keyword is given" do
-    subject { described_class.new(url, query_param: param) }
+    context "and it's a String" do
+      let(:query_param) { 'vuln' }
 
-    it "must set #query_param" do
-      expect(subject.query_param).to eq(param)
+      subject { described_class.new(url, query_param: query_param) }
+
+      it "must set #query_param" do
+        expect(subject.query_param).to eq(query_param)
+      end
+    end
+
+    context "but it's a Symbol" do
+      let(:query_param) { :vuln }
+
+      subject { described_class.new(url, query_param: query_param) }
+
+      it "must convert it to a String and set #query_param" do
+        expect(subject.query_param).to eq(query_param.to_s)
+      end
+    end
+
+    context "but it's a Symbol" do
+      subject { described_class.new(url, query_param: nil) }
+
+      it "must not set #query_param" do
+        expect(subject.query_param).to be(nil)
+      end
     end
   end
 
   context "when the header_name: keyword is given" do
-    subject { described_class.new(url, header_name: param) }
+    context "and it's a String" do
+      let(:header_name) { 'X-Vuln' }
 
-    it "must set #header_name" do
-      expect(subject.header_name).to eq(param)
+      subject { described_class.new(url, header_name: header_name) }
+
+      it "must set #header_name" do
+        expect(subject.header_name).to eq(header_name)
+      end
+    end
+
+    context "but it's a Symbol" do
+      let(:header_name) { :'X-Vuln' }
+
+      subject { described_class.new(url, header_name: header_name) }
+
+      it "must convert it to a String and set #header_name" do
+        expect(subject.header_name).to eq(header_name.to_s)
+      end
+    end
+
+    context "but it's nil" do
+      subject { described_class.new(url, header_name: nil) }
+
+      it "must not set #header_name" do
+        expect(subject.header_name).to be(nil)
+      end
     end
   end
 
   context "when the cookie_param: keyword is given" do
-    subject { described_class.new(url, cookie_param: param) }
+    context "and it's a String" do
+      let(:cookie_param) { 'vuln' }
 
-    it "must set #cookie_param" do
-      expect(subject.cookie_param).to eq(param)
+      subject { described_class.new(url, cookie_param: cookie_param) }
+
+      it "must set #cookie_param" do
+        expect(subject.cookie_param).to eq(cookie_param)
+      end
+    end
+
+    context "but it's a Symbol" do
+      let(:cookie_param) { :vuln }
+
+      subject { described_class.new(url, cookie_param: cookie_param) }
+
+      it "must convert it to a String and set #cookie_param" do
+        expect(subject.cookie_param).to eq(cookie_param.to_s)
+      end
+    end
+
+    context "but it's nil" do
+      subject { described_class.new(url, cookie_param: nil) }
+
+      it "must not set #cookie_param" do
+        expect(subject.cookie_param).to be(nil)
+      end
     end
   end
 
   context "when the form_param: keyword is given" do
-    subject { described_class.new(url, form_param: param) }
+    context "and it's a String" do
+      let(:form_param) { 'vuln' }
 
-    it "must set #form_param" do
-      expect(subject.form_param).to eq(param)
+      subject { described_class.new(url, form_param: form_param) }
+
+      it "must set #form_param" do
+        expect(subject.form_param).to eq(form_param)
+      end
+    end
+
+    context "but it's a Symbol" do
+      let(:form_param) { :vuln }
+
+      subject { described_class.new(url, form_param: form_param) }
+
+      it "must convert it to a String and set #form_param" do
+        expect(subject.form_param).to eq(form_param.to_s)
+      end
+    end
+
+    context "but it's nil" do
+      subject { described_class.new(url, form_param: nil) }
+
+      it "must not set #form_param" do
+        expect(subject.form_param).to be(nil)
+      end
     end
   end
 
