@@ -252,7 +252,7 @@ RSpec.shared_examples_for "Ronin::Vulns::WebVuln#exploit examples" do
 
         subject do
           described_class.new(url, query_param:    query_param,
-                              request_method: request_method)
+                                   request_method: request_method)
         end
 
         it "must send a request with the method of #request_method" do
@@ -277,7 +277,7 @@ RSpec.shared_examples_for "Ronin::Vulns::WebVuln#exploit examples" do
 
         subject do
           described_class.new(url, query_param:    query_param,
-                              request_method: request_method)
+                                   request_method: request_method)
         end
 
         it "must send a request with the method of #request_method" do
@@ -308,7 +308,7 @@ RSpec.shared_examples_for "Ronin::Vulns::WebVuln#exploit examples" do
 
         subject do
           described_class.new(url, header_name:    header_name,
-                              request_method: request_method)
+                                   request_method: request_method)
         end
 
         it "must send a request with the method of #request_method" do
@@ -339,8 +339,8 @@ RSpec.shared_examples_for "Ronin::Vulns::WebVuln#exploit examples" do
 
         subject do
           described_class.new(url, header_name:    header_name,
-                              request_method: request_method,
-                              headers:        headers)
+                                   request_method: request_method,
+                                   headers:        headers)
         end
 
         it "must send a request with the method of #request_method" do
