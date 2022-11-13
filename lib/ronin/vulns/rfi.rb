@@ -165,6 +165,9 @@ module Ronin
       # @param [URI::HTTP, String] rfi_url
       #   The remote URL to include into the page.
       #
+      # @param [Hash{Symbol => Object}] kwargs
+      #   Additional keyword arguments for {WebVuln#exploit}.
+      #
       # @return [Net::HTTPResponse]
       #   The HTTP response from the RFI request.
       #
