@@ -170,6 +170,8 @@ module Ronin
 
         @request_method = request_method
         @query_params   = @url.query_params
+        @user           = user
+        @password       = password
         @headers        = headers
         @cookie         = cookie
         @form_data      = form_data

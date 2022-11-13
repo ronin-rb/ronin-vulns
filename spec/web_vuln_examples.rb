@@ -76,6 +76,26 @@ RSpec.shared_examples_for "Ronin::Vulns::WebVuln#initialize examples" do
     end
   end
 
+  context "when the user: keyword is given" do
+    let(:user) { 'bob' }
+
+    subject { described_class.new(url, user: user) }
+
+    it "must set #user" do
+      expect(subject.user).to eq(user)
+    end
+  end
+
+  context "when the password: keyword is given" do
+    let(:password) { 's3cr3t' }
+
+    subject { described_class.new(url, password: password) }
+
+    it "must set #password" do
+      expect(subject.password).to eq(password)
+    end
+  end
+
   context "when the headers: keyword is given" do
     let(:headers) do
       {'X-Foo' => 'bar' }

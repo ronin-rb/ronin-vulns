@@ -64,6 +64,7 @@ describe Ronin::Vulns::WebVuln do
 
     it "must call #http.request with the #request_method, #url.path, #user, #password, #query_params, #cookie, #referer, #headers, #form_data" do
       stub_request(request_method, url).with(
+        basic_auth: [user, password],
         headers: {
           'Accept'          => '*/*',
           'Accept-Encoding' => 'gzip;q=1.0,deflate;q=0.6,identity;q=0.3',
