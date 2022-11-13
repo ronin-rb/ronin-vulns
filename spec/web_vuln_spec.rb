@@ -715,46 +715,85 @@ describe Ronin::Vulns::WebVuln do
 
     context "when #header_name is set" do
       let(:header_name) { 'X-Bar' }
-      let(:headers) do
-        {'X-Foo' => 'a', header_name => 'b', 'X-Baz' => 'c'}
+
+      context "when #headers is set" do
+        let(:headers) do
+          {'X-Foo' => 'a', header_name => 'b', 'X-Baz' => 'c'}
+        end
+
+        subject do
+          described_class.new(url, header_name: header_name, headers: headers)
+        end
+
+        it "must return the #header_name from #headers" do
+          expect(subject.original_value).to eq(headers[header_name])
+        end
       end
 
-      subject do
-        described_class.new(url, header_name: header_name, headers: headers)
-      end
+      context "but #headers is not set" do
+        subject do
+          described_class.new(url, header_name: header_name)
+        end
 
-      it "must return the #header_name from #headers" do
-        expect(subject.original_value).to eq(headers[header_name])
+        it "must return nil" do
+          expect(subject.original_value).to be(nil)
+        end
       end
     end
 
     context "when #cookie_param is set" do
       let(:cookie_param) { 'bar' }
-      let(:cookie) do
-        {'foo' => 'a', cookie_param => 'b', 'baz' => 'c'}
+
+      context "when #cookie is set" do
+        let(:cookie) do
+          {'foo' => 'a', cookie_param => 'b', 'baz' => 'c'}
+        end
+
+        subject do
+          described_class.new(url, cookie_param: cookie_param, cookie: cookie)
+        end
+
+        it "must return the #cookie_param from #cookie" do
+          expect(subject.original_value).to eq(cookie[cookie_param])
+        end
       end
 
-      subject do
-        described_class.new(url, cookie_param: cookie_param, cookie: cookie)
-      end
+      context "but #cookie is not set" do
+        subject do
+          described_class.new(url, cookie_param: cookie_param)
+        end
 
-      it "must return the #cookie_param from #cookie" do
-        expect(subject.original_value).to eq(cookie[cookie_param])
+        it "must return nil" do
+          expect(subject.original_value).to be(nil)
+        end
       end
     end
 
     context "when #form_param is set" do
       let(:form_param) { 'bar' }
-      let(:form_data) do
-        {'foo' => 'a', form_param => 'b', 'baz' => 'c'}
+
+      context "when #form_data is set" do
+        let(:form_data) do
+          {'foo' => 'a', form_param => 'b', 'baz' => 'c'}
+        end
+
+        subject do
+          described_class.new(url, form_param: form_param, form_data: form_data)
+        end
+
+        it "must return the #form_param from #form_data" do
+          expect(subject.original_value).to eq(form_data[form_param])
+        end
       end
 
-      subject do
-        described_class.new(url, form_param: form_param, form_data: form_data)
-      end
+      context "but #form_data is not set" do
+        subject do
+          described_class.new(url, form_param: form_param)
+        end
 
-      it "must return the #form_param from #form_data" do
-        expect(subject.original_value).to eq(form_data[form_param])
+        it "must return nil" do
+          expect(subject.original_value).to be(nil)
+        end
       end
     end
   end

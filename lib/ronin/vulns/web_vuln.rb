@@ -656,11 +656,11 @@ module Ronin
         if @query_param
           @url.query_params[@query_param]
         elsif @header_name
-          @headers[@header_name]
+          @headers[@header_name] if @headers
         elsif @cookie_param
-          @cookie[@cookie_param]
+          @cookie[@cookie_param] if @cookie
         elsif @form_param
-          @form_data[@form_param]
+          @form_data[@form_param] if @form_data
         end
       end
 
