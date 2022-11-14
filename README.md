@@ -85,6 +85,29 @@ vulns = Ronin::Vulns::LFI.scan('http://www.example.com/page.php?lang=en') do |vu
 end
 ```
 
+### SQL Injection (SQLI)
+
+Test a URL for SQL Injection (SQLi):
+
+```ruby
+require 'ronin/vulns/sqli'
+
+vuln = Ronin::Vulns::SQLI.test('http://www.example.com/page.php?lang=en')
+# => #<Ronin::Vulns::SQLI: ...>
+```
+
+Finds all Server Side Template Injection (SQLI) vulnerabilities for a given URL:
+
+```ruby
+vulns = Ronin::Vulns::SQLI.scan('http://www.example.com/page.php?lang=en')
+# => [#<Ronin::Vulns::SQLI: ...>, ...]
+
+vulns = Ronin::Vulns::SQLI.scan('http://www.example.com/page.php?lang=en') do |vuln|
+  puts "Found SQLi on #{vuln.url} query param #{vuln.query_param}"
+end
+# => [#<Ronin::Vulns::SQLI: ...>, ...]
+```
+
 ### Server Side Template Injection (SSTI)
 
 Test a URL for Server Side Template Injection (SSTI):
