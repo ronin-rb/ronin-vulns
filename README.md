@@ -65,23 +65,23 @@ end
 
 ### Local File Inclusion (LFI)
 
-Test a URL for Remote File Inclusion (RFI):
+Test a URL for Local File Inclusion (LFI):
 
 ```ruby
-require 'ronin/vulns/rfi'
+require 'ronin/vulns/lfi'
 
-vuln = Ronin::Vulns::RFI.test('http://www.example.com/page.php?lang=en')
-# => #<Ronin::Vulns::RFI: ...>
+vuln = Ronin::Vulns::LFI.test('http://www.example.com/page.php?lang=en')
+# => #<Ronin::Vulns::LFI: ...>
 ```
 
-Finds all Remote File Inclusion (RFI) vulnerabilities for a given URL:
+Finds all Local File Inclusion (LFI) vulnerabilities for a given URL:
 
 ```ruby
-vulns = Ronin::Vulns::RFI.scan('http://www.example.com/page.php?lang=en')
-# => [#<Ronin::Vulns::RFI: ...>, ...]
+vulns = Ronin::Vulns::LFI.scan('http://www.example.com/page.php?lang=en')
+# => [#<Ronin::Vulns::LFI: ...>, ...]
 
-vulns = Ronin::Vulns::RFI.scan('http://www.example.com/page.php?lang=en') do |vuln|
-  puts "Found RFI on #{vuln.url} query param #{vuln.query_param}"
+vulns = Ronin::Vulns::LFI.scan('http://www.example.com/page.php?lang=en') do |vuln|
+  puts "Found LFI on #{vuln.url} query param #{vuln.query_param}"
 end
 ```
 
@@ -90,7 +90,7 @@ end
 Test a URL for Server Side Template Injection (SSTI):
 
 ```ruby
-require 'ronin/vulns/rfi'
+require 'ronin/vulns/ssti'
 
 vuln = Ronin::Vulns::SSTI.test('http://www.example.com/page.php?lang=en')
 # => #<Ronin::Vulns::SSTI: ...>
