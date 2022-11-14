@@ -251,9 +251,9 @@ module Ronin
         mssql: ErrorPattern[
           /Driver.* SQL[\-\_\ ]*Server/,
           /OLE DB.* SQL Server/,
-          /\bSQL Server[^&lt;&quot;]+Driver/,
+          /\bSQL Server[^<"]+Driver/,
           /Warning.*\W(?:mssql|sqlsrv)_/,
-          /\bSQL Server[^&lt;&quot;]+[0-9a-fA-F]{8}/,
+          /\bSQL Server[^<"]+[0-9a-fA-F]{8}/,
           /System\.Data\.SqlClient\.SqlException/,
           /Exception.*\bRoadhouse\.Cms\./m,
           /Microsoft SQL Native Client error '[0-9a-fA-F]{8}/,
