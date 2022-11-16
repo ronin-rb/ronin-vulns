@@ -503,7 +503,7 @@ module Ronin
       # @option kwargs [Hash{String => String}, nil] :form_data
       #   Additional form data to send with requests.
       #
-      # @return [Web, nil]
+      # @return [WebVuln, nil]
       #   The first discovered Web vulnerability or `nil` if no vulnerabilities
       #   were discovered.
       #
