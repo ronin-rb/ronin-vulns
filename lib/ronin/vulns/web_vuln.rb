@@ -192,13 +192,14 @@ module Ronin
       #   An HTTP session to use when testing for web vulnerabilities.
       #
       # @yield [vuln]
-      #   If a block is given it will be yielded each discovered vulnerability.
+      #   If a block is given it will be yielded each discovered web
+      #   vulnerability.
       #
       # @yieldparam [Web] vuln
-      #   A discovered vulnerability in the URL's query params.
+      #   A discovered web vulnerability in the URL's query params.
       #
       # @return [Array<Web>]
-      #   All discovered Web vulnerabilities.
+      #   All discovered web vulnerabilities.
       #
       def self.scan_query_params(url,query_params=nil, http: nil, **kwargs)
         url    = URI(url)
@@ -232,13 +233,14 @@ module Ronin
       #   An HTTP session to use when testing for web vulnerabilities.
       #
       # @yield [vuln]
-      #   If a block is given it will be yielded each discovered vulnerability.
+      #   If a block is given it will be yielded each discovered web
+      #   vulnerability.
       #
       # @yieldparam [Web] vuln
-      #   A discovered vulnerability in the URL and one of the header names.
+      #   A discovered web vulnerability in the URL and one of the header names.
       #
       # @return [Array<Web>]
-      #   All discovered Web vulnerabilities.
+      #   All discovered web vulnerabilities.
       #
       def self.scan_headers(url,header_names, http: nil, **kwargs)
         url    = URI(url)
@@ -273,14 +275,15 @@ module Ronin
       #   An HTTP session to use when testing for web vulnerabilities.
       #
       # @yield [vuln]
-      #   If a block is given it will be yielded each discovered vulnerability.
+      #   If a block is given it will be yielded each discovered web
+      #   vulnerability.
       #
       # @yieldparam [Web] vuln
-      #   A discovered vulnerability in the URL and one of the `Cookie` header
-      #   params.
+      #   A discovered web vulnerability in the URL and one of the `Cookie`
+      #   header params.
       #
       # @return [Array<Web>]
-      #   All discovered Web vulnerabilities.
+      #   All discovered web vulnerabilities.
       #
       def self.scan_cookie_params(url,cookie_params=nil, http: nil, **kwargs)
         url    = URI(url)
@@ -321,13 +324,14 @@ module Ronin
       #   An HTTP session to use when testing for web vulnerabilities.
       #
       # @yield [vuln]
-      #   If a block is given it will be yielded each discovered vulnerability.
+      #   If a block is given it will be yielded each discovered web
+      #   vulnerability.
       #
       # @yieldparam [Web] vuln
-      #   A discovered vulnerability in the URL and one of the form params.
+      #   A discovered web vulnerability in the URL and one of the form params.
       #
       # @return [Array<Web>]
-      #   All discovered Web vulnerabilities.
+      #   All discovered web vulnerabilities.
       #
       def self.scan_form_params(url,form_params, http: nil, **kwargs)
         url    = URI(url)
@@ -348,7 +352,7 @@ module Ronin
       end
 
       #
-      # Scans the URL for Web vulnerabilities.
+      # Scans the URL for web vulnerabilities.
       #
       # @param [URI::HTTP, String] url
       #   The URL to scan.
@@ -395,13 +399,14 @@ module Ronin
       #   Additional form data to send with requests.
       #
       # @yield [vuln]
-      #   If a block is given it will be yielded each discovered vulnerability.
+      #   If a block is given it will be yielded each discovered web
+      #   vulnerability.
       #
       # @yieldparam [WebVuln] vuln
-      #   A discovered vulnerability in the URL.
+      #   A discovered web vulnerability in the URL.
       #
       # @return [Array<WebVuln>]
-      #   All discovered Web vulnerabilities.
+      #   All discovered web vulnerabilities.
       #
       def self.scan(url, query_params:  nil,
                          header_names:  nil,
@@ -456,7 +461,7 @@ module Ronin
       end
 
       #
-      # Tests the URL for a Web vulnerability and returns the first found
+      # Tests the URL for a web vulnerability and returns the first found
       # vulnerability.
       #
       # @param [URI::HTTP, String] url
@@ -504,7 +509,7 @@ module Ronin
       #   Additional form data to send with requests.
       #
       # @return [WebVuln, nil]
-      #   The first discovered Web vulnerability or `nil` if no vulnerabilities
+      #   The first discovered web vulnerability or `nil` if no vulnerabilities
       #   were discovered.
       #
       def self.test(url,**kwargs)
