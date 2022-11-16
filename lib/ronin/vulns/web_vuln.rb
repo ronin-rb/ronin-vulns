@@ -516,6 +516,8 @@ module Ronin
         scan(url,**kwargs) do |vuln|
           return vuln
         end
+
+        return nil
       end
 
       #

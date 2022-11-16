@@ -692,6 +692,14 @@ describe Ronin::Vulns::WebVuln do
 
       expect(subject.test(url)).to eq(vuln2)
     end
+
+    context "when .scan does not yield any vulnerabiltieis" do
+      it "must return nil" do
+        expect(subject).to receive(:scan).with(url)
+
+        expect(subject.test(url)).to be(nil)
+      end
+    end
   end
 
   describe "#original_value" do
