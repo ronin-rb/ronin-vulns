@@ -43,6 +43,9 @@ module Ronin
       #
       # Initializes the Open Redirect vulnerability.
       #
+      # @param [String, URI::HTTP] url
+      #   The URL to exploit.
+      #
       # @param [String] test_url
       #   The desired redirect URL to test the URL with.
       #
