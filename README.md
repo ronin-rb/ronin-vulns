@@ -152,6 +152,30 @@ end
 # => [#<Ronin::Vulns::SSTI: ...>, ...]
 ```
 
+### Reflected Cross Site Scripting (XSS)
+
+Test a URL for an (Reflected) Cross Site Scripting (XSS) vulnerability:
+
+```ruby
+require 'ronin/vulns/reflected_xss'
+
+vuln = Ronin::Vulns::ReflectedXSS.test('http://www.example.com/page.php?lang=en')
+# => #<Ronin::Vulns::ReflectedXSS: ...>
+```
+
+Finds all (Reflected) Cross Site Scripting (XSS) vulnerabilities for a given
+URL:
+
+```ruby
+vulns = Ronin::Vulns::ReflectedXSS.scan('http://www.example.com/page.php?lang=en')
+# => [#<Ronin::Vulns::ReflectedXSS: ...>, ...]
+
+vulns = Ronin::Vulns::ReflectedXSS.scan('http://www.example.com/page.php?lang=en') do |vuln|
+  puts "Found ReflectedXSS on #{vuln.url} query param #{vuln.query_param}"
+end
+# => [#<Ronin::Vulns::ReflectedXSS: ...>, ...]
+```
+
 ### Open Redirect
 
 Test a URL for an Open Redirect vulnerability:
