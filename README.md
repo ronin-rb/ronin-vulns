@@ -40,6 +40,27 @@ Template Injection (SSTI), and Open Redirects.
 
 ## Examples
 
+Test a URL for any web vulnerability:
+
+```ruby
+require 'ronin/vulns/url_scanner'
+
+vuln = Ronin::Vulns::URLScanner.test('http://www.example.com/page.php?lang=en')
+# => #<Ronin::Vulns::SQLI: ...>
+```
+
+Scan a URL for all web vulnerabilities:
+
+```ruby
+require 'ronin/vulns/url_scanner'
+
+vulns = Ronin::Vulns::URLScanner.scan('http://www.example.com/page.php?lang=en')
+do |vuln|
+  puts "Found #{vuln.class} on #{vuln.url} query param #{vuln.query_param}"
+end
+# => [#<Ronin::Vulns::SQLI: ...>, #<Ronin::Vulns::ReflectedXSS: ...>, ...]
+```
+
 ### Remote File Inclusion (RFI)
 
 Test a URL for Remote File Inclusion (RFI):
