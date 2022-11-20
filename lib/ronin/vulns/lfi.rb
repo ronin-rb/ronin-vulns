@@ -47,6 +47,9 @@ module Ronin
       # The test file for Windows systems.
       WINDOWS_TEST_FILE = TestFile.new('boot.ini', /\[boot loader\](?:\r?\n(?:[^\[\r\n].*)?)*\r?\n(?:\[operating system\](?:\r?\n(?:[^\[\r\n].*)?)*\r?\n)?/m)
 
+      # The default directory traversal depth.
+      DEFAULT_DEPTH = 6
+
       # Targeted Operating System (OS)
       #
       # @return [:unix, :windows, nil]
@@ -105,7 +108,7 @@ module Ronin
       #   Additional keyword arguments for {WebVuln#initialize}.
       #
       def initialize(url, os:            :unix,
-                          depth:         6,
+                          depth:         DEFAULT_DEPTH,
                           filter_bypass: nil,
                           **kwargs)
         super(url,**kwargs)

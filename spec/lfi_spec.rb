@@ -29,8 +29,8 @@ describe Ronin::Vulns::LFI do
       expect(subject.separator).to eq('/')
     end
 
-    it "must default #depth to 6" do
-      expect(subject.depth).to be(6)
+    it "must default #depth to DEFAULT_DEPTH" do
+      expect(subject.depth).to eq(described_class::DEFAULT_DEPTH)
     end
 
     it "must default #filter_bypass to nil" do
