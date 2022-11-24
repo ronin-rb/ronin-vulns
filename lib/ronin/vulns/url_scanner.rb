@@ -72,7 +72,7 @@ module Ronin
       # @option kwargs [String, nil] :referer
       #   The optional HTTP `Referer` header to send with each request.
       #
-      # @param [Hash{Symbol => Object}] lfi
+      # @param [Hash{Symbol => Object}, false] lfi
       #   Additional options for {LFI.scan}.
       #
       # @option lfi [:unix, :windows, nil] :os (:unix)
@@ -93,7 +93,7 @@ module Ronin
       #   * `:zlib` - Zlib compresses and Base64 encodes the included local
       #     file.
       #
-      # @param [Hash{Symbol => Object}] rfi
+      # @param [Hash{Symbol => Object}, false] rfi
       #   Additional options for {RFI.scan}.
       #
       # @option rfi [:null_byte, :double_encode, nil] :filter_bypass
@@ -111,7 +111,7 @@ module Ronin
       #   The URL of the RFI test script. If not specified, it will default to
       #   {RFI.test_script_for}.
       #
-      # @param [Hash{Symbol => Object}] sqli
+      # @param [Hash{Symbol => Object}, false] sqli
       #   Additional options for {SQLI.scan}.
       #
       # @option sqli [Boolean] :escape_quote (false)
@@ -123,7 +123,7 @@ module Ronin
       # @option sqli [Boolean] :terminate (false)
       #   Specifies whether to terminate the SQL statement with `--`.
       #
-      # @param [Hash{Symbol => Object}] ssti
+      # @param [Hash{Symbol => Object}, false] ssti
       #   Additional options for {SSTI.scan}.
       #
       # @option ssti [Proc, nil] :escape
@@ -135,10 +135,10 @@ module Ronin
       #   The test payload and expected result to check for when testing the URL
       #   for SSTI.
       #
-      # @param [Hash{Symbol => Object}] reflected_xss
+      # @param [Hash{Symbol => Object}, false] reflected_xss
       #   Additional options for {ReflectedXSS.scan}.
       #
-      # @param [Hash{Symbol => Object}] open_redirect
+      # @param [Hash{Symbol => Object}, false] open_redirect
       #   Additional options for {OpenRedirect.scan}.
       #
       # @option open_redirect [String] :test_url (OpenRedirect.random_test_url)
@@ -164,12 +164,29 @@ module Ronin
                          &block)
         vulns = []
 
-        vulns.concat(LFI.scan(url,**kwargs,**lfi,&block))
-        vulns.concat(RFI.scan(url,**kwargs,**rfi,&block))
-        vulns.concat(SQLI.scan(url,**kwargs,**sqli,&block))
-        vulns.concat(SSTI.scan(url,**kwargs,**ssti,&block))
-        vulns.concat(ReflectedXSS.scan(url,**kwargs,**reflected_xss,&block))
-        vulns.concat(OpenRedirect.scan(url,**kwargs,**open_redirect,&block))
+        if lfi
+          vulns.concat(LFI.scan(url,**kwargs,**lfi,&block))
+        end
+
+        if rfi
+          vulns.concat(RFI.scan(url,**kwargs,**rfi,&block))
+        end
+
+        if sqli
+          vulns.concat(SQLI.scan(url,**kwargs,**sqli,&block))
+        end
+
+        if ssti
+          vulns.concat(SSTI.scan(url,**kwargs,**ssti,&block))
+        end
+
+        if reflected_xss
+          vulns.concat(ReflectedXSS.scan(url,**kwargs,**reflected_xss,&block))
+        end
+
+        if open_redirect
+          vulns.concat(OpenRedirect.scan(url,**kwargs,**open_redirect,&block))
+        end
 
         return vulns
       end

@@ -19,6 +19,84 @@ describe Ronin::Vulns::URLScanner do
       subject.scan(url)
     end
 
+    context "when given `lfi: false`" do
+      it "must not call LFI.scan" do
+        expect(Ronin::Vulns::LFI).to_not receive(:scan)
+        expect(Ronin::Vulns::RFI).to receive(:scan).with(url).and_return([])
+        expect(Ronin::Vulns::SQLI).to receive(:scan).with(url).and_return([])
+        expect(Ronin::Vulns::SSTI).to receive(:scan).with(url).and_return([])
+        expect(Ronin::Vulns::ReflectedXSS).to receive(:scan).with(url).and_return([])
+        expect(Ronin::Vulns::OpenRedirect).to receive(:scan).with(url).and_return([])
+
+        subject.scan(url, lfi: false)
+      end
+    end
+
+    context "when given `rfi: false`" do
+      it "must not call RFI.scan" do
+        expect(Ronin::Vulns::LFI).to receive(:scan).with(url).and_return([])
+        expect(Ronin::Vulns::RFI).to_not receive(:scan)
+        expect(Ronin::Vulns::SQLI).to receive(:scan).with(url).and_return([])
+        expect(Ronin::Vulns::SSTI).to receive(:scan).with(url).and_return([])
+        expect(Ronin::Vulns::ReflectedXSS).to receive(:scan).with(url).and_return([])
+        expect(Ronin::Vulns::OpenRedirect).to receive(:scan).with(url).and_return([])
+
+        subject.scan(url, rfi: false)
+      end
+    end
+
+    context "when given `sqli: false`" do
+      it "must not call SQLI.scan" do
+        expect(Ronin::Vulns::LFI).to receive(:scan).with(url).and_return([])
+        expect(Ronin::Vulns::RFI).to receive(:scan).with(url).and_return([])
+        expect(Ronin::Vulns::SQLI).to_not receive(:scan)
+        expect(Ronin::Vulns::SSTI).to receive(:scan).with(url).and_return([])
+        expect(Ronin::Vulns::ReflectedXSS).to receive(:scan).with(url).and_return([])
+        expect(Ronin::Vulns::OpenRedirect).to receive(:scan).with(url).and_return([])
+
+        subject.scan(url, sqli: false)
+      end
+    end
+
+    context "when given `ssti: false`" do
+      it "must not call SSTI.scan" do
+        expect(Ronin::Vulns::LFI).to receive(:scan).with(url).and_return([])
+        expect(Ronin::Vulns::RFI).to receive(:scan).with(url).and_return([])
+        expect(Ronin::Vulns::SQLI).to receive(:scan).with(url).and_return([])
+        expect(Ronin::Vulns::SSTI).to_not receive(:scan)
+        expect(Ronin::Vulns::ReflectedXSS).to receive(:scan).with(url).and_return([])
+        expect(Ronin::Vulns::OpenRedirect).to receive(:scan).with(url).and_return([])
+
+        subject.scan(url, ssti: false)
+      end
+    end
+
+    context "when given `reflected_xss: false`" do
+      it "must not call ReflectedXSS.scan" do
+        expect(Ronin::Vulns::LFI).to receive(:scan).with(url).and_return([])
+        expect(Ronin::Vulns::RFI).to receive(:scan).with(url).and_return([])
+        expect(Ronin::Vulns::SQLI).to receive(:scan).with(url).and_return([])
+        expect(Ronin::Vulns::SSTI).to receive(:scan).with(url).and_return([])
+        expect(Ronin::Vulns::ReflectedXSS).to_not receive(:scan)
+        expect(Ronin::Vulns::OpenRedirect).to receive(:scan).with(url).and_return([])
+
+        subject.scan(url, reflected_xss: false)
+      end
+    end
+
+    context "when given `open_redirect: false`" do
+      it "must not call OpenRedirect.scan" do
+        expect(Ronin::Vulns::LFI).to receive(:scan).with(url).and_return([])
+        expect(Ronin::Vulns::RFI).to receive(:scan).with(url).and_return([])
+        expect(Ronin::Vulns::SQLI).to receive(:scan).with(url).and_return([])
+        expect(Ronin::Vulns::SSTI).to receive(:scan).with(url).and_return([])
+        expect(Ronin::Vulns::ReflectedXSS).to receive(:scan).with(url).and_return([])
+        expect(Ronin::Vulns::OpenRedirect).to_not receive(:scan)
+
+        subject.scan(url, open_redirect: false)
+      end
+    end
+
     context "when web vulnerabilites are discovered in the URL" do
       context "and when a block is given" do
         before do
