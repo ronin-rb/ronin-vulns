@@ -55,6 +55,39 @@ module Ronin
         end
 
         #
+        # Parses an expression string and calculates the result.
+        #
+        # @param [String] string
+        #   The expression string to parse.
+        #
+        # @return [TestExpression]
+        #   The parsed test expression.
+        #
+        # @raise [ArgumentError]
+        #   Could not parse the test expression.
+        #
+        def self.parse(string)
+          unless (match = string.match(/\A(\d+)\s*([\*\/\+\-])\s*(\d+)\z/))
+            raise(ArgumentError,"could not parse the expression: #{string.inspect}")
+          end
+
+          lvalue = match[1].to_i
+          op     = match[2]
+          rvalue = match[3].to_i
+
+          result = case op
+                   when '*' then lvalue * rvalue
+                   when '/' then lvalue / rvalue
+                   when '+' then lvalue + rvalue
+                   when '-' then lvalue - rvalue
+                   else
+                     raise(NotImplementedError,"unsupported expression operator: #{op.inspect}")
+                   end
+
+          return new(string,result.to_s)
+        end
+
+        #
         # The test expression as a String.
         #
         # @return [String]
