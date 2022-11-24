@@ -17,6 +17,7 @@
 # along with ronin-vuln.  If not, see <https://www.gnu.org/licenses/>.
 #
 
+require 'ronin/vulns/vuln'
 require 'ronin/support/network/http'
 
 require 'chars'
@@ -26,7 +27,7 @@ module Ronin
     #
     # The base class for all web vulnerabilities.
     #
-    class WebVuln
+    class WebVuln < Vuln
 
       # The URL to test or exploit.
       #
