@@ -45,7 +45,7 @@ module Ronin
       UNIX_TEST_FILE = TestFile.new('/etc/passwd', %r{(?:[a-z][a-z0-9_-]*:x:\d+:\d+:[^:]*:(?:/[A-Za-z0-9_-]*)+:(?:/[A-Za-z0-9_-]*)+\n)+})
 
       # The test file for Windows systems.
-      WINDOWS_TEST_FILE = TestFile.new('boot.ini', /\[boot loader\](?:\r?\n(?:[^\[\r\n].*)?)*\r?\n(?:\[operating system\](?:\r?\n(?:[^\[\r\n].*)?)*\r?\n)?/m)
+      WINDOWS_TEST_FILE = TestFile.new('\\boot.ini', /\[boot loader\](?:\r?\n(?:[^\[\r\n].*)?)*\r?\n(?:\[operating system\](?:\r?\n(?:[^\[\r\n].*)?)*\r?\n)?/m)
 
       # The default directory traversal depth.
       DEFAULT_DEPTH = 6
