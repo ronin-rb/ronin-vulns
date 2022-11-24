@@ -44,14 +44,47 @@ describe Ronin::Vulns::RFI do
     end
   end
 
-  describe ".infer_scripting_lang" do
+  describe ".test_script_url_for" do
+    subject { described_class }
+
+    context "when given a scripting language name" do
+      [
+        :asp,
+        :asp_net,
+        :cold_fusion,
+        :jsp,
+        :php,
+        :perl
+      ].each do |script_lang|
+        context "when given #{script_lang.inspect}" do
+          let(:script_lang) { script_lang }
+
+          it "must return the test script URL from #{described_class}::TEST_SCRIPT_URLS" do
+            expect(subject.test_script_url_for(script_lang)).to eq(described_class::TEST_SCRIPT_URLS[script_lang])
+          end
+        end
+      end
+    end
+
+    context "when given an unknown scripting language name" do
+      let(:script_lang) { :foo }
+
+      it do
+        expect {
+          subject.test_script_url_for(script_lang)
+        }.to raise_error(ArgumentError,"unknown scripting language: #{script_lang.inspect}")
+      end
+    end
+  end
+
+  describe ".infer_script_lang" do
     subject { described_class }
 
     context "when the given URL's path ends in '.asp'" do
       let(:url) { "https://example.com/page.asp?id=1" }
 
       it "must return :asp" do
-        expect(subject.infer_scripting_lang(url)).to be(:asp)
+        expect(subject.infer_script_lang(url)).to be(:asp)
       end
     end
 
@@ -59,7 +92,7 @@ describe Ronin::Vulns::RFI do
       let(:url) { "https://example.com/page.aspx?id=1" }
 
       it "must return :asp_net" do
-        expect(subject.infer_scripting_lang(url)).to be(:asp_net)
+        expect(subject.infer_script_lang(url)).to be(:asp_net)
       end
     end
 
@@ -67,7 +100,7 @@ describe Ronin::Vulns::RFI do
       let(:url) { "https://example.com/page.cfm?id=1" }
 
       it "must return :cold_fusion" do
-        expect(subject.infer_scripting_lang(url)).to be(:cold_fusion)
+        expect(subject.infer_script_lang(url)).to be(:cold_fusion)
       end
     end
 
@@ -75,7 +108,7 @@ describe Ronin::Vulns::RFI do
       let(:url) { "https://example.com/page.cfml?id=1" }
 
       it "must return :cold_fusion" do
-        expect(subject.infer_scripting_lang(url)).to be(:cold_fusion)
+        expect(subject.infer_script_lang(url)).to be(:cold_fusion)
       end
     end
 
@@ -83,7 +116,7 @@ describe Ronin::Vulns::RFI do
       let(:url) { "https://example.com/page.jsp?id=1" }
 
       it "must return :jsp" do
-        expect(subject.infer_scripting_lang(url)).to be(:jsp)
+        expect(subject.infer_script_lang(url)).to be(:jsp)
       end
     end
 
@@ -91,7 +124,7 @@ describe Ronin::Vulns::RFI do
       let(:url) { "https://example.com/page.php?id=1" }
 
       it "must return :php" do
-        expect(subject.infer_scripting_lang(url)).to be(:php)
+        expect(subject.infer_script_lang(url)).to be(:php)
       end
     end
 
@@ -99,7 +132,7 @@ describe Ronin::Vulns::RFI do
       let(:url) { "https://example.com/page.pl?id=1" }
 
       it "must return :perl" do
-        expect(subject.infer_scripting_lang(url)).to be(:perl)
+        expect(subject.infer_script_lang(url)).to be(:perl)
       end
     end
   end
@@ -192,6 +225,19 @@ describe Ronin::Vulns::RFI do
 
     it "must default #filter_bypass to nil" do
       expect(subject.filter_bypass).to be(nil)
+    end
+
+    context "when given the script_lang: keyword argument" do
+      let(:script_lang) { :jsp }
+
+      subject do
+        described_class.new(url, query_param:    query_param,
+                                 script_lang: script_lang)
+      end
+
+      it "must set #test_script_url to the according test script URL from #{described_class}::TEST_SCRIPT_URLS" do
+        expect(subject.test_script_url).to eq(described_class.test_script_url_for(script_lang))
+      end
     end
 
     context "when given the test_script_url: keyword argument" do

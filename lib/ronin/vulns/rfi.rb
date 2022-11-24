@@ -85,15 +85,43 @@ module Ronin
       #   * `:null_byte` - will cause the inclusion URL to be appended with a
       #     `%00` character. **Note:* this technique only works on PHP < 5.3.
       #
+      # @param [:asp, :asp_net, :cold_fusion, :jsp, :php, :perl, nil] script_lang
+      #   Explicitly specifies the scripting language that the URL uses.
+      #
       # @param [String, URI::HTTP, nil] test_script_url
       #   The URL of the RFI test script. If not specified, it will default to
       #   {test_script_for}.
       #
-      def initialize(url, test_script_url: nil, filter_bypass: nil, **kwargs)
+      def initialize(url, script_lang: nil, test_script_url: nil, filter_bypass: nil, **kwargs)
         super(url,**kwargs)
 
-        @test_script_url = test_script_url || self.class.test_script_for(@url)
-        @filter_bypass   = filter_bypass
+        @test_script_url = if test_script_url
+                             test_script_url
+                           elsif script_lang
+                             self.class.test_script_url_for(script_lang)
+                           else
+                             self.class.test_script_for(@url)
+                           end
+
+        @filter_bypass = filter_bypass
+      end
+
+      #
+      # Returns the test script URL for the given scripting language.
+      #
+      # @param [:asp, :asp_net, :cold_fusion, :jsp, :php, :perl] script_lang
+      #   The scripting language.
+      #
+      # @return [String]
+      #   The test script URL for the given scripting language.
+      #
+      # @raise [ArgumentError]
+      #   An unknown scripting language value was given.
+      #
+      def self.test_script_url_for(script_lang)
+        TEST_SCRIPT_URLS.fetch(script_lang) do
+          raise(ArgumentError,"unknown scripting language: #{script_lang.inspect}")
+        end
       end
 
       #
@@ -106,7 +134,7 @@ module Ronin
       # @return [:asp, :cold_fusion, :jsp, :php, :perl, nil]
       #   The programming language inferred from the URL.
       #
-      def self.infer_scripting_lang(url)
+      def self.infer_script_lang(url)
         url = URI(url)
 
         return URL_EXTS[File.extname(url.path)]
@@ -124,7 +152,7 @@ module Ronin
       #   be inferred from the URL.
       #
       def self.test_script_for(url)
-        if (lang = infer_scripting_lang(url))
+        if (lang = infer_script_lang(url))
           TEST_SCRIPT_URLS.fetch(lang)
         end
       end
