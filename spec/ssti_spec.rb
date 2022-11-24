@@ -5,6 +5,14 @@ require 'ronin/vulns/ssti'
 require 'webmock/rspec'
 
 describe Ronin::Vulns::SSTI do
+  describe ".vuln_type" do
+    subject { described_class }
+
+    it "must return :ssti" do
+      expect(subject.vuln_type).to eq(:ssti)
+    end
+  end
+
   describe "#initialize" do
     include_examples "Ronin::Vulns::WebVuln#initialize examples"
 

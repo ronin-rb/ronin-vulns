@@ -5,6 +5,14 @@ require 'ronin/vulns/reflected_xss'
 require 'webmock/rspec'
 
 describe Ronin::Vulns::ReflectedXSS do
+  describe ".vuln_type" do
+    subject { described_class }
+
+    it "must return :reflected_xss" do
+      expect(subject.vuln_type).to eq(:reflected_xss)
+    end
+  end
+
   describe "#initialize" do
     include_examples "Ronin::Vulns::WebVuln#initialize examples"
   end

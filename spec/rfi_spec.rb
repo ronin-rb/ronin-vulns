@@ -5,6 +5,14 @@ require 'ronin/vulns/rfi'
 require 'webmock/rspec'
 
 describe Ronin::Vulns::RFI do
+  describe ".vuln_type" do
+    subject { described_class }
+
+    it "must return :rfi" do
+      expect(subject.vuln_type).to eq(:rfi)
+    end
+  end
+
   describe "TEST_SCRIPT_URLS" do
     subject { described_class::TEST_SCRIPT_URLS }
 

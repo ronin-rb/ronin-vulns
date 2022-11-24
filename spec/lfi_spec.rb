@@ -13,6 +13,14 @@ describe Ronin::Vulns::LFI do
     subject { described_class::WINDOWS_TEST_FILE }
   end
 
+  describe ".vuln_type" do
+    subject { described_class }
+
+    it "must return :lfi" do
+      expect(subject.vuln_type).to eq(:lfi)
+    end
+  end
+
   let(:query_param) { 'bar' }
   let(:url)         { "https://example.com/page?foo=1&bar=2&baz=3" }
 

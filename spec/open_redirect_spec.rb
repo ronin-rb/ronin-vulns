@@ -5,6 +5,14 @@ require 'ronin/vulns/open_redirect'
 require 'webmock/rspec'
 
 describe Ronin::Vulns::OpenRedirect do
+  describe ".vuln_type" do
+    subject { described_class }
+
+    it "must return :open_redirect" do
+      expect(subject.vuln_type).to eq(:open_redirect)
+    end
+  end
+
   describe "#initialize" do
     include_examples "Ronin::Vulns::WebVuln#initialize examples"
 

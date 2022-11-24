@@ -257,6 +257,23 @@ module Ronin
         end
       end
 
+      #
+      # Returns the type or kind of vulnerability.
+      #
+      # @return [Symbol]
+      #
+      # @note
+      #   This is used internally to map an vulnerability class to a printable
+      #   type.
+      #
+      # @api private
+      #
+      # @abstract
+      #
+      def self.vuln_type
+        :lfi
+      end
+
     end
   end
 end

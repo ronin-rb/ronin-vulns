@@ -5,6 +5,14 @@ require 'ronin/vulns/sqli'
 require 'webmock/rspec'
 
 describe Ronin::Vulns::SQLI do
+  describe ".vuln_type" do
+    subject { described_class }
+
+    it "must return :sqli" do
+      expect(subject.vuln_type).to eq(:sqli)
+    end
+  end
+
   describe "#initialize" do
     include_examples "Ronin::Vulns::WebVuln#initialize examples"
 

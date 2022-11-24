@@ -197,6 +197,23 @@ module Ronin
         return body.include?(@test_result)
       end
 
+      #
+      # Returns the type or kind of vulnerability.
+      #
+      # @return [Symbol]
+      #
+      # @note
+      #   This is used internally to map an vulnerability class to a printable
+      #   type.
+      #
+      # @api private
+      #
+      # @abstract
+      #
+      def self.vuln_type
+        :ssti
+      end
+
     end
   end
 end
