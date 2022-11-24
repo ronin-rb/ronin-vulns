@@ -18,6 +18,7 @@
 #
 
 require 'ronin/vulns/web_vuln'
+require 'ronin/vulns/ssti/test_expression'
 
 module Ronin
   module Vulns
@@ -30,12 +31,12 @@ module Ronin
       #
       # @api private
       ESCAPES = [
-        nil, # does not escape the payload
-        ->(payload) { "{{#{payload}}}"    },
-        ->(payload) { "${#{payload}}"     },
-        ->(payload) { "${{#{payload}}}"   },
-        ->(payload) { "\#{#{payload}}"    },
-        ->(payload) { "<%= #{payload} %>" }
+        nil, # does not escape the expression
+        ->(expression) { "{{#{expression}}}"    },
+        ->(expression) { "${#{expression}}"     },
+        ->(expression) { "${{#{expression}}}"   },
+        ->(expression) { "\#{#{expression}}"    },
+        ->(expression) { "<%= #{expression} %>" }
       ]
 
       # How to escape the payload so that it's executed.
@@ -45,15 +46,10 @@ module Ronin
       #   indicate that the payload will not be escaped.
       attr_reader :escape
 
-      # The payload to test the URL with.
+      # The test expression to use when testing the URL for SSTI.
       #
-      # @return [String]
-      attr_reader :test_payload
-
-      # The expected result to check for when testing the URL for SSTI.
-      #
-      # @return [String]
-      attr_reader :test_result
+      # @return [TestExpression]
+      attr_reader :test
 
       #
       # Initializes the Server Side Template Injection (SSTI) vulnerability.
@@ -66,7 +62,7 @@ module Ronin
       #   and return a String, or `nil` to indicate that the payload will not
       #   be escaped.
       #
-      # @param [(String, String)] test
+      # @param [TestExpression] test
       #   The test payload and expected result to check for when testing the URL
       #   for SSTI.
       #
@@ -74,28 +70,27 @@ module Ronin
         super(url,**kwargs)
 
         @escape = escape
+        @test   = test
 
-        @test_payload, @test_result = test
-
-        unless (@test_payload && @test_result)
-          raise(ArgumentError,"must specify both a test payload and a test result")
+        unless @test
+          raise(ArgumentError,"must specify both a test expression")
         end
       end
 
       #
       # Generates a random `N*M` SSTI test.
       #
-      # @return [(String, String)]
-      #   The test payload and expected result.
+      # @return [TestExpression]
+      #   A random test expression.
       #
       def self.random_test
         int1 = rand(999) + 1_000
         int2 = rand(999) + 1_000
 
-        payload = "#{int1}*#{int2}"
+        string  = "#{int1}*#{int2}"
         result  = (int1 * int2).to_s
 
-        return [payload, result]
+        return TestExpression.new(string,result)
       end
 
       #
@@ -191,10 +186,10 @@ module Ronin
       # @return [Boolean]
       #
       def vulnerable?
-        response = exploit(@test_payload)
+        response = exploit(@test.string)
         body     = response.body
 
-        return body.include?(@test_result)
+        return body.include?(@test.result)
       end
 
       #

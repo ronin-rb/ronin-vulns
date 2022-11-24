@@ -20,12 +20,10 @@ describe Ronin::Vulns::SSTI do
       expect(subject.escape).to be(nil)
     end
 
-    it "must initialize #test_payload to a random N*M payload" do
-      expect(subject.test_payload).to match(/\A\d+\*\d+\z/)
-    end
-
-    it "must initialize #test_result to the result value of #test_payload" do
-      expect(subject.test_result).to eq(eval(subject.test_payload).to_s)
+    it "must initialize #test to a random N*M #{described_class}::TestExpression" do
+      expect(subject.test).to be_kind_of(described_class::TestExpression)
+      expect(subject.test.string).to match(/\A\d+\*\d+\z/)
+      expect(subject.test.result).to eq(eval(subject.test.string).to_s)
     end
 
     context "when the escape: keyword argument is given" do
@@ -45,8 +43,8 @@ describe Ronin::Vulns::SSTI do
     it "must return a random N*M String and the result of N*M" do
       test = subject.random_test
 
-      expect(test[0]).to match(/\A\d+\*\d+\z/)
-      expect(test[1]).to eq(eval(test[0]).to_s)
+      expect(test.string).to match(/\A\d+\*\d+\z/)
+      expect(test.result).to eq(eval(test.string).to_s)
     end
 
     it "must return a random test playload and result each time" do
@@ -56,9 +54,11 @@ describe Ronin::Vulns::SSTI do
     end
   end
 
-  let(:test_payload) { '7*7' }
-  let(:test_result)  { '49'  }
-  let(:test)         { [test_payload, test_result] }
+  let(:test_string) { '7*7' }
+  let(:test_result) { '49'  }
+  let(:test) do
+    described_class::TestExpression.new(test_string,test_result)
+  end
 
   describe ".scan" do
     subject { described_class }
@@ -66,45 +66,45 @@ describe Ronin::Vulns::SSTI do
     let(:url)     { "https://example.com/page?foo=1&bar=2&baz=3" }
     context "when the escape: keyword argument is not given" do
       it "must scan the URL using every escape in #{described_class}::ESCAPES" do
-        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=#{test_payload}")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo={{#{test_payload}}}")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=${#{test_payload}}")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=${{#{test_payload}}}")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=%23{#{test_payload}}")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=<%= #{test_payload} %>")
-        stub_request(:get,"https://example.com/page?bar=#{test_payload}&baz=3&foo=1")
-        stub_request(:get,"https://example.com/page?bar={{#{test_payload}}}&baz=3&foo=1")
-        stub_request(:get,"https://example.com/page?bar=${#{test_payload}}&baz=3&foo=1")
-        stub_request(:get,"https://example.com/page?bar=${{#{test_payload}}}&baz=3&foo=1")
-        stub_request(:get,"https://example.com/page?bar=%23{#{test_payload}}&baz=3&foo=1")
-        stub_request(:get,"https://example.com/page?bar=<%= #{test_payload} %>&baz=3&foo=1")
-        stub_request(:get,"https://example.com/page?bar=2&baz=#{test_payload}&foo=1")
-        stub_request(:get,"https://example.com/page?bar=2&baz={{#{test_payload}}}&foo=1")
-        stub_request(:get,"https://example.com/page?bar=2&baz=${{#{test_payload}}}&foo=1")
-        stub_request(:get,"https://example.com/page?bar=2&baz=${#{test_payload}}&foo=1")
-        stub_request(:get,"https://example.com/page?bar=2&baz=%23{#{test_payload}}&foo=1")
-        stub_request(:get,"https://example.com/page?bar=2&baz=<%= #{test_payload} %>&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=#{test_string}")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo={{#{test_string}}}")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=${#{test_string}}")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=${{#{test_string}}}")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=%23{#{test_string}}")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=<%= #{test_string} %>")
+        stub_request(:get,"https://example.com/page?bar=#{test_string}&baz=3&foo=1")
+        stub_request(:get,"https://example.com/page?bar={{#{test_string}}}&baz=3&foo=1")
+        stub_request(:get,"https://example.com/page?bar=${#{test_string}}&baz=3&foo=1")
+        stub_request(:get,"https://example.com/page?bar=${{#{test_string}}}&baz=3&foo=1")
+        stub_request(:get,"https://example.com/page?bar=%23{#{test_string}}&baz=3&foo=1")
+        stub_request(:get,"https://example.com/page?bar=<%= #{test_string} %>&baz=3&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2&baz=#{test_string}&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2&baz={{#{test_string}}}&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2&baz=${{#{test_string}}}&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2&baz=${#{test_string}}&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2&baz=%23{#{test_string}}&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2&baz=<%= #{test_string} %>&foo=1")
 
         subject.scan(url, test: test)
 
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=#{test_payload}")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo={{#{test_payload}}}")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=${#{test_payload}}")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=${{#{test_payload}}}")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=%23{#{test_payload}}")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=<%= #{test_payload} %>")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=#{test_payload}&baz=3&foo=1")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar={{#{test_payload}}}&baz=3&foo=1")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=${#{test_payload}}&baz=3&foo=1")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=${{#{test_payload}}}&baz=3&foo=1")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=%23{#{test_payload}}&baz=3&foo=1")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=<%= #{test_payload} %>&baz=3&foo=1")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=#{test_payload}&foo=1")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz={{#{test_payload}}}&foo=1")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=${{#{test_payload}}}&foo=1")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=${#{test_payload}}&foo=1")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=%23{#{test_payload}}&foo=1")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=<%= #{test_payload} %>&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=#{test_string}")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo={{#{test_string}}}")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=${#{test_string}}")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=${{#{test_string}}}")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=%23{#{test_string}}")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=<%= #{test_string} %>")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=#{test_string}&baz=3&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar={{#{test_string}}}&baz=3&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=${#{test_string}}&baz=3&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=${{#{test_string}}}&baz=3&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=%23{#{test_string}}&baz=3&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=<%= #{test_string} %>&baz=3&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=#{test_string}&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz={{#{test_string}}}&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=${{#{test_string}}}&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=${#{test_string}}&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=%23{#{test_string}}&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=<%= #{test_string} %>&foo=1")
       end
     end
 
@@ -112,15 +112,15 @@ describe Ronin::Vulns::SSTI do
       let(:escape) { subject::ESCAPES[1] }
 
       it "must scan the URL using only the given escape" do
-        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo={{#{test_payload}}}")
-        stub_request(:get,"https://example.com/page?bar={{#{test_payload}}}&baz=3&foo=1")
-        stub_request(:get,"https://example.com/page?bar=2&baz={{#{test_payload}}}&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo={{#{test_string}}}")
+        stub_request(:get,"https://example.com/page?bar={{#{test_string}}}&baz=3&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2&baz={{#{test_string}}}&foo=1")
 
         subject.scan(url, escape: escape, test: test)
 
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo={{#{test_payload}}}")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar={{#{test_payload}}}&baz=3&foo=1")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz={{#{test_payload}}}&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo={{#{test_string}}}")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar={{#{test_string}}}&baz=3&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz={{#{test_string}}}&foo=1")
       end
     end
   end
@@ -176,20 +176,20 @@ describe Ronin::Vulns::SSTI do
     let(:response) { double('Net::HTTPResponse', body: response_body) }
 
     before do
-      expect(subject).to receive(:exploit).with(subject.test_payload).and_return(response)
+      expect(subject).to receive(:exploit).with(subject.test.string).and_return(response)
     end
 
-    it "must call #exploit with #test_payload" do
+    it "must call #exploit with #test.string" do
       subject.vulnerable?
     end
 
-    context "when the response contains #test_result" do
+    context "when the response contains #test.result" do
       let(:response_body) do
         <<~HTML
         <html>
           <body>
             <p>example content</p>
-            <p>#{test_result}content</p>
+            <p>#{test.result}content</p>
             <p>more content</p>
           </body>
         </html>
@@ -201,7 +201,7 @@ describe Ronin::Vulns::SSTI do
       end
     end
 
-    context "when the response does not contain #test_result" do
+    context "when the response does not contain #test.result" do
       it "must return false" do
         expect(subject.vulnerable?).to be_falsy
       end
