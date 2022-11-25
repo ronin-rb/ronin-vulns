@@ -27,6 +27,7 @@ required_ruby_version: ">= 3.0.0"
 generated_files:
   - man/ronin-vulns-lfi.1
   - man/ronin-vulns-rfi.1
+  - man/ronin-vulns-sqli.1
 
 dependencies:
   ronin-support: ~> 1.0
