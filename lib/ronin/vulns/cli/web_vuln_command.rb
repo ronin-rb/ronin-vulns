@@ -107,32 +107,32 @@ module Ronin
                                     @test_query_params << name
                                   end
 
-        option :test_header_names, value: {
+        option :test_header_name, value: {
+                                    type: String,
+                                    usage: 'NAME'
+                                  },
+                                  desc: 'Tests the HTTP Header name' do |name|
+                                    @test_header_names ||= Set.new
+                                    @test_header_names << name
+                                  end
+
+        option :test_cookie_param, value: {
                                      type: String,
                                      usage: 'NAME'
                                    },
-                                   desc: 'Tests the HTTP Header name' do |name|
-                                     @test_header_names ||= Set.new
-                                     @test_header_names << name
+                                   desc: 'Tests the HTTP Cookie name' do |name|
+                                     @test_cookie_params ||= Set.new
+                                     @test_cookie_params << name
                                    end
 
-        option :test_cookie_params, value: {
-                                      type: String,
-                                      usage: 'NAME'
-                                    },
-                                    desc: 'Tests the HTTP Cookie name' do |name|
-                                      @test_cookie_params ||= Set.new
-                                      @test_cookie_params << name
-                                    end
-
-        option :test_form_params, value: {
-                                      type: String,
-                                      usage: 'NAME'
-                                    },
-                                    desc: 'Tests the form param name' do |name|
-                                      @test_form_params ||= Set.new
-                                      @test_form_params << name
-                                    end
+        option :test_form_param, value: {
+                                     type: String,
+                                     usage: 'NAME'
+                                   },
+                                   desc: 'Tests the form param name' do |name|
+                                     @test_form_params ||= Set.new
+                                     @test_form_params << name
+                                   end
 
         option :input, short: '-i',
                        value: {
