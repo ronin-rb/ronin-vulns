@@ -47,7 +47,7 @@ module Ronin
         option :header, short: '-H',
                         value: {
                           type:  /[A-Za-z0-9-]+:\s*\w+/,
-                          usage: 'Name: value'
+                          usage: '"Name: value"'
                         },
                         desc: 'Sets an additional header' do |header|
                           name, value = header.split(/:\s*/,2)
