@@ -185,7 +185,7 @@ module Ronin
       # @param [URI::HTTP, String] url
       #   The URL to scan.
       #
-      # @param [Array<Symbol, String>, Symbol, String, nil] query_params
+      # @param [Array<Symbol, String>, nil] query_params
       #   The query param name(s) to test. If no query param(s) are given,
       #   then all query params in the URL will be scanned.
       #
@@ -227,7 +227,7 @@ module Ronin
       # @param [URI::HTTP, String] url
       #   The URL to scan.
       #
-      # @param [Array<String, Symbol>, String, Symbol] header_names
+      # @param [Array<String, Symbol>] header_names
       #   The header name(s) to test.
       #
       # @param [Ronin::Support::Network::HTTP, nil] http
@@ -267,7 +267,7 @@ module Ronin
       # @param [URI::HTTP, String] url
       #   The URL to scan.
       #
-      # @param [Array<Symbol, String>, Symbol, String, nil] cookie_params
+      # @param [Array<Symbol, String>, nil] cookie_params
       #   The cookie param name(s) to test. If not given, then the URL will be
       #   requested and the `Set-Cookie` params from the response will be
       #   tested instead.
@@ -318,7 +318,7 @@ module Ronin
       # @param [URI::HTTP, String] url
       #   The URL to scan.
       #
-      # @param [Array<Symbol, String>, Symbol, String, nil] form_params
+      # @param [Array<Symbol, String>, nil] form_params
       #   The form param name(s) to test.
       #
       # @param [Ronin::Support::Network::HTTP, nil] http
@@ -358,16 +358,16 @@ module Ronin
       # @param [URI::HTTP, String] url
       #   The URL to scan.
       #
-      # @param [Array<Symbol, String>, Symbol, String, true, nil] query_params
+      # @param [Array<Symbol, String>, true, nil] query_params
       #   The query param name(s) to test.
       #
-      # @param [Array<Symbol, String>, Symbol, String, nil] header_names
+      # @param [Array<Symbol, String>, nil] header_names
       #   The header name(s) to test.
       #
-      # @param [Array<Symbol, String>, Symbol, String, true, nil] cookie_params
+      # @param [Array<Symbol, String>, true, nil] cookie_params
       #   The cookie param name(s) to test.
       #
-      # @param [Array<Symbol, String>, Symbol, String, nil] form_params
+      # @param [Array<Symbol, String>, nil] form_params
       #   The form param name(s) to test.
       #
       # @param [Ronin::Support::Network::HTTP, nil] http
@@ -471,16 +471,16 @@ module Ronin
       # @param [Hash{Symbol => Object}] kwargs
       #   Additional keyword arguments for {scan}.
       #
-      # @option kwargs [Array<Symbol, String>, Symbol, String, nil] :query_params
+      # @option kwargs [Array<Symbol, String>, true, nil] :query_params
       #   The query param name(s) to test.
       #
-      # @option kwargs [Array<Symbol, String>, Symbol, String, nil] :header_names
+      # @option kwargs [Array<Symbol, String>, nil] :header_names
       #   The header name(s) to test.
       #
-      # @option kwargs [Array<Symbol, String>, Symbol, String, nil] :cookie_params
+      # @option kwargs [Array<Symbol, String>, true, nil] :cookie_params
       #   The cookie param name(s) to test.
       #
-      # @option kwargs [Array<Symbol, String>, Symbol, String, nil] :form_params
+      # @option kwargs [Array<Symbol, String>, nil] :form_params
       #   The form param name(s) to test.
       #
       # @option kwargs [Ronin::Support::Network::HTTP, nil] :http
