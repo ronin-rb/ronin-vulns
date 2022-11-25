@@ -61,7 +61,7 @@ module Ronin
                           type: String,
                           usage: 'COOKIE'
                         },
-                        desc: 'Sets the Cookie' do |cookie|
+                        desc: 'Sets the raw Cookie header' do |cookie|
                           @raw_cookie = cookie
                         end
 
@@ -91,7 +91,7 @@ module Ronin
                               type: /[^\s=]+=\w+/,
                               usage: 'NAME=VALUE'
                             },
-                            desc: 'Sets additional form params' do |param|
+                            desc: 'Sets an additional form param' do |param|
                               name, value = param.split('=',2)
 
                               @form_data ||= {}
