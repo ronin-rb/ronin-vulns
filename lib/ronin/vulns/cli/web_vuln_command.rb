@@ -107,6 +107,10 @@ module Ronin
                                     @test_query_params << name
                                   end
 
+        option :test_all_query_params, desc: 'Test all URL query param names' do
+          @test_all_query_params = true
+        end
+
         option :test_header_name, value: {
                                     type: String,
                                     usage: 'NAME'
@@ -124,6 +128,10 @@ module Ronin
                                      @test_cookie_params ||= Set.new
                                      @test_cookie_params << name
                                    end
+
+        option :test_all_cookie_params, desc: 'Test all Cookie param names' do
+          @test_all_cookie_params = true
+        end
 
         option :test_form_param, value: {
                                      type: String,
@@ -182,6 +190,11 @@ module Ronin
         # @return [Set<String>, nil]
         attr_reader :test_query_params
 
+        # Indiciates whether to test all of the query params of the URL.
+        #
+        # @return [Boolean, nil]
+        attr_reader :test_all_query_params
+
         # The HTTP Header names to test.
         #
         # @return [Set<String>, nil]
@@ -191,6 +204,11 @@ module Ronin
         #
         # @return [Set<String>, nil]
         attr_reader :test_cookie_params
+
+        # Indiciates whether to test all `Cookie` params for the URL.
+        #
+        # @return [Boolean, nil]
+        attr_reader :test_all_cookie_params
 
         # The form params to test.
         #
@@ -270,9 +288,20 @@ module Ronin
           kwargs[:referer]   = @referer   if @referer
           kwargs[:form_data] = @form_data if @form_data
 
-          kwargs[:query_params]  = @test_query_params  if @test_query_params
+          if @test_query_params
+            kwargs[:query_params]  = @test_query_params
+          elsif @test_all_query_params
+            kwargs[:query_params]  = true
+          end
+
           kwargs[:header_names]  = @test_header_names  if @test_header_names
-          kwargs[:cookie_params] = @test_cookie_params if @test_cookie_params
+
+          if @test_cookie_params
+            kwargs[:cookie_params] = @test_cookie_params
+          elsif @test_all_cookie_params
+            kwargs[:cookie_params] = true
+          end
+
           kwargs[:form_params]   = @test_form_params   if @test_form_params
 
           return kwargs

@@ -33,12 +33,20 @@ describe Ronin::Vulns::CLI::WebVulnCommand do
       expect(subject.test_query_params).to be(nil)
     end
 
+    it "must default #test_all_query_params to nil" do
+      expect(subject.test_all_query_params).to be(nil)
+    end
+
     it "must default #test_header_names to nil" do
       expect(subject.test_header_names).to be(nil)
     end
 
     it "must default #test_cookie_params to nil" do
       expect(subject.test_cookie_params).to be(nil)
+    end
+
+    it "must default #test_all_cookie_params to nil" do
+      expect(subject.test_all_cookie_params).to be(nil)
     end
 
     it "must default #test_form_params to nil" do
@@ -143,6 +151,14 @@ describe Ronin::Vulns::CLI::WebVulnCommand do
       end
     end
 
+    context "when the '--test-all-query-param' option is parsed" do
+      let(:argv) { %w[--test-all-query-param] }
+
+      it "must set #test_all_query_params to true" do
+        expect(subject.test_all_query_params).to be(true)
+      end
+    end
+
     context "when the '--test-header-name <name>' option is parsed" do
       let(:header_name)  { 'X-Foo' }
 
@@ -168,6 +184,14 @@ describe Ronin::Vulns::CLI::WebVulnCommand do
 
       it "must add the query param name to #test_cookie_params" do
         expect(subject.test_cookie_params).to include(cookie_param)
+      end
+    end
+
+    context "when the '--test-all-cookie-param' option is parsed" do
+      let(:argv) { %w[--test-all-cookie-param] }
+
+      it "must set #test_all_cookie_params to true" do
+        expect(subject.test_all_cookie_params).to be(true)
       end
     end
 
@@ -352,6 +376,15 @@ describe Ronin::Vulns::CLI::WebVulnCommand do
       end
     end
 
+    context "when #test_all_query_params is set" do
+      let(:argv) { %w[--test-all-query-param] }
+      before { subject.option_parser.parse(argv) }
+
+      it "must set the :query_params key in the Hash to true" do
+        expect(subject.scan_kwargs[:query_params]).to be(true)
+      end
+    end
+
     context "when #test_header_names is set" do
       let(:header_name)  { 'X-Foo' }
 
@@ -371,6 +404,15 @@ describe Ronin::Vulns::CLI::WebVulnCommand do
 
       it "must set the :cookie_params key in the Hash" do
         expect(subject.scan_kwargs[:cookie_params]).to eq(subject.test_cookie_params)
+      end
+    end
+
+    context "when #test_all_cookie_params is set" do
+      let(:argv) { %w[--test-all-cookie-param] }
+      before { subject.option_parser.parse(argv) }
+
+      it "must set the :cookie_params key in the Hash to true" do
+        expect(subject.scan_kwargs[:cookie_params]).to be(true)
       end
     end
 
