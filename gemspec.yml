@@ -24,6 +24,9 @@ metadata:
 
 required_ruby_version: ">= 3.0.0"
 
+generated_files:
+  - man/ronin-vulns-lfi.1
+
 dependencies:
   ronin-support: ~> 1.0
   ronin-core: ~> 0.1
