@@ -29,6 +29,7 @@ generated_files:
   - man/ronin-vulns-rfi.1
   - man/ronin-vulns-sqli.1
   - man/ronin-vulns-ssti.1
+  - man/ronin-vulns-open-redirect.1
 
 dependencies:
   ronin-support: ~> 1.0
