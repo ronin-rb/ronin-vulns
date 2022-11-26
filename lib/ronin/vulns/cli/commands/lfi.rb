@@ -48,7 +48,7 @@ module Ronin
         #         --test-form-param NAME       Tests the form param name
         #     -i, --input FILE                 Reads URLs from the list file
         #     -O, --os unix|windows            Sets the OS to test for
-        #     -D, --depth INT                  Sets the directory depth to escape up
+        #     -D, --depth COUNT                Sets the directory depth to escape up
         #     -B null_byte|double_escape|base64|rot13|zlib,
         #         --filter-bypass              Sets the filter bypass strategy to use
         #     -h, --help                       Print help information
@@ -69,7 +69,8 @@ module Ronin
 
           option :depth, short: '-D',
                          value: {
-                           type: Integer,
+                           type:  Integer,
+                           usage: 'COUNT'
                          },
                          desc: 'Sets the directory depth to escape up'
 

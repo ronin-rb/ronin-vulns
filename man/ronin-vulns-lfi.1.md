@@ -62,7 +62,7 @@ option.
 `-O`, `--os` `unix`|`windows`
   Sets the OS to test for.
 
-`-D`, `--depth` *NUM*
+`-D`, `--depth` *COUNT*
   Sets the directory depth to escape up.
 
 `-B`, `--filter-bypass` `null_byte`\|`double_escape`\|`base64`\|`rot13`\|`zlib`
