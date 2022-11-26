@@ -38,6 +38,64 @@ Template Injection (SSTI), and Open Redirects.
   * HTTP `Cookie` parameters.
   * Form parameters.
 
+## Synopsis
+
+```
+Usage: ronin-vulns [options] [COMMAND [ARGS...]]
+
+Options:
+    -h, --help                       Print help information
+
+Arguments:
+    [COMMAND]                        The command name to run
+    [ARGS ...]                       Additional arguments for the command
+
+Commands:
+    help
+    lfi
+    open-redirect
+    reflected-xss
+    rfi
+    sqli
+    ssti
+```
+
+Test a URL for Remote File Inclusion (RFI):
+
+```shell
+$ ronin-vulns rfi http://www.example.com/page.php?lang=en
+```
+
+Test a URL for Local File Inclusion (LFI):
+
+```shell
+$ ronin-vulns lfi http://www.example.com/page.php?lang=en
+```
+
+Test a URL for SQL injection (SQLi):
+
+```shell
+$ ronin-vulns sqli http://www.example.com/page.php?lang=en
+```
+
+Test a URL for Server Side Template Injection (SSTI):
+
+```shell
+$ ronin-vulns sqli http://www.example.com/page.php?lang=en
+```
+
+Test a URL for Open Redirects:
+
+```shell
+$ ronin-vulns open-redirect http://www.example.com/page.php?lang=en
+```
+
+Test a URL for reflected Cross Site Scripting (XSS):
+
+```shell
+$ ronin-vulns reflected-xss http://www.example.com/page.php?lang=en
+```
+
 ## Examples
 
 Test a URL for any web vulnerability:
