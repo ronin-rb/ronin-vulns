@@ -66,43 +66,43 @@ Commands:
 Test a URL for any web vulnerabilities:
 
 ```shell
-$ ronin-vulns scan http://www.example.com/page.php?lang=en
+$ ronin-vulns scan "http://www.example.com/page.php?lang=en"
 ```
 
 Test a URL for Remote File Inclusion (RFI):
 
 ```shell
-$ ronin-vulns rfi http://www.example.com/page.php?lang=en
+$ ronin-vulns rfi "http://www.example.com/page.php?lang=en"
 ```
 
 Test a URL for Local File Inclusion (LFI):
 
 ```shell
-$ ronin-vulns lfi http://www.example.com/page.php?lang=en
+$ ronin-vulns lfi "http://www.example.com/page.php?lang=en"
 ```
 
 Test a URL for SQL injection (SQLi):
 
 ```shell
-$ ronin-vulns sqli http://www.example.com/page.php?lang=en
+$ ronin-vulns sqli "http://www.example.com/page.php?lang=en"
 ```
 
 Test a URL for Server Side Template Injection (SSTI):
 
 ```shell
-$ ronin-vulns sqli http://www.example.com/page.php?lang=en
+$ ronin-vulns sqli "http://www.example.com/page.php?lang=en"
 ```
 
 Test a URL for Open Redirects:
 
 ```shell
-$ ronin-vulns open-redirect http://www.example.com/page.php?lang=en
+$ ronin-vulns open-redirect "http://www.example.com/page.php?lang=en"
 ```
 
 Test a URL for reflected Cross Site Scripting (XSS):
 
 ```shell
-$ ronin-vulns reflected-xss http://www.example.com/page.php?lang=en
+$ ronin-vulns reflected-xss "http://www.example.com/page.php?lang=en"
 ```
 
 ## Examples
