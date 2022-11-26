@@ -58,8 +58,15 @@ Commands:
     open-redirect
     reflected-xss, xss
     rfi
+    scan
     sqli
     ssti
+```
+
+Test a URL for any web vulnerabilities:
+
+```shell
+$ ronin-vulns scan http://www.example.com/page.php?lang=en
 ```
 
 Test a URL for Remote File Inclusion (RFI):
