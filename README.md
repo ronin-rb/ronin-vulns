@@ -37,6 +37,8 @@ Template Injection (SSTI), and Open Redirects.
   * HTTP Headers.
   * HTTP `Cookie` parameters.
   * Form parameters.
+* Has 96% documentation coverage.
+* Has 99% test coverage.
 
 ## Synopsis
 
