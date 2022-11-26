@@ -37,6 +37,8 @@ module Ronin
 
       command_name 'ronin-vulns'
 
+      command_aliases['xss'] = 'reflected-xss'
+
     end
   end
 end

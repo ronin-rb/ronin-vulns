@@ -54,7 +54,7 @@ Commands:
     help
     lfi
     open-redirect
-    reflected-xss
+    reflected-xss, xss
     rfi
     sqli
     ssti
