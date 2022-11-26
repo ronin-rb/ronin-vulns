@@ -59,7 +59,7 @@ option.
 `-i`, `--input` *FILE*
   Reads URLs from the given *FILE*.
 
-`-F`, `--filter-bypass` `double-encode`\|`suffix-escape`\|`null-byte`
+`-B`, `--filter-bypass` `double-encode`\|`suffix-escape`\|`null-byte`
   Optional filter-bypass strategy to use.
 
 `-S`, `--script-lang` `asp\|`asp.net`\|`coldfusion`\|`jsp`\|`php`\|`perl`

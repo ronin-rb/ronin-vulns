@@ -39,7 +39,7 @@ module Ronin
         #     -C, --cookie COOKIE              Sets the raw Cookie header
         #     -c, --cookie-param NAME=VALUE    Sets an additional cookie param
         #     -R, --referer URL                Sets the Referer header
-        #         --form-param NAME=VALUE      Sets an additional form param
+        #     -F, --form-param NAME=VALUE      Sets an additional form param
         #         --test-query-param NAME      Tests the URL query param name
         #         --test-all-query-params      Test all URL query param names
         #         --test-header-name NAME      Tests the HTTP Header name
@@ -47,7 +47,7 @@ module Ronin
         #         --test-all-cookie-params     Test all Cookie param names
         #         --test-form-param NAME       Tests the form param name
         #     -i, --input FILE                 Reads URLs from the list file
-        #     -F double-encode|suffix-escape|null-byte,
+        #     -B double-encode|suffix-escape|null-byte,
         #         --filter-bypass              Optional filter-bypass strategy to use
         #     -S asp|asp.net|coldfusion|jsp|php|perl,
         #         --script-lang                Explicitly specify the scripting language to test for
@@ -62,7 +62,7 @@ module Ronin
 
           usage '[options] {URL ... | --input FILE}'
 
-          option :filter_bypass, short: '-F',
+          option :filter_bypass, short: '-B',
                                  value: {
                                    type: {
                                      'double-encode' => :double_encode,
