@@ -5,17 +5,17 @@ describe Ronin::Vulns::CLI::Commands::Ssti do
   let(:url) { 'https://example.com/page.php?id=1' }
 
   describe "#scan_kwargs" do
-    context "when #test_url is set" do
+    context "when #test_expr is set" do
       let(:test) { '7*7' }
-      let(:argv) { ['--test', test] }
+      let(:argv) { ['--test-expr', test] }
 
       before { subject.option_parser.parse(argv) }
 
-      it "must set the :test key in the Hash" do
+      it "must set the :test_expr key in the Hash" do
         kwargs = subject.scan_kwargs
 
-        expect(kwargs[:test]).to be_kind_of(Ronin::Vulns::SSTI::TestExpression)
-        expect(kwargs[:test].string).to eq(test)
+        expect(kwargs[:test_expr]).to be_kind_of(Ronin::Vulns::SSTI::TestExpression)
+        expect(kwargs[:test_expr].string).to eq(test)
       end
     end
   end

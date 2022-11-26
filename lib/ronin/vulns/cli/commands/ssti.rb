@@ -49,7 +49,7 @@ module Ronin
         #         --test-form-param NAME       Tests the form param name
         #     -i, --input FILE                 Reads URLs from the list file
         #     -T {X*Y | X/Z | X+Y | X-Y},      Optional numeric test to use
-        #         --test
+        #         --test-expr
         #     -h, --help                       Print help information
         #
         # ## Arguments
@@ -60,18 +60,23 @@ module Ronin
 
           usage '[options] {URL ... | --input FILE}'
 
-          option :test, short: '-T',
-                        value: {
-                          type: /\A\d+\s*[\*\/\+\-]\s*\d+\z/,
-                          usage: '{X*Y | X/Z | X+Y | X-Y}'
-                        },
-                        desc: 'Optional numeric test to use' do |expr|
-                          @test = Vulns::SSTI::TestExpression.parse(expr)
-                        end
+          option :test_expr, short: '-T',
+                             value: {
+                               type: /\A\d+\s*[\*\/\+\-]\s*\d+\z/,
+                               usage: '{X*Y | X/Z | X+Y | X-Y}'
+                             },
+                             desc: 'Optional numeric test to use' do |expr|
+                               @test_expr = Vulns::SSTI::TestExpression.parse(expr)
+                             end
 
           description 'Scans URL(s) for Server Side Template Injection (SSTI) vulnerabilities'
 
           man_page 'ronin-vulns-ssti.1'
+
+          # The expression to use to test for SSTI.
+          #
+          # @return [Vulns::SSTI::TestExpression, nil]
+          attr_reader :test_expr
 
           #
           # Keyword arguments for `Vulns::SSTI.scan` and `Vulns::SSTI.test`.
@@ -80,7 +85,7 @@ module Ronin
           #
           def scan_kwargs
             kwargs = super()
-            kwargs[:test] = @test if @test
+            kwargs[:test_expr] = @test_expr if @test_expr
             return kwargs
           end
 

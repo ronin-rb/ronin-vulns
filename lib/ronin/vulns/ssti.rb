@@ -49,7 +49,7 @@ module Ronin
       # The test expression to use when testing the URL for SSTI.
       #
       # @return [TestExpression]
-      attr_reader :test
+      attr_reader :test_expr
 
       #
       # Initializes the Server Side Template Injection (SSTI) vulnerability.
@@ -62,17 +62,19 @@ module Ronin
       #   and return a String, or `nil` to indicate that the payload will not
       #   be escaped.
       #
-      # @param [TestExpression] test
+      # @param [TestExpression] test_expr
       #   The test payload and expected result to check for when testing the URL
       #   for SSTI.
       #
-      def initialize(url, escape: nil, test: self.class.random_test, **kwargs)
+      def initialize(url, escape: nil,
+                          test_expr: self.class.random_test,
+                          **kwargs)
         super(url,**kwargs)
 
-        @escape = escape
-        @test   = test
+        @escape    = escape
+        @test_expr = test_expr
 
-        unless @test
+        unless @test_expr
           raise(ArgumentError,"must specify both a test expression")
         end
       end
@@ -186,10 +188,10 @@ module Ronin
       # @return [Boolean]
       #
       def vulnerable?
-        response = exploit(@test.string)
+        response = exploit(@test_expr.string)
         body     = response.body
 
-        return body.include?(@test.result)
+        return body.include?(@test_expr.result)
       end
 
       #

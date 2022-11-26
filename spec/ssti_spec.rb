@@ -20,10 +20,10 @@ describe Ronin::Vulns::SSTI do
       expect(subject.escape).to be(nil)
     end
 
-    it "must initialize #test to a random N*M #{described_class}::TestExpression" do
-      expect(subject.test).to be_kind_of(described_class::TestExpression)
-      expect(subject.test.string).to match(/\A\d+\*\d+\z/)
-      expect(subject.test.result).to eq(eval(subject.test.string).to_s)
+    it "must initialize #test_expr to a random N*M #{described_class}::TestExpression" do
+      expect(subject.test_expr).to be_kind_of(described_class::TestExpression)
+      expect(subject.test_expr.string).to match(/\A\d+\*\d+\z/)
+      expect(subject.test_expr.result).to eq(eval(subject.test_expr.string).to_s)
     end
 
     context "when the escape: keyword argument is given" do
@@ -41,10 +41,10 @@ describe Ronin::Vulns::SSTI do
     subject { described_class }
 
     it "must return a random N*M String and the result of N*M" do
-      test = subject.random_test
+      test_expr = subject.random_test
 
-      expect(test.string).to match(/\A\d+\*\d+\z/)
-      expect(test.result).to eq(eval(test.string).to_s)
+      expect(test_expr.string).to match(/\A\d+\*\d+\z/)
+      expect(test_expr.result).to eq(eval(test_expr.string).to_s)
     end
 
     it "must return a random test playload and result each time" do
@@ -56,7 +56,7 @@ describe Ronin::Vulns::SSTI do
 
   let(:test_string) { '7*7' }
   let(:test_result) { '49'  }
-  let(:test) do
+  let(:test_expr) do
     described_class::TestExpression.new(test_string,test_result)
   end
 
@@ -85,7 +85,7 @@ describe Ronin::Vulns::SSTI do
         stub_request(:get,"https://example.com/page?bar=2&baz=%23{#{test_string}}&foo=1")
         stub_request(:get,"https://example.com/page?bar=2&baz=<%= #{test_string} %>&foo=1")
 
-        subject.scan(url, test: test)
+        subject.scan(url, test_expr: test_expr)
 
         expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=#{test_string}")
         expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo={{#{test_string}}}")
@@ -116,7 +116,7 @@ describe Ronin::Vulns::SSTI do
         stub_request(:get,"https://example.com/page?bar={{#{test_string}}}&baz=3&foo=1")
         stub_request(:get,"https://example.com/page?bar=2&baz={{#{test_string}}}&foo=1")
 
-        subject.scan(url, escape: escape, test: test)
+        subject.scan(url, escape: escape, test_expr: test_expr)
 
         expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo={{#{test_string}}}")
         expect(WebMock).to have_requested(:get,"https://example.com/page?bar={{#{test_string}}}&baz=3&foo=1")
@@ -128,7 +128,10 @@ describe Ronin::Vulns::SSTI do
   let(:query_param) { 'bar' }
   let(:url)         { "https://example.com/page?foo=1&bar=2&baz=3" }
 
-  subject { described_class.new(url, query_param: query_param, test: test) }
+  subject do
+    described_class.new(url, query_param: query_param,
+                             test_expr:   test_expr)
+  end
 
   describe "#encode_payload" do
     let(:payload) { '7*7' }
@@ -176,20 +179,20 @@ describe Ronin::Vulns::SSTI do
     let(:response) { double('Net::HTTPResponse', body: response_body) }
 
     before do
-      expect(subject).to receive(:exploit).with(subject.test.string).and_return(response)
+      expect(subject).to receive(:exploit).with(subject.test_expr.string).and_return(response)
     end
 
     it "must call #exploit with #test.string" do
       subject.vulnerable?
     end
 
-    context "when the response contains #test.result" do
+    context "when the response contains #test_expr.result" do
       let(:response_body) do
         <<~HTML
         <html>
           <body>
             <p>example content</p>
-            <p>#{test.result}content</p>
+            <p>#{test_expr.result}content</p>
             <p>more content</p>
           </body>
         </html>
@@ -201,7 +204,7 @@ describe Ronin::Vulns::SSTI do
       end
     end
 
-    context "when the response does not contain #test.result" do
+    context "when the response does not contain #test_expr.result" do
       it "must return false" do
         expect(subject.vulnerable?).to be_falsy
       end

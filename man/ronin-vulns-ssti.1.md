@@ -59,7 +59,7 @@ to scan can be given as additional arguments or read from a file using the
 `-i`, `--input` *FILE*
   Reads URLs from the given *FILE*.
 
-`-T`, `--test` {*X\*Y* \| *X/Z* \| *X+Y* \| *X-Y*}
+`-T`, `--test-expr` {*X\*Y* \| *X/Z* \| *X+Y* \| *X-Y*}
   Optional numeric test to use.
 
 `-h`, `--help`
