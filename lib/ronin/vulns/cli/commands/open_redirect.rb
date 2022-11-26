@@ -104,7 +104,7 @@ module Ronin
           # @param [String] url
           #   The URL to test.
           #
-          # @return [Vulns::OpenRedirect, nil] vuln
+          # @return [Vulns::OpenRedirect, nil]
           #   The first Open Redirect vulnerability discovered on the URL.
           #
           def test_url(url,&block)

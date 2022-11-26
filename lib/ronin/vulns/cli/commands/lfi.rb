@@ -129,7 +129,7 @@ module Ronin
           # @param [String] url
           #   The URL to test.
           #
-          # @return [Vulns::LFI, nil] vuln
+          # @return [Vulns::LFI, nil]
           #   The first LFI vulnerability discovered on the URL.
           #
           def test_url(url,&block)

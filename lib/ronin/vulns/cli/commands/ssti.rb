@@ -111,7 +111,7 @@ module Ronin
           # @param [String] url
           #   The URL to test.
           #
-          # @return [Vulns::SSTI, nil] vuln
+          # @return [Vulns::SSTI, nil]
           #   The first SSTI vulnerability discovered on the URL.
           #
           def test_url(url,&block)

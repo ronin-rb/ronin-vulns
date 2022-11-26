@@ -84,7 +84,7 @@ module Ronin
           # @param [String] url
           #   The URL to test.
           #
-          # @return [Vulns::ReflectedXSS, nil] vuln
+          # @return [Vulns::ReflectedXSS, nil]
           #   The first Reflected XSS vulnerability discovered on the URL.
           #
           def test_url(url,&block)
