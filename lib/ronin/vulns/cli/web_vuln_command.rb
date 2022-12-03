@@ -18,7 +18,7 @@
 #
 
 require 'ronin/vulns/cli/command'
-require 'ronin/vulns/cli/printing'
+require 'ronin/vulns/cli/logging'
 
 require 'ronin/support/network/http/cookie'
 
@@ -32,7 +32,7 @@ module Ronin
       #
       class WebVulnCommand < Command
 
-        include Printing
+        include Logging
 
         option :first, short: '-F',
                        desc:  'Only find the first vulnerability for each URL' do

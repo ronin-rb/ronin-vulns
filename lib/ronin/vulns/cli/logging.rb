@@ -17,10 +17,14 @@
 # along with ronin-vulns.  If not, see <https://www.gnu.org/licenses/>.
 #
 
+require 'ronin/core/cli/logging'
+
 module Ronin
   module Vulns
     class CLI
-      module Printing
+      module Logging
+        include Core::CLI::Logging
+
         # Known vulnerability types and their printable names.
         VULN_TYPES = {
           open_redirect: 'Open Redirect',
@@ -49,7 +53,7 @@ module Ronin
         # @param [WebVuln] vuln
         #   The web vulnerability to print.
         #
-        def print_vuln(vuln)
+        def log_vuln(vuln)
           vuln_name = vuln_type(vuln)
           location  = if vuln.query_param
                         "query param #{vuln.query_param}"
@@ -62,9 +66,9 @@ module Ronin
                       end
 
           if location
-            puts "Found #{vuln_name} on #{vuln.url} via #{location}!"
+            log_info "Found #{vuln_name} on #{vuln.url} via #{location}!"
           else
-            puts "Found #{vuln_name} on #{vuln.url}!"
+            log_info "Found #{vuln_name} on #{vuln.url}!"
           end
         end
       end
