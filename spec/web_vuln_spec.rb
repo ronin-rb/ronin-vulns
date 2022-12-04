@@ -269,9 +269,25 @@ describe Ronin::Vulns::WebVuln do
     end
   end
 
+  describe "#encode_payload" do
+    let(:payload) { 'test payload' }
+
+    it "must return the payload" do
+      expect(subject.encode_payload(payload)).to eq(payload)
+    end
+
+    context "when given a non-String object" do
+      let(:payload) { 42 }
+
+      it "must convert it to a String" do
+        expect(subject.encode_payload(payload)).to eq(payload.to_s)
+      end
+    end
+  end
+
   describe "#exploit" do
     let(:payload)         { 'test'  }
-    let(:escaped_payload) { payload }
+    let(:encoded_payload) { payload }
 
     include_examples "Ronin::Vulns::WebVuln#exploit examples"
   end

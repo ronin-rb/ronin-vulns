@@ -216,20 +216,6 @@ module Ronin
       end
 
       #
-      # Exploits the Local File Inclusion (LFI) vulnerability by performing an
-      # HTTP request that attempts to include the local file.
-      #
-      # @param [String] path
-      #   The local file path to include.
-      #
-      # @return [Net::HTTPResponse]
-      #   The HTTP response for the LFI request.
-      #
-      def exploit(path,**kwargs)
-        super(encode_payload(path),**kwargs)
-      end
-
-      #
       # Determines whether the URL is vulnerable to Local File Inclusion (LFI).
       #
       # @return [Boolean]

@@ -183,18 +183,6 @@ module Ronin
       end
 
       #
-      # Performs a SQL injection (SQLi) using the given SQL.
-      #
-      # @param [#to_s] sql
-      #   The SQL to inject.
-      #
-      # @return [Net::HTTPResponse]
-      #
-      def exploit(sql,**kwargs)
-        super(encode_payload(sql),**kwargs)
-      end
-
-      #
       # Tests whether the URL is vulnerable to SQL injection.
       #
       # @return [Boolean]

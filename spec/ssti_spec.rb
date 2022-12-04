@@ -155,13 +155,6 @@ describe Ronin::Vulns::SSTI do
     end
   end
 
-  describe "#exploit" do
-    let(:payload)         { '/etc/passwd' }
-    let(:escaped_payload) { subject.encode_payload(payload) }
-
-    include_examples "Ronin::Vulns::WebVuln#exploit examples"
-  end
-
   describe "#vulnerable?" do
     let(:request_url) { subject.exploit_url(subject.test_script_url) }
 

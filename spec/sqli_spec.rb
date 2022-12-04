@@ -208,13 +208,6 @@ describe Ronin::Vulns::SQLI do
     end
   end
 
-  describe "#exploit" do
-    let(:payload)         { 'OR 1=1' }
-    let(:escaped_payload) { subject.escape(payload) }
-
-    include_examples "Ronin::Vulns::WebVuln#exploit examples"
-  end
-
   describe "#random_id" do
     it "must return a random four digit number" do
       expect(subject.random_id).to be_between(1_000, 10_000)

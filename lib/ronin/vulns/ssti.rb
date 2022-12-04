@@ -168,20 +168,6 @@ module Ronin
       end
 
       #
-      # Exploits the Server Side Template Injection (SSTI) vulnerability by
-      # performing an HTTP request with the given template expression.
-      #
-      # @param [String] payload
-      #   The template expression to attempt to execute.
-      #
-      # @return [Net::HTTPResponse]
-      #   The HTTP response for the SSTI request.
-      #
-      def exploit(payload,**kwargs)
-        super(encode_payload(payload),**kwargs)
-      end
-
-      #
       # Determine whether the URL is vulnerable to Server Side Template
       # Injection (SSTI).
       #

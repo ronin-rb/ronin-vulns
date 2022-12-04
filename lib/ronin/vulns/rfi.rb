@@ -188,22 +188,6 @@ module Ronin
       end
 
       #
-      # Performs a Remote File Inclusion (RFI) using the given remote URL.
-      #
-      # @param [URI::HTTP, String] rfi_url
-      #   The remote URL to include into the page.
-      #
-      # @param [Hash{Symbol => Object}] kwargs
-      #   Additional keyword arguments for {WebVuln#exploit}.
-      #
-      # @return [Net::HTTPResponse]
-      #   The HTTP response from the RFI request.
-      #
-      def exploit(rfi_url,**kwargs)
-        super(encode_payload(rfi_url),**kwargs)
-      end
-
-      #
       # Tests whether the URL and query parameter are vulnerable to Remote File
       # Inclusion (RFI).
       #

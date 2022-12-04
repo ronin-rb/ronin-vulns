@@ -632,6 +632,19 @@ module Ronin
       end
 
       #
+      # Place holder method for applying additional encoding to the payload.
+      #
+      # @param [#to_s] payload
+      #   The payload to encode.
+      #
+      # @return [String]
+      #   The encoded payload.
+      #
+      def encode_payload(payload)
+        payload.to_s
+      end
+
+      #
       # Exploits the web vulnerability by sending an HTTP request.
       #
       # @param [String] payload
@@ -644,6 +657,8 @@ module Ronin
       # @return [Net::HTTPResponse]
       #
       def exploit(payload,**kwargs)
+        payload = encode_payload(payload)
+
         request(
           query_params: exploit_query_params(payload),
           cookie:       exploit_cookie(payload),
