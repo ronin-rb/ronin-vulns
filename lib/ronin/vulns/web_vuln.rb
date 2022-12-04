@@ -745,6 +745,29 @@ module Ronin
         ).to_curl
       end
 
+      #
+      # Converts the HTTP request to a raw HTTP request.
+      #
+      # @param [#to_s] payload
+      #   The optional payload to include in the HTTP request.
+      #
+      # @return [String]
+      #
+      def to_http(payload='PAYLOAD')
+        payload = encode_payload(payload)
+
+        HTTPRequest.new(
+          @url, request_method: @request_method,
+                user:           @user,
+                password:       @password,
+                referer:        @referer,
+                query_params:   exploit_query_params(payload),
+                cookie:         exploit_cookie(payload),
+                headers:        exploit_headers(payload),
+                form_data:      exploit_form_data(payload)
+        ).to_http
+      end
+
     end
   end
 end
