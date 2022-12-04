@@ -89,12 +89,12 @@ module Ronin
       # Additional `Cookie` header. If a `Hash` is given, it will be converted
       # to a `String` using `Ronin::Support::Network::HTTP::Cookie`.
       #
-      # @return [String, Hash{String => String}, nil]
+      # @return [Hash{String => String}, nil]
       attr_reader :cookie
 
       # The form data that may be sent in the body of the request.
       #
-      # @return [Hash, String, nil]
+      # @return [Hash, nil]
       attr_reader :form_data
 
       # The optional HTTP `Referer` header to send with each request.
@@ -137,11 +137,11 @@ module Ronin
       # @param [Hash{Symbol,String => String}, nil] headers
       #   Additional HTTP header names and values to add to the request.
       #
-      # @param [String, Hash{String => String}, nil] cookie
+      # @param [Hash{String => String}, nil] cookie
       #   Additional `Cookie` header. If a `Hash` is given, it will be
       #   converted to a `String` using `Ronin::Support::Network::HTTP::Cookie`.
       #
-      # @param [Hash, String, nil] form_data
+      # @param [Hash, nil] form_data
       #   The form data that may be sent in the body of the request.
       #
       # @param [String, nil] referer
@@ -390,7 +390,7 @@ module Ronin
       # @option kwargs [Hash{String => String}, nil] :headers
       #   Additional headers to send with requests.
       #
-      # @option kwargs [String, Ronin::Support::Network::HTTP::Cookie, nil] :cookie
+      # @option kwargs [Hash{String => String}, Ronin::Support::Network::HTTP::Cookie, nil] :cookie
       #   Additional cookie params to send with requests.
       #
       # @option kwargs [String, nil] :referer
@@ -500,7 +500,7 @@ module Ronin
       # @option kwargs [Hash{String => String}, nil] :headers
       #   Additional headers to send with requests.
       #
-      # @option kwargs [String, Ronin::Support::Network::HTTP::Cookie, nil] :cookie
+      # @option kwargs [Hash{String => String}, Ronin::Support::Network::HTTP::Cookie, nil] :cookie
       #   Additional cookie params to send with requests.
       #
       # @option kwargs [String, nil] :referer
@@ -571,7 +571,7 @@ module Ronin
       # @param [#to_s] payload
       #   The payload to use for the exploit.
       #
-      # @return [Hash{String,Symbol => String}]
+      # @return [Hash{String,Symbol => String}, nil]
       #   The {#headers} with the payload injected. If {#header_name} is not
       #   set, then the unmodified {#headers} will be returned.
       #
@@ -593,8 +593,7 @@ module Ronin
       # @param [#to_s] payload
       #   The payload to use for the exploit.
       #
-      # @return [Hash{String,Symbol => String},
-      #          Ronin::Support::Network::HTTP::Cookie]
+      # @return [Hash{String,Symbol => String}, Ronin::Support::Network::HTTP::Cookie, nil]
       #   The {#cookie} with the payload injected. If {#cookie_param} is not
       #   set, then the unmodified {#cookie} will be returned.
       #
@@ -616,7 +615,7 @@ module Ronin
       # @param [#to_s] payload
       #   The payload to use for the exploit.
       #
-      # @return [Hash{String,Symbol => String}, Ronin::Support::Network::HTTP::Cookie]
+      # @return [Hash{String,Symbol => String}, nil]
       #   The {#form_data} with the payload injected. If {#form_param} is not
       #   set, then the unmodified {#form_data} will be returned.
       #
