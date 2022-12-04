@@ -18,6 +18,7 @@
 #
 
 require 'ronin/vulns/vuln'
+require 'ronin/vulns/web_vuln/http_request'
 require 'ronin/support/network/http'
 
 require 'chars'
@@ -719,6 +720,29 @@ module Ronin
       #
       def to_s
         @url.to_s
+      end
+
+      #
+      # Converts the HTTP request to a `curl` command.
+      #
+      # @param [#to_s] payload
+      #   The optional payload to include in the `curl` command.
+      #
+      # @return [String]
+      #
+      def to_curl(payload='PAYLOAD')
+        payload = encode_payload(payload)
+
+        HTTPRequest.new(
+          @url, request_method: @request_method,
+                user:           @user,
+                password:       @password,
+                referer:        @referer,
+                query_params:   exploit_query_params(payload),
+                cookie:         exploit_cookie(payload),
+                headers:        exploit_headers(payload),
+                form_data:      exploit_form_data(payload)
+        ).to_curl
       end
 
     end

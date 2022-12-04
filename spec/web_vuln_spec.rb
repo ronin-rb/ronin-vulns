@@ -850,4 +850,172 @@ describe Ronin::Vulns::WebVuln do
       expect(subject.to_s).to eq(url.to_s)
     end
   end
+
+  describe "#to_curl" do
+    context "when #request_method is not :get" do
+      let(:request_method) { :put }
+
+      subject { described_class.new(url, request_method: request_method) }
+
+      it "must include the `--request` option with the #request_method" do
+        expect(subject.to_curl).to eq(
+          "curl --request #{request_method.upcase} '#{url}'"
+        )
+      end
+    end
+
+    context "when #user is set" do
+      let(:user) { 'bob' }
+
+      subject { described_class.new(url, user: user) }
+
+      it "must include the '--user' option with the #user" do
+        expect(subject.to_curl).to eq(
+          "curl --user '#{user}:' '#{url}'"
+        )
+      end
+    end
+
+    context "when #password is set" do
+      let(:password) { 'secret' }
+
+      subject { described_class.new(url, password: password) }
+
+      it "must include the '--user' option with the #password" do
+        expect(subject.to_curl).to eq(
+          "curl --user ':#{password}' '#{url}'"
+        )
+      end
+    end
+
+    context "when #user and #password are set" do
+      let(:user)     { 'bob'    }
+      let(:password) { 'secret' }
+
+      subject { described_class.new(url, user: user, password: password) }
+
+      it "must include the '--user' option with the #user and #password" do
+        expect(subject.to_curl).to eq(
+          "curl --user '#{user}:#{password}' '#{url}'"
+        )
+      end
+    end
+
+    context "when #referer is set" do
+      let(:referer ) { 'https://example..com/' }
+
+      subject { described_class.new(url, referer: referer) }
+
+      it "must include the '--referer' option with the #referer" do
+        expect(subject.to_curl).to eq(
+          "curl --referer '#{referer}' '#{url}'"
+        )
+      end
+    end
+
+    context "when #query_param is set" do
+      let(:url) { "https://example.com/page.php?id=1&foo=bar" }
+
+      it "must return a curl command with PAYLOAD injected into the query params" do
+        expect(subject.to_curl).to eq(
+          "curl '#{subject.url.scheme}://#{subject.url.host}#{subject.url.path}?#{query_param}=PAYLOAD&foo=bar'"
+        )
+      end
+
+      context "when a payload is given" do
+        let(:payload) { 'test payload' }
+
+        it "must use the custom payload" do
+          expect(subject.to_curl(payload)).to eq(
+            "curl '#{subject.url.scheme}://#{subject.url.host}#{subject.url.path}?#{query_param}=test%20payload&foo=bar'"
+          )
+        end
+      end
+    end
+
+    context "when #header_name is set" do
+      let(:header_name)  { 'X-Foo' }
+      let(:headers) do
+        {'X-Foo' => 'bar', 'X-Bar' => 'baz'}
+      end
+
+      subject do
+        described_class.new(url, header_name: header_name, headers: headers)
+      end
+
+      it "must return a curl command with the PAYLOAD injected into a `--header` option" do
+        expect(subject.to_curl).to eq(
+          "curl --header '#{header_name}: PAYLOAD' --header '#{headers.keys[1]}: #{headers.values[1]}' '#{url}'"
+        )
+      end
+
+      context "when a payload is given" do
+        let(:payload) { 'test payload' }
+
+        it "must use the custom payload" do
+          expect(subject.to_curl(payload)).to eq(
+            "curl --header '#{header_name}: #{payload}' --header '#{headers.keys[1]}: #{headers.values[1]}' '#{url}'"
+          )
+        end
+      end
+    end
+
+    context "when #cookie_param is set" do
+      let(:cookie_param)  { 'bar' }
+      let(:cookie) do
+        {'foo' => 'A', 'bar' => 'B', 'baz' => 'C'}
+      end
+
+      subject do
+        described_class.new(url, cookie_param: cookie_param,
+                                 cookie:       cookie)
+      end
+
+      it "must return a curl command with the PAYLOAD injected into a `--cookie` option" do
+        expect(subject.to_curl).to eq(
+          "curl --cookie '#{cookie.keys[0]}=#{cookie.values[0]}; #{cookie_param}=PAYLOAD; #{cookie.keys[2]}=#{cookie.values[2]}' '#{url}'"
+        )
+      end
+
+      context "when a payload is given" do
+        let(:payload)         { 'test payload' }
+        let(:encoded_payload) { 'test+payload' }
+
+        it "must use the custom payload" do
+          expect(subject.to_curl(payload)).to eq(
+            "curl --cookie '#{cookie.keys[0]}=#{cookie.values[0]}; #{cookie_param}=#{encoded_payload}; #{cookie.keys[2]}=#{cookie.values[2]}' '#{url}'"
+          )
+        end
+      end
+    end
+
+    context "when #form_param is set" do
+      let(:form_data) do
+        {'foo' => 'A', 'bar' => 'B', 'baz' => 'C'}
+      end
+      let(:form_param)  { 'bar' }
+
+      subject do
+        described_class.new(url, form_param: form_param,
+                                 form_data:       form_data)
+      end
+
+      it "must return a curl command with the PAYLOAD injected into a `--form-string` option" do
+        expect(subject.to_curl).to eq(
+          "curl --form-string '#{form_data.keys[0]}=#{form_data.values[0]}&#{form_param}=PAYLOAD&#{form_data.keys[2]}=#{form_data.values[2]}' '#{url}'"
+        )
+      end
+
+      context "when a payload is given" do
+        let(:payload)         { 'test payload' }
+        let(:encoded_payload) { 'test+payload' }
+
+        it "must use the custom payload" do
+          expect(subject.to_curl(payload)).to eq(
+            "curl --form-string '#{form_data.keys[0]}=#{form_data.values[0]}&#{form_param}=#{encoded_payload}&#{form_data.keys[2]}=#{form_data.values[2]}' '#{url}'"
+          )
+        end
+      end
+    end
+  end
 end
