@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 #
 # ronin-vulns - A Ruby library for blind vulnerability testing.
 #
