@@ -18,6 +18,9 @@ supports testing for Local File Inclusion (LFI), Remote File Inclusion (RFI),
 SQL injection (SQLi), reflective Cross Site Scripting (XSS), and Server Side
 Template Injection (SSTI), and Open Redirects.
 
+ronin-vulns is part of the [ronin-rb] project, a [Ruby] toolkit for security
+research and development.
+
 ## Features
 
 * Supports testing for:
@@ -319,5 +322,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with ronin-vulns.  If not, see <https://www.gnu.org/licenses/>.
 
 [Ruby]: https://www.ruby-lang.org
+[ronin-rb]: https://ronin-rb.dev
+
 [ronin-support]: https://github.com/ronin-rb/ronin-support#readme
 [ronin-core]: https://github.com/ronin-rb/ronin-core#readme
