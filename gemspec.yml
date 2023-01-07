@@ -16,7 +16,7 @@ homepage: https://ronin-rb.dev/
 has_yard: true
 
 metadata:
-  documentation_uri: https://rubydoc.info/gems/ronin-vulns
+  documentation_uri: https://ronin-rb.dev/docs/ronin-vulns
   source_code_uri:   https://github.com/ronin-rb/ronin-vulns
   bug_tracker_uri:   https://github.com/ronin-rb/ronin-vulns/issues
   changelog_uri:     https://github.com/ronin-rb/ronin-vulns/blob/master/ChangeLog.md
