@@ -25,14 +25,14 @@ Gem::Specification.new do |gem|
   gem.files  = `git ls-files`.split($/)
   gem.files  = glob[gemspec['files']] if gemspec['files']
   gem.files += Array(gemspec['generated_files'])
-  gem.files -= glob[gemspec['test_files'] || '{test,spec}/{**/}*']
+  # exclude test files from the packages gem
+  gem.files -= glob[gemspec['test_files'] || 'spec/{**/}*']
 
   gem.executables = gemspec.fetch('executables') do
     glob['bin/*'].map { |path| File.basename(path) }
   end
 
   gem.extensions       = glob[gemspec['extensions'] || 'ext/**/extconf.rb']
-  gem.test_files       = glob[gemspec['test_files'] || 'spec/{**/}*_spec.rb']
   gem.extra_rdoc_files = glob[gemspec['extra_doc_files'] || '*.{txt,md}']
 
   gem.require_paths = Array(gemspec.fetch('require_paths') {
