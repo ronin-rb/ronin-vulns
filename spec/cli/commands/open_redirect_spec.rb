@@ -1,7 +1,10 @@
 require 'spec_helper'
 require 'ronin/vulns/cli/commands/open_redirect'
+require_relative 'man_page_example'
 
 describe Ronin::Vulns::CLI::Commands::OpenRedirect do
+  include_examples "man_page"
+
   let(:url) { 'https://example.com/page.php?id=1' }
 
   describe "#scan_kwargs" do

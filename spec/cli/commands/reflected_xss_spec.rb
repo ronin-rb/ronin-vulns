@@ -1,7 +1,10 @@
 require 'spec_helper'
 require 'ronin/vulns/cli/commands/reflected_xss'
+require_relative 'man_page_example'
 
 describe Ronin::Vulns::CLI::Commands::ReflectedXss do
+  include_examples "man_page"
+
   let(:url) { 'https://example.com/page.php?id=1' }
 
   describe "#scan_url" do

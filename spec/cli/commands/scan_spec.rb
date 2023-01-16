@@ -1,7 +1,10 @@
 require 'spec_helper'
 require 'ronin/vulns/cli/commands/scan'
+require_relative 'man_page_example'
 
 describe Ronin::Vulns::CLI::Commands::Scan do
+  include_examples "man_page"
+
   let(:url) { 'https://example.com/page.php?id=1' }
 
   describe "#lfi_kwargs" do
