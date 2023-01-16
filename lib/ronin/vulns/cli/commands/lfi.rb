@@ -110,7 +110,7 @@ module Ronin
           end
 
           #
-          # Scans a URL for LFI vulnerabiltiies.
+          # Scans a URL for LFI vulnerabilities.
           #
           # @param [String] url
           #   The URL to scan.
@@ -126,7 +126,7 @@ module Ronin
           end
 
           #
-          # Tests a URL for LFI vulnerabiltiies.
+          # Tests a URL for LFI vulnerabilities.
           #
           # @param [String] url
           #   The URL to test.

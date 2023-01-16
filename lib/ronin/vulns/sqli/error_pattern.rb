@@ -57,7 +57,7 @@ module Ronin
         end
 
         #
-        # Tests whether the respones body contains a SQL error.
+        # Tests whether the response body contains a SQL error.
         #
         # @param [String] response_body
         #   The HTTP response body.

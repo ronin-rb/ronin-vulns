@@ -280,7 +280,7 @@ module Ronin
       #   The HTTP response object to check.
       #
       # @return [Boolean]
-      #   Indicates whether the response was a `500` and if the respones body
+      #   Indicates whether the response was a `500` and if the response body
       #   contained a SQL error message.
       #
       def check_for_sql_errors(response)

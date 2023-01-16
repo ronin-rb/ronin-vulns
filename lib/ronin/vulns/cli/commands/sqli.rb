@@ -98,7 +98,7 @@ module Ronin
           end
 
           #
-          # Scans a URL for SQLi vulnerabiltiies.
+          # Scans a URL for SQLi vulnerabilities.
           #
           # @param [String] url
           #   The URL to scan.
@@ -114,7 +114,7 @@ module Ronin
           end
 
           #
-          # Tests a URL for SQLi vulnerabiltiies.
+          # Tests a URL for SQLi vulnerabilities.
           #
           # @param [String] url
           #   The URL to test.

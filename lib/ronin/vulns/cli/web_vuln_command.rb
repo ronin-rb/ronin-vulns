@@ -191,7 +191,7 @@ module Ronin
         # @return [Set<String>, nil]
         attr_reader :test_query_params
 
-        # Indiciates whether to test all of the query params of the URL.
+        # Indicates whether to test all of the query params of the URL.
         #
         # @return [Boolean, nil]
         attr_reader :test_all_query_params
@@ -206,7 +206,7 @@ module Ronin
         # @return [Set<String>, nil]
         attr_reader :test_cookie_params
 
-        # Indiciates whether to test all `Cookie` params for the URL.
+        # Indicates whether to test all `Cookie` params for the URL.
         #
         # @return [Boolean, nil]
         attr_reader :test_all_cookie_params
@@ -252,7 +252,7 @@ module Ronin
         end
 
         #
-        # Prcesses a URL.
+        # Processes a URL.
         #
         # @param [String] url
         #   A URL to scan.
@@ -309,7 +309,7 @@ module Ronin
         end
 
         #
-        # Scans a URL for web vulnerabiltiies.
+        # Scans a URL for web vulnerabilities.
         #
         # @param [String] url
         #   The URL to scan.
@@ -327,7 +327,7 @@ module Ronin
         end
 
         #
-        # Tests a URL for web vulnerabiltiies.
+        # Tests a URL for web vulnerabilities.
         #
         # @param [String] url
         #   The URL to test.

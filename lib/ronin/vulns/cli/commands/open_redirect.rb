@@ -83,7 +83,7 @@ module Ronin
           end
 
           #
-          # Scans a URL for Open Redirect vulnerabiltiies.
+          # Scans a URL for Open Redirect vulnerabilities.
           #
           # @param [String] url
           #   The URL to scan.
@@ -100,7 +100,7 @@ module Ronin
           end
 
           #
-          # Tests a URL for Open Redirect vulnerabiltiies.
+          # Tests a URL for Open Redirect vulnerabilities.
           #
           # @param [String] url
           #   The URL to test.

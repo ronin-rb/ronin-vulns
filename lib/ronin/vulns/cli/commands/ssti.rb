@@ -91,7 +91,7 @@ module Ronin
           end
 
           #
-          # Scans a URL for SSTI vulnerabiltiies.
+          # Scans a URL for SSTI vulnerabilities.
           #
           # @param [String] url
           #   The URL to scan.
@@ -107,7 +107,7 @@ module Ronin
           end
 
           #
-          # Tests a URL for SSTI vulnerabiltiies.
+          # Tests a URL for SSTI vulnerabilities.
           #
           # @param [String] url
           #   The URL to test.

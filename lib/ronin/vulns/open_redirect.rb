@@ -69,7 +69,7 @@ module Ronin
       end
 
       #
-      # Tests whther the URL has a vulnerable Open Redirect.
+      # Tests whether the URL has a vulnerable Open Redirect.
       #
       # @return [Boolean]
       #

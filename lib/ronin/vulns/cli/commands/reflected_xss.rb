@@ -63,7 +63,7 @@ module Ronin
           man_page 'ronin-vulns-reflected-xss.1'
 
           #
-          # Scans a URL for Reflected XSS vulnerabiltiies.
+          # Scans a URL for Reflected XSS vulnerabilities.
           #
           # @param [String] url
           #   The URL to scan.
@@ -80,7 +80,7 @@ module Ronin
           end
 
           #
-          # Tests a URL for Reflected XSS vulnerabiltiies.
+          # Tests a URL for Reflected XSS vulnerabilities.
           #
           # @param [String] url
           #   The URL to test.

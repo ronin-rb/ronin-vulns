@@ -162,7 +162,7 @@ module Ronin
       # Optionally applies a filter bypass technique to the RFI URL.
       #
       # @param [URI::HTTP, String] url
-      #   The RFI URL to optionall encode before it will be injected into a
+      #   The RFI URL to optionally encode before it will be injected into a
       #   HTTP request.
       #
       # @return [String]

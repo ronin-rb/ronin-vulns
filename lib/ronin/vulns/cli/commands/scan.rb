@@ -271,7 +271,7 @@ module Ronin
           end
 
           #
-          # Scans a URL for all web vulnerabiltiies.
+          # Scans a URL for all web vulnerabilities.
           #
           # @param [String] url
           #   The URL to scan.
@@ -292,7 +292,7 @@ module Ronin
           end
 
           #
-          # Tests a URL for any web vulnerabiltiies.
+          # Tests a URL for any web vulnerabilities.
           #
           # @param [String] url
           #   The URL to test.
