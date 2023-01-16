@@ -74,7 +74,7 @@ additional arguments or read from a file using the `--input` option.
   Explicitly specify the scripting language to test for.
 
 `--rfi-test-script-url` *URL*
-  Use an altnerative test script URL.
+  Use an alternative test script URL.
 
 `--sqli-escape-quote`
   Escapes quotation marks.

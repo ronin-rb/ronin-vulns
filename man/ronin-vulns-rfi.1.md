@@ -66,7 +66,7 @@ option.
   Explicitly specify the scripting language to test for.
 
 `-T`, `--test-script-url` *URL*
-  Use an altnerative test script *URL*.
+  Use an alternative test script *URL*.
 
 `-h`, `--help`
   Print help information.

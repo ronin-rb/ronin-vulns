@@ -54,7 +54,7 @@ module Ronin
         #                                      Optional filter-bypass strategy to use
         #         --rfi-script-lang asp|asp.net|coldfusion|jsp|php|perl
         #                                      Explicitly specify the scripting language to test for
-        #         --rfi-test-script-url URL    Use an altnerative test script URL
+        #         --rfi-test-script-url URL    Use an alternative test script URL
         #         --sqli-escape-quote          Escapes quotation marks
         #         --sqli-escape-parens         Escapes parenthesis
         #         --sqli-terminate             Terminates the SQL expression with a --
@@ -118,7 +118,7 @@ module Ronin
                                          type:  String,
                                          usage: 'URL'
                                        },
-                                       desc: 'Use an altnerative test script URL'
+                                       desc: 'Use an alternative test script URL'
 
           option :sqli_escape_quote, desc: 'Escapes quotation marks'
 

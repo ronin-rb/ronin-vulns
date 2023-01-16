@@ -52,7 +52,7 @@ module Ronin
         #         --filter-bypass              Optional filter-bypass strategy to use
         #     -S asp|asp.net|coldfusion|jsp|php|perl,
         #         --script-lang                Explicitly specify the scripting language to test for
-        #     -T, --test-script-url URL        Use an altnerative test script URL
+        #     -T, --test-script-url URL        Use an alternative test script URL
         #     -h, --help                       Print help information
         #
         # ## Arguments
@@ -91,7 +91,7 @@ module Ronin
                                      type:  String,
                                      usage: 'URL'
                                    },
-                                   desc: 'Use an altnerative test script URL'
+                                   desc: 'Use an alternative test script URL'
 
           description 'Scans URL(s) for Remote File Inclusion (RFI) vulnerabilities'
 
