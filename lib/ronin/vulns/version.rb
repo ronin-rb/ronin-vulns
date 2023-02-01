@@ -21,6 +21,6 @@
 module Ronin
   module Vulns
     # The ronin-vulns version
-    VERSION = '0.1.0.beta1'
+    VERSION = '0.1.0'
   end
 end
