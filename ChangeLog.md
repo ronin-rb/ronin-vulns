@@ -1,3 +1,8 @@
+### 0.1.1 / 2023-02-02
+
+* Fixed typo in {Ronin::Vulns::CLI::WebVulnCommand#process_url} which effected
+  the `ronin-vulns lfi` command and others.
+
 ### 0.1.0 / 2023-02-01
 
 * Initial release:
