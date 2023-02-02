@@ -260,11 +260,11 @@ module Ronin
         def process_url(url)
           if @scan_mode == :first
             if (first_vuln = test_url(url))
-              print_vuln(first_vuln)
+              log_vuln(first_vuln)
             end
           else
             scan_url(url) do |vuln|
-              print_vuln(vuln)
+              log_vuln(vuln)
             end
           end
         end
