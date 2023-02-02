@@ -268,9 +268,9 @@ describe Ronin::Vulns::CLI::WebVulnCommand do
       context "and #test_url returns a WebVuln object" do
         let(:vuln) { double('first returned WebVuln') }
 
-        it "must call #print_vuln with the WebVuln object" do
+        it "must call #log_vuln with the WebVuln object" do
           expect(subject).to receive(:test_url).with(url).and_return(vuln)
-          expect(subject).to receive(:print_vuln).with(vuln)
+          expect(subject).to receive(:log_vuln).with(vuln)
 
           subject.process_url(url)
         end
@@ -291,10 +291,10 @@ describe Ronin::Vulns::CLI::WebVulnCommand do
         let(:vuln1) { double('yielded WebVuln 1') }
         let(:vuln2) { double('yielded WebVuln 2') }
 
-        it "must call #print_vuln with the yielded WebVuln objects" do
+        it "must call #log_vuln with the yielded WebVuln objects" do
           expect(subject).to receive(:scan_url).with(url).and_yield(vuln1).and_yield(vuln2)
-          expect(subject).to receive(:print_vuln).with(vuln1)
-          expect(subject).to receive(:print_vuln).with(vuln2)
+          expect(subject).to receive(:log_vuln).with(vuln1)
+          expect(subject).to receive(:log_vuln).with(vuln2)
 
           subject.process_url(url)
         end
