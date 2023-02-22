@@ -595,7 +595,7 @@ describe Ronin::Vulns::LFI do
             <html>
               <body>
                 <p>example content</p>
-                #{Base64.strict_encode64("hello")}
+                #{Base64.strict_encode64('hello')}
                 <p>more content</p>
               </body>
             </html>

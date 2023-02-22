@@ -102,22 +102,22 @@ describe Ronin::Vulns::ReflectedXSS do
           yielded_body  = nil
           yielded_match = nil
 
-           subject.test_string(test_string) do |body,match|
-             yielded_body  = body
-             yielded_match = match
-           end
+          subject.test_string(test_string) do |body,match|
+            yielded_body  = body
+            yielded_match = match
+          end
 
-           expect(yielded_body).to eq(response_body)
-           expect(yielded_match).to be_kind_of(MatchData)
-           expect(yielded_match[0]).to eq("#{random_value1}#{test_string}#{random_value2}")
-           expect(yielded_match[1]).to eq("'")
-           expect(yielded_match[2]).to eq('"')
-           expect(yielded_match[3]).to eq('=')
-           expect(yielded_match[4]).to eq(' ')
-           expect(yielded_match[5]).to eq('/')
-           expect(yielded_match[6]).to eq('>')
-           expect(yielded_match[7]).to eq('<')
-           expect(yielded_match[8]).to eq('&')
+          expect(yielded_body).to eq(response_body)
+          expect(yielded_match).to be_kind_of(MatchData)
+          expect(yielded_match[0]).to eq("#{random_value1}#{test_string}#{random_value2}")
+          expect(yielded_match[1]).to eq("'")
+          expect(yielded_match[2]).to eq('"')
+          expect(yielded_match[3]).to eq('=')
+          expect(yielded_match[4]).to eq(' ')
+          expect(yielded_match[5]).to eq('/')
+          expect(yielded_match[6]).to eq('>')
+          expect(yielded_match[7]).to eq('<')
+          expect(yielded_match[8]).to eq('&')
         end
       end
 
@@ -138,19 +138,19 @@ describe Ronin::Vulns::ReflectedXSS do
           yielded_body  = nil
           yielded_match = nil
 
-           subject.test_string(test_string) do |body,match|
-             yielded_body  = body
-             yielded_match = match
-           end
+          subject.test_string(test_string) do |body,match|
+            yielded_body  = body
+            yielded_match = match
+          end
 
-           expect(yielded_match[1]).to eq("'")
-           expect(yielded_match[2]).to eq('"')
-           expect(yielded_match[3]).to eq('=')
-           expect(yielded_match[4]).to eq(' ')
-           expect(yielded_match[5]).to eq('/')
-           expect(yielded_match[6]).to be(nil)
-           expect(yielded_match[7]).to be(nil)
-           expect(yielded_match[8]).to be(nil)
+          expect(yielded_match[1]).to eq("'")
+          expect(yielded_match[2]).to eq('"')
+          expect(yielded_match[3]).to eq('=')
+          expect(yielded_match[4]).to eq(' ')
+          expect(yielded_match[5]).to eq('/')
+          expect(yielded_match[6]).to be(nil)
+          expect(yielded_match[7]).to be(nil)
+          expect(yielded_match[8]).to be(nil)
         end
       end
 
@@ -171,19 +171,19 @@ describe Ronin::Vulns::ReflectedXSS do
           yielded_body  = nil
           yielded_match = nil
 
-           subject.test_string(test_string) do |body,match|
-             yielded_body  = body
-             yielded_match = match
-           end
+          subject.test_string(test_string) do |body,match|
+            yielded_body  = body
+            yielded_match = match
+          end
 
-           expect(yielded_match[1]).to eq("'")
-           expect(yielded_match[2]).to eq('"')
-           expect(yielded_match[3]).to eq('=')
-           expect(yielded_match[4]).to eq(' ')
-           expect(yielded_match[5]).to eq('/')
-           expect(yielded_match[6]).to be(nil)
-           expect(yielded_match[7]).to be(nil)
-           expect(yielded_match[8]).to be(nil)
+          expect(yielded_match[1]).to eq("'")
+          expect(yielded_match[2]).to eq('"')
+          expect(yielded_match[3]).to eq('=')
+          expect(yielded_match[4]).to eq(' ')
+          expect(yielded_match[5]).to eq('/')
+          expect(yielded_match[6]).to be(nil)
+          expect(yielded_match[7]).to be(nil)
+          expect(yielded_match[8]).to be(nil)
         end
       end
 
@@ -293,22 +293,22 @@ describe Ronin::Vulns::ReflectedXSS do
           yielded_body  = nil
           yielded_match = nil
 
-           subject.test_chars(test_string) do |body,match|
-             yielded_body  = body
-             yielded_match = match
-           end
+          subject.test_chars(test_string) do |body,match|
+            yielded_body  = body
+            yielded_match = match
+          end
 
-           expect(yielded_body).to eq(response_body)
-           expect(yielded_match).to be_kind_of(MatchData)
-           expect(yielded_match[0]).to eq("#{random_value1}#{test_string}#{random_value2}")
-           expect(yielded_match[1]).to eq("'")
-           expect(yielded_match[2]).to eq('"')
-           expect(yielded_match[3]).to eq('=')
-           expect(yielded_match[4]).to eq(' ')
-           expect(yielded_match[5]).to eq('/')
-           expect(yielded_match[6]).to eq('>')
-           expect(yielded_match[7]).to eq('<')
-           expect(yielded_match[8]).to eq('&')
+          expect(yielded_body).to eq(response_body)
+          expect(yielded_match).to be_kind_of(MatchData)
+          expect(yielded_match[0]).to eq("#{random_value1}#{test_string}#{random_value2}")
+          expect(yielded_match[1]).to eq("'")
+          expect(yielded_match[2]).to eq('"')
+          expect(yielded_match[3]).to eq('=')
+          expect(yielded_match[4]).to eq(' ')
+          expect(yielded_match[5]).to eq('/')
+          expect(yielded_match[6]).to eq('>')
+          expect(yielded_match[7]).to eq('<')
+          expect(yielded_match[8]).to eq('&')
         end
 
         it "must populate #allowed_chars with the unescaped characters" do
@@ -339,19 +339,19 @@ describe Ronin::Vulns::ReflectedXSS do
           yielded_body  = nil
           yielded_match = nil
 
-           subject.test_chars(test_string) do |body,match|
-             yielded_body  = body
-             yielded_match = match
-           end
+          subject.test_chars(test_string) do |body,match|
+            yielded_body  = body
+            yielded_match = match
+          end
 
-           expect(yielded_match[1]).to eq("'")
-           expect(yielded_match[2]).to eq('"')
-           expect(yielded_match[3]).to eq('=')
-           expect(yielded_match[4]).to eq(' ')
-           expect(yielded_match[5]).to eq('/')
-           expect(yielded_match[6]).to be(nil)
-           expect(yielded_match[7]).to be(nil)
-           expect(yielded_match[8]).to be(nil)
+          expect(yielded_match[1]).to eq("'")
+          expect(yielded_match[2]).to eq('"')
+          expect(yielded_match[3]).to eq('=')
+          expect(yielded_match[4]).to eq(' ')
+          expect(yielded_match[5]).to eq('/')
+          expect(yielded_match[6]).to be(nil)
+          expect(yielded_match[7]).to be(nil)
+          expect(yielded_match[8]).to be(nil)
         end
 
         it "must populate #allowed_chars with the unescaped characters" do
@@ -380,19 +380,19 @@ describe Ronin::Vulns::ReflectedXSS do
           yielded_body  = nil
           yielded_match = nil
 
-           subject.test_chars(test_string) do |body,match|
-             yielded_body  = body
-             yielded_match = match
-           end
+          subject.test_chars(test_string) do |body,match|
+            yielded_body  = body
+            yielded_match = match
+          end
 
-           expect(yielded_match[1]).to eq("'")
-           expect(yielded_match[2]).to eq('"')
-           expect(yielded_match[3]).to eq('=')
-           expect(yielded_match[4]).to eq(' ')
-           expect(yielded_match[5]).to eq('/')
-           expect(yielded_match[6]).to be(nil)
-           expect(yielded_match[7]).to be(nil)
-           expect(yielded_match[8]).to be(nil)
+          expect(yielded_match[1]).to eq("'")
+          expect(yielded_match[2]).to eq('"')
+          expect(yielded_match[3]).to eq('=')
+          expect(yielded_match[4]).to eq(' ')
+          expect(yielded_match[5]).to eq('/')
+          expect(yielded_match[6]).to be(nil)
+          expect(yielded_match[7]).to be(nil)
+          expect(yielded_match[8]).to be(nil)
         end
 
         it "must populate #allowed_chars with the unescaped characters" do
@@ -517,21 +517,21 @@ describe Ronin::Vulns::ReflectedXSS do
           yielded_body  = nil
           yielded_match = nil
 
-           subject.test_html_chars do |body,match|
-             yielded_body  = body
-             yielded_match = match
-           end
+          subject.test_html_chars do |body,match|
+            yielded_body  = body
+            yielded_match = match
+          end
 
-           expect(yielded_body).to eq(response_body)
-           expect(yielded_match).to be_kind_of(MatchData)
-           expect(yielded_match[0]).to eq("#{random_value1}#{test_string}#{random_value2}")
-           expect(yielded_match[1]).to eq("'")
-           expect(yielded_match[2]).to eq('"')
-           expect(yielded_match[3]).to eq('=')
-           expect(yielded_match[4]).to eq(' ')
-           expect(yielded_match[5]).to eq('/')
-           expect(yielded_match[6]).to eq('>')
-           expect(yielded_match[7]).to eq('<')
+          expect(yielded_body).to eq(response_body)
+          expect(yielded_match).to be_kind_of(MatchData)
+          expect(yielded_match[0]).to eq("#{random_value1}#{test_string}#{random_value2}")
+          expect(yielded_match[1]).to eq("'")
+          expect(yielded_match[2]).to eq('"')
+          expect(yielded_match[3]).to eq('=')
+          expect(yielded_match[4]).to eq(' ')
+          expect(yielded_match[5]).to eq('/')
+          expect(yielded_match[6]).to eq('>')
+          expect(yielded_match[7]).to eq('<')
         end
 
         it "must populate #allowed_chars with the unescaped characters" do
@@ -561,18 +561,18 @@ describe Ronin::Vulns::ReflectedXSS do
           yielded_body  = nil
           yielded_match = nil
 
-           subject.test_html_chars do |body,match|
-             yielded_body  = body
-             yielded_match = match
-           end
+          subject.test_html_chars do |body,match|
+            yielded_body  = body
+            yielded_match = match
+          end
 
-           expect(yielded_match[1]).to eq("'")
-           expect(yielded_match[2]).to eq('"')
-           expect(yielded_match[3]).to eq('=')
-           expect(yielded_match[4]).to eq(' ')
-           expect(yielded_match[5]).to eq('/')
-           expect(yielded_match[6]).to be(nil)
-           expect(yielded_match[7]).to be(nil)
+          expect(yielded_match[1]).to eq("'")
+          expect(yielded_match[2]).to eq('"')
+          expect(yielded_match[3]).to eq('=')
+          expect(yielded_match[4]).to eq(' ')
+          expect(yielded_match[5]).to eq('/')
+          expect(yielded_match[6]).to be(nil)
+          expect(yielded_match[7]).to be(nil)
         end
 
         it "must populate #allowed_chars with the unescaped characters" do
