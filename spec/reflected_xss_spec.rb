@@ -535,8 +535,7 @@ describe Ronin::Vulns::ReflectedXSS do
         end
 
         it "must populate #allowed_chars with the unescaped characters" do
-          subject.test_html_chars do |body,match|
-          end
+          subject.test_html_chars { |body,match| }
 
           expect(subject.allowed_chars).to be_kind_of(Set)
           expect(subject.allowed_chars.to_a).to eq(
@@ -577,8 +576,7 @@ describe Ronin::Vulns::ReflectedXSS do
         end
 
         it "must populate #allowed_chars with the unescaped characters" do
-          subject.test_html_chars do |body,match|
-          end
+          subject.test_html_chars { |body,match| }
 
           expect(subject.allowed_chars).to be_kind_of(Set)
           expect(subject.allowed_chars.to_a).to eq(["'", '"', '=', ' ', '/'])
@@ -617,8 +615,7 @@ describe Ronin::Vulns::ReflectedXSS do
         end
 
         it "must populate #allowed_chars with the unescaped characters" do
-          subject.test_html_chars do |body,match|
-          end
+          subject.test_html_chars { |body,match| }
 
           expect(subject.allowed_chars).to be_kind_of(Set)
           expect(subject.allowed_chars.to_a).to eq(["'", '"', '=', ' ', '/'])
