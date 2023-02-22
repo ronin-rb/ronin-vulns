@@ -160,3 +160,19 @@ Gemspec/RequireMFA: { Enabled: false }
 Gemspec/DuplicatedAssignment:
   Exclude:
     - 'ronin-vulns.gemspec'
+
+# we need to make the branching logic extremely explicit here
+Lint/DuplicateBranch:
+  Exclude:
+    - 'lib/ronin/vulns/lfi.rb'
+
+# we need to use eval() in the specs to test the SSTI test expression
+Security/Eval:
+  Exclude:
+    - 'spec/ssti_spec.rb'
+
+# we need to call URLScanner.scan with a block
+Lint/EmptyBlock:
+  Exclude:
+    - 'spec/reflected_xss_spec.rb'
+    - 'spec/url_scanner_spec.rb'
