@@ -525,7 +525,6 @@ describe Ronin::Vulns::SQLI do
       stub_request(:get,"https://example.com/page?#{query_param}=#{original_value};SELECT PG_SLEEP(5)&baz=3&foo=1")
       stub_request(:get,"https://example.com/page?#{query_param}=#{original_value};SELECT WAITFOR DELAY '0:0:5'&baz=3&foo=1")
 
-
       subject.test_sleep
     end
 
@@ -538,7 +537,6 @@ describe Ronin::Vulns::SQLI do
           stub_request(:get,"https://example.com/page?#{query_param}=#{original_value};SELECT SLEEP(5)&baz=3&foo=1")
           stub_request(:get,"https://example.com/page?#{query_param}=#{original_value};SELECT PG_SLEEP(5)&baz=3&foo=1")
           stub_request(:get,"https://example.com/page?#{query_param}=#{original_value};SELECT WAITFOR DELAY '0:0:5'&baz=3&foo=1")
-
 
           expect(subject.test_sleep).to be(true)
         end
@@ -553,7 +551,6 @@ describe Ronin::Vulns::SQLI do
         stub_request(:get,"https://example.com/page?#{query_param}=#{original_value};SELECT SLEEP(5)&baz=3&foo=1")
         stub_request(:get,"https://example.com/page?#{query_param}=#{original_value};SELECT PG_SLEEP(5)&baz=3&foo=1")
         stub_request(:get,"https://example.com/page?#{query_param}=#{original_value};SELECT WAITFOR DELAY '0:0:5'&baz=3&foo=1")
-
 
         expect(subject.test_sleep).to be(false)
       end
