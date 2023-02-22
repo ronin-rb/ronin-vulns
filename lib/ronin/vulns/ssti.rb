@@ -87,8 +87,8 @@ module Ronin
       #   A random test expression.
       #
       def self.random_test
-        int1 = rand(999) + 1_000
-        int2 = rand(999) + 1_000
+        int1 = rand(1_000..1_999)
+        int2 = rand(1_000..1_999)
 
         string  = "#{int1}*#{int2}"
         result  = (int1 * int2).to_s

@@ -304,7 +304,7 @@ module Ronin
       # @api private
       #
       def random_id
-        rand(8_999) + 1_000
+        rand(8_999..9999)
       end
 
       #
