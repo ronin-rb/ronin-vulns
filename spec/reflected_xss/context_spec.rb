@@ -38,13 +38,13 @@ describe Ronin::Vulns::ReflectedXSS::Context do
     context "when the index is within a tag's body" do
       let(:body) do
         <<~HTML
-        <html>
-          <body>
-            <p>foo bar baz</p>
-            <div>foo XSS bar</p>
-            <p>foo bar baz</p>
-          </body>
-        </html>
+          <html>
+            <body>
+              <p>foo bar baz</p>
+              <div>foo XSS bar</p>
+              <p>foo bar baz</p>
+            </body>
+          </html>
         HTML
       end
 
@@ -64,13 +64,13 @@ describe Ronin::Vulns::ReflectedXSS::Context do
     context "when the index is within a tag's double-quoted attribute value" do
       let(:body) do
         <<~HTML
-        <html>
-          <body>
-            <p>foo bar baz</p>
-            <div attr="valueXSS">foo bar baz</p>
-            <p>foo bar baz</p>
-          </body>
-        </html>
+          <html>
+            <body>
+              <p>foo bar baz</p>
+              <div attr="valueXSS">foo bar baz</p>
+              <p>foo bar baz</p>
+            </body>
+          </html>
         HTML
       end
 
@@ -94,13 +94,13 @@ describe Ronin::Vulns::ReflectedXSS::Context do
     context "when the index is within a tag's single-quoted attribute value" do
       let(:body) do
         <<~HTML
-        <html>
-          <body>
-            <p>foo bar baz</p>
-            <div attr='valueXSS'>foo bar baz</p>
-            <p>foo bar baz</p>
-          </body>
-        </html>
+          <html>
+            <body>
+              <p>foo bar baz</p>
+              <div attr='valueXSS'>foo bar baz</p>
+              <p>foo bar baz</p>
+            </body>
+          </html>
         HTML
       end
 
@@ -124,13 +124,13 @@ describe Ronin::Vulns::ReflectedXSS::Context do
     context "when the index is within a tag's unquoted attribute value" do
       let(:body) do
         <<~HTML
-        <html>
-          <body>
-            <p>foo bar baz</p>
-            <div attr=valueXSS>foo bar baz</p>
-            <p>foo bar baz</p>
-          </body>
-        </html>
+          <html>
+            <body>
+              <p>foo bar baz</p>
+              <div attr=valueXSS>foo bar baz</p>
+              <p>foo bar baz</p>
+            </body>
+          </html>
         HTML
       end
 
@@ -154,13 +154,13 @@ describe Ronin::Vulns::ReflectedXSS::Context do
     context "when the index is within a tag's attribute name" do
       let(:body) do
         <<~HTML
-        <html>
-          <body>
-            <p>foo bar baz</p>
-            <div attrXSS>foo bar baz</p>
-            <p>foo bar baz</p>
-          </body>
-        </html>
+          <html>
+            <body>
+              <p>foo bar baz</p>
+              <div attrXSS>foo bar baz</p>
+              <p>foo bar baz</p>
+            </body>
+          </html>
         HTML
       end
 
@@ -184,13 +184,13 @@ describe Ronin::Vulns::ReflectedXSS::Context do
     context "when the index is within a tag's attribute list" do
       let(:body) do
         <<~HTML
-        <html>
-          <body>
-            <p>foo bar baz</p>
-            <div attr1="1" attr2='2' attr3 XSS>foo bar baz</p>
-            <p>foo bar baz</p>
-          </body>
-        </html>
+          <html>
+            <body>
+              <p>foo bar baz</p>
+              <div attr1="1" attr2='2' attr3 XSS>foo bar baz</p>
+              <p>foo bar baz</p>
+            </body>
+          </html>
         HTML
       end
 
@@ -210,13 +210,13 @@ describe Ronin::Vulns::ReflectedXSS::Context do
     context "when the index is within a tag's name" do
       let(:body) do
         <<~HTML
-        <html>
-          <body>
-            <p>foo bar baz</p>
-            <divXSS attr1="1" attr2='2' attr3>foo bar baz</div>
-            <p>foo bar baz</p>
-          </body>
-        </html>
+          <html>
+            <body>
+              <p>foo bar baz</p>
+              <divXSS attr1="1" attr2='2' attr3>foo bar baz</div>
+              <p>foo bar baz</p>
+            </body>
+          </html>
         HTML
       end
 

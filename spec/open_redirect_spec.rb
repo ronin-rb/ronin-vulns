@@ -188,16 +188,16 @@ describe Ronin::Vulns::OpenRedirect do
         context "and the response includes a meta refresh redirect" do
           let(:response_body) do
             <<~HTML
-            <html>
-              <head>
-                <meta http-equiv="refresh" content="0;url='#{subject.test_url}'"/>
-              </head>
-              <body>
-                <p>example content</p>
-                <p>included content</p>
-                <p>more content</p>
-              </body>
-            </html>
+              <html>
+                <head>
+                  <meta http-equiv="refresh" content="0;url='#{subject.test_url}'"/>
+                </head>
+                <body>
+                  <p>example content</p>
+                  <p>included content</p>
+                  <p>more content</p>
+                </body>
+              </html>
             HTML
           end
 
@@ -208,16 +208,16 @@ describe Ronin::Vulns::OpenRedirect do
           context "when meta tag is all upercase" do
             let(:response_body) do
               <<~HTML
-              <html>
-                <head>
-                  <META HTTP-EQUIV="REFRESH" CONTENT="0;URL='#{subject.test_url}'"/>
-                </head>
-                <body>
-                  <p>example content</p>
-                  <p>included content</p>
-                  <p>more content</p>
-                </body>
-              </html>
+                <html>
+                  <head>
+                    <META HTTP-EQUIV="REFRESH" CONTENT="0;URL='#{subject.test_url}'"/>
+                  </head>
+                  <body>
+                    <p>example content</p>
+                    <p>included content</p>
+                    <p>more content</p>
+                  </body>
+                </html>
               HTML
             end
 
@@ -229,16 +229,16 @@ describe Ronin::Vulns::OpenRedirect do
           context "when there is a space after http-equiv attribute name" do
             let(:response_body) do
               <<~HTML
-              <html>
-                <head>
-                  <meta http-equiv ="refresh" content="10;url='#{subject.test_url}'"/>
-                </head>
-                <body>
-                  <p>example content</p>
-                  <p>included content</p>
-                  <p>more content</p>
-                </body>
-              </html>
+                <html>
+                  <head>
+                    <meta http-equiv ="refresh" content="10;url='#{subject.test_url}'"/>
+                  </head>
+                  <body>
+                    <p>example content</p>
+                    <p>included content</p>
+                    <p>more content</p>
+                  </body>
+                </html>
               HTML
             end
 
@@ -250,16 +250,16 @@ describe Ronin::Vulns::OpenRedirect do
           context "when there is a space after 'http-equiv=' name" do
             let(:response_body) do
               <<~HTML
-              <html>
-                <head>
-                  <meta http-equiv= "refresh" content="10;url='#{subject.test_url}'"/>
-                </head>
-                <body>
-                  <p>example content</p>
-                  <p>included content</p>
-                  <p>more content</p>
-                </body>
-              </html>
+                <html>
+                  <head>
+                    <meta http-equiv= "refresh" content="10;url='#{subject.test_url}'"/>
+                  </head>
+                  <body>
+                    <p>example content</p>
+                    <p>included content</p>
+                    <p>more content</p>
+                  </body>
+                </html>
               HTML
             end
 
@@ -271,16 +271,16 @@ describe Ronin::Vulns::OpenRedirect do
           context "when the http-equiv attribute is single quoted" do
             let(:response_body) do
               <<~HTML
-              <html>
-                <head>
-                  <meta http-equiv='refresh' content="10;url='#{subject.test_url}'"/>
-                </head>
-                <body>
-                  <p>example content</p>
-                  <p>included content</p>
-                  <p>more content</p>
-                </body>
-              </html>
+                <html>
+                  <head>
+                    <meta http-equiv='refresh' content="10;url='#{subject.test_url}'"/>
+                  </head>
+                  <body>
+                    <p>example content</p>
+                    <p>included content</p>
+                    <p>more content</p>
+                  </body>
+                </html>
               HTML
             end
 
@@ -292,16 +292,16 @@ describe Ronin::Vulns::OpenRedirect do
           context "when the http-equiv attribute is not quoted" do
             let(:response_body) do
               <<~HTML
-              <html>
-                <head>
-                  <meta http-equiv=refresh content="10;url='#{subject.test_url}'"/>
-                </head>
-                <body>
-                  <p>example content</p>
-                  <p>included content</p>
-                  <p>more content</p>
-                </body>
-              </html>
+                <html>
+                  <head>
+                    <meta http-equiv=refresh content="10;url='#{subject.test_url}'"/>
+                  </head>
+                  <body>
+                    <p>example content</p>
+                    <p>included content</p>
+                    <p>more content</p>
+                  </body>
+                </html>
               HTML
             end
 
@@ -313,16 +313,16 @@ describe Ronin::Vulns::OpenRedirect do
           context "when the meta refresh has a delay value" do
             let(:response_body) do
               <<~HTML
-              <html>
-                <head>
-                  <meta http-equiv="refresh" content="10;url='#{subject.test_url}'"/>
-                </head>
-                <body>
-                  <p>example content</p>
-                  <p>included content</p>
-                  <p>more content</p>
-                </body>
-              </html>
+                <html>
+                  <head>
+                    <meta http-equiv="refresh" content="10;url='#{subject.test_url}'"/>
+                  </head>
+                  <body>
+                    <p>example content</p>
+                    <p>included content</p>
+                    <p>more content</p>
+                  </body>
+                </html>
               HTML
             end
 
@@ -334,16 +334,16 @@ describe Ronin::Vulns::OpenRedirect do
           context "when there is a space between the delay value and the url value" do
             let(:response_body) do
               <<~HTML
-              <html>
-                <head>
-                  <meta http-equiv="refresh" content="10; url='#{subject.test_url}'"/>
-                </head>
-                <body>
-                  <p>example content</p>
-                  <p>included content</p>
-                  <p>more content</p>
-                </body>
-              </html>
+                <html>
+                  <head>
+                    <meta http-equiv="refresh" content="10; url='#{subject.test_url}'"/>
+                  </head>
+                  <body>
+                    <p>example content</p>
+                    <p>included content</p>
+                    <p>more content</p>
+                  </body>
+                </html>
               HTML
             end
 
@@ -355,17 +355,17 @@ describe Ronin::Vulns::OpenRedirect do
           context "when there is a newline between the delay value and the url value" do
             let(:response_body) do
               <<~HTML
-              <html>
-                <head>
-                  <meta http-equiv="refresh" content="10;
-url='#{subject.test_url}'"/>
-                </head>
-                <body>
-                  <p>example content</p>
-                  <p>included content</p>
-                  <p>more content</p>
-                </body>
-              </html>
+                              <html>
+                                <head>
+                                  <meta http-equiv="refresh" content="10;
+                url='#{subject.test_url}'"/>
+                                </head>
+                                <body>
+                                  <p>example content</p>
+                                  <p>included content</p>
+                                  <p>more content</p>
+                                </body>
+                              </html>
               HTML
             end
 
@@ -377,16 +377,16 @@ url='#{subject.test_url}'"/>
           context "when the url name is uppercase" do
             let(:response_body) do
               <<~HTML
-              <html>
-                <head>
-                  <meta http-equiv="refresh" content="0;URL='#{subject.test_url}'"/>
-                </head>
-                <body>
-                  <p>example content</p>
-                  <p>included content</p>
-                  <p>more content</p>
-                </body>
-              </html>
+                <html>
+                  <head>
+                    <meta http-equiv="refresh" content="0;URL='#{subject.test_url}'"/>
+                  </head>
+                  <body>
+                    <p>example content</p>
+                    <p>included content</p>
+                    <p>more content</p>
+                  </body>
+                </html>
               HTML
             end
 
@@ -398,16 +398,16 @@ url='#{subject.test_url}'"/>
           context "when the http-equiv attribute is single quoted" do
             let(:response_body) do
               <<~HTML
-              <html>
-                <head>
-                  <meta http-equiv='refresh' content="0;url='#{subject.test_url}'"/>
-                </head>
-                <body>
-                  <p>example content</p>
-                  <p>included content</p>
-                  <p>more content</p>
-                </body>
-              </html>
+                <html>
+                  <head>
+                    <meta http-equiv='refresh' content="0;url='#{subject.test_url}'"/>
+                  </head>
+                  <body>
+                    <p>example content</p>
+                    <p>included content</p>
+                    <p>more content</p>
+                  </body>
+                </html>
               HTML
             end
 
@@ -420,16 +420,16 @@ url='#{subject.test_url}'"/>
             context "and the url value is double quoted" do
               let(:response_body) do
                 <<~HTML
-                <html>
-                  <head>
-                    <meta http-equiv="refresh" content='0;url="#{subject.test_url}"'/>
-                  </head>
-                  <body>
-                    <p>example content</p>
-                    <p>included content</p>
-                    <p>more content</p>
-                  </body>
-                </html>
+                  <html>
+                    <head>
+                      <meta http-equiv="refresh" content='0;url="#{subject.test_url}"'/>
+                    </head>
+                    <body>
+                      <p>example content</p>
+                      <p>included content</p>
+                      <p>more content</p>
+                    </body>
+                  </html>
                 HTML
               end
 
@@ -443,16 +443,16 @@ url='#{subject.test_url}'"/>
             context "and the url value is double quoted" do
               let(:response_body) do
                 <<~HTML
-                <html>
-                  <head>
-                    <meta http-equiv="refresh" content=0;url="#{subject.test_url}"/>
-                  </head>
-                  <body>
-                    <p>example content</p>
-                    <p>included content</p>
-                    <p>more content</p>
-                  </body>
-                </html>
+                  <html>
+                    <head>
+                      <meta http-equiv="refresh" content=0;url="#{subject.test_url}"/>
+                    </head>
+                    <body>
+                      <p>example content</p>
+                      <p>included content</p>
+                      <p>more content</p>
+                    </body>
+                  </html>
                 HTML
               end
 
@@ -464,16 +464,16 @@ url='#{subject.test_url}'"/>
             context "and the url value is single quoted" do
               let(:response_body) do
                 <<~HTML
-                <html>
-                  <head>
-                    <meta http-equiv="refresh" content=0;url='#{subject.test_url}'/>
-                  </head>
-                  <body>
-                    <p>example content</p>
-                    <p>included content</p>
-                    <p>more content</p>
-                  </body>
-                </html>
+                  <html>
+                    <head>
+                      <meta http-equiv="refresh" content=0;url='#{subject.test_url}'/>
+                    </head>
+                    <body>
+                      <p>example content</p>
+                      <p>included content</p>
+                      <p>more content</p>
+                    </body>
+                  </html>
                 HTML
               end
 
@@ -653,16 +653,16 @@ url='#{subject.test_url}'"/>
             context "when there is a space before the '/>'" do
               let(:response_body) do
                 <<~HTML
-                <html>
-                  <head>
-                    <meta http-equiv="refresh" content="0;url='#{subject.test_url}'" />
-                  </head>
-                  <body>
-                    <p>example content</p>
-                    <p>included content</p>
-                    <p>more content</p>
-                  </body>
-                </html>
+                  <html>
+                    <head>
+                      <meta http-equiv="refresh" content="0;url='#{subject.test_url}'" />
+                    </head>
+                    <body>
+                      <p>example content</p>
+                      <p>included content</p>
+                      <p>more content</p>
+                    </body>
+                  </html>
                 HTML
               end
 
@@ -695,16 +695,16 @@ url='#{subject.test_url}'"/>
             context "when there is a space before the '/ >'" do
               let(:response_body) do
                 <<~HTML
-                <html>
-                  <head>
-                    <meta http-equiv="refresh" content="0;url='#{subject.test_url}'" / >
-                  </head>
-                  <body>
-                    <p>example content</p>
-                    <p>included content</p>
-                    <p>more content</p>
-                  </body>
-                </html>
+                  <html>
+                    <head>
+                      <meta http-equiv="refresh" content="0;url='#{subject.test_url}'" / >
+                    </head>
+                    <body>
+                      <p>example content</p>
+                      <p>included content</p>
+                      <p>more content</p>
+                    </body>
+                  </html>
                 HTML
               end
 
@@ -737,16 +737,16 @@ url='#{subject.test_url}'"/>
             context "when there is a space before the '>'" do
               let(:response_body) do
                 <<~HTML
-                <html>
-                  <head>
-                    <meta http-equiv="refresh" content="0;url='#{subject.test_url}'" >
-                  </head>
-                  <body>
-                    <p>example content</p>
-                    <p>included content</p>
-                    <p>more content</p>
-                  </body>
-                </html>
+                  <html>
+                    <head>
+                      <meta http-equiv="refresh" content="0;url='#{subject.test_url}'" >
+                    </head>
+                    <body>
+                      <p>example content</p>
+                      <p>included content</p>
+                      <p>more content</p>
+                    </body>
+                  </html>
                 HTML
               end
 

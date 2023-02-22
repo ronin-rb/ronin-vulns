@@ -81,13 +81,13 @@ describe Ronin::Vulns::ReflectedXSS do
       context "and the response body matches the test_string" do
         let(:response_body) do
           <<~HTML
-          <html>
-            <body>
-              <p>example content</p>
-              <p>#{random_value1}#{test_string}#{random_value2}</p>
-              <p>more content</p>
-            </body>
-          </html>
+            <html>
+              <body>
+                <p>example content</p>
+                <p>#{random_value1}#{test_string}#{random_value2}</p>
+                <p>more content</p>
+              </body>
+            </html>
           HTML
         end
 
@@ -124,13 +124,13 @@ describe Ronin::Vulns::ReflectedXSS do
       context "but some of the characters in the test string were HTML escaped" do
         let(:response_body) do
           <<~HTML
-          <html>
-            <body>
-              <p>example content</p>
-              <p>#{random_value1}'"= /&gt;&lt;&amp;#{random_value2}</p>
-              <p>more content</p>
-            </body>
-          </html>
+            <html>
+              <body>
+                <p>example content</p>
+                <p>#{random_value1}'"= /&gt;&lt;&amp;#{random_value2}</p>
+                <p>more content</p>
+              </body>
+            </html>
           HTML
         end
 
@@ -157,13 +157,13 @@ describe Ronin::Vulns::ReflectedXSS do
       context "but some of the characters in the test string were filtered out" do
         let(:response_body) do
           <<~HTML
-          <html>
-            <body>
-              <p>example content</p>
-              <p>#{random_value1}'"= /#{random_value2}</p>
-              <p>more content</p>
-            </body>
-          </html>
+            <html>
+              <body>
+                <p>example content</p>
+                <p>#{random_value1}'"= /#{random_value2}</p>
+                <p>more content</p>
+              </body>
+            </html>
           HTML
         end
 
@@ -272,13 +272,13 @@ describe Ronin::Vulns::ReflectedXSS do
       context "and the response body matches the test_string" do
         let(:response_body) do
           <<~HTML
-          <html>
-            <body>
-              <p>example content</p>
-              <p>#{random_value1}#{test_string}#{random_value2}</p>
-              <p>more content</p>
-            </body>
-          </html>
+            <html>
+              <body>
+                <p>example content</p>
+                <p>#{random_value1}#{test_string}#{random_value2}</p>
+                <p>more content</p>
+              </body>
+            </html>
           HTML
         end
 
@@ -325,13 +325,13 @@ describe Ronin::Vulns::ReflectedXSS do
       context "but some of the characters in the test string were HTML escaped" do
         let(:response_body) do
           <<~HTML
-          <html>
-            <body>
-              <p>example content</p>
-              <p>#{random_value1}'"= /&gt;&lt;&amp;#{random_value2}</p>
-              <p>more content</p>
-            </body>
-          </html>
+            <html>
+              <body>
+                <p>example content</p>
+                <p>#{random_value1}'"= /&gt;&lt;&amp;#{random_value2}</p>
+                <p>more content</p>
+              </body>
+            </html>
           HTML
         end
 
@@ -366,13 +366,13 @@ describe Ronin::Vulns::ReflectedXSS do
       context "but some of the characters in the test string were filtered out" do
         let(:response_body) do
           <<~HTML
-          <html>
-            <body>
-              <p>example content</p>
-              <p>#{random_value1}'"= /#{random_value2}</p>
-              <p>more content</p>
-            </body>
-          </html>
+            <html>
+              <body>
+                <p>example content</p>
+                <p>#{random_value1}'"= /#{random_value2}</p>
+                <p>more content</p>
+              </body>
+            </html>
           HTML
         end
 
@@ -496,13 +496,13 @@ describe Ronin::Vulns::ReflectedXSS do
       context "and the response body matches the test_string" do
         let(:response_body) do
           <<~HTML
-          <html>
-            <body>
-              <p>example content</p>
-              <p>#{random_value1}#{test_string}#{random_value2}</p>
-              <p>more content</p>
-            </body>
-          </html>
+            <html>
+              <body>
+                <p>example content</p>
+                <p>#{random_value1}#{test_string}#{random_value2}</p>
+                <p>more content</p>
+              </body>
+            </html>
           HTML
         end
 
@@ -547,13 +547,13 @@ describe Ronin::Vulns::ReflectedXSS do
       context "but some of the characters in the test string were HTML escaped" do
         let(:response_body) do
           <<~HTML
-          <html>
-            <body>
-              <p>example content</p>
-              <p>#{random_value1}'"= /&gt;&lt;#{random_value2}</p>
-              <p>more content</p>
-            </body>
-          </html>
+            <html>
+              <body>
+                <p>example content</p>
+                <p>#{random_value1}'"= /&gt;&lt;#{random_value2}</p>
+                <p>more content</p>
+              </body>
+            </html>
           HTML
         end
 
@@ -586,13 +586,13 @@ describe Ronin::Vulns::ReflectedXSS do
       context "but some of the characters in the test string were filtered out" do
         let(:response_body) do
           <<~HTML
-          <html>
-            <body>
-              <p>example content</p>
-              <p>#{random_value1}'"= /#{random_value2}</p>
-              <p>more content</p>
-            </body>
-          </html>
+            <html>
+              <body>
+                <p>example content</p>
+                <p>#{random_value1}'"= /#{random_value2}</p>
+                <p>more content</p>
+              </body>
+            </html>
           HTML
         end
 
@@ -719,13 +719,13 @@ describe Ronin::Vulns::ReflectedXSS do
       context "and the response body contains the unescaped HTML test string" do
         let(:response_body) do
           <<~HTML
-          <html>
-            <body>
-              <p>example content</p>
-              <p>#{original_value}#{random_value1}#{test_string}#{random_value2}</p>
-              <p>more content</p>
-            </body>
-          </html>
+            <html>
+              <body>
+                <p>example content</p>
+                <p>#{original_value}#{random_value1}#{test_string}#{random_value2}</p>
+                <p>more content</p>
+              </body>
+            </html>
           HTML
         end
 
@@ -777,13 +777,13 @@ describe Ronin::Vulns::ReflectedXSS do
           context "but the '\\'' character was HTML escaped" do
             let(:response_body) do
               <<~HTML
-              <html>
-                <body>
-                  <p>example content</p>
-                  <p>#{original_value}#{random_value1}&#39;"= /><#{random_value2}</p>
-                  <p>more content</p>
-                </body>
-              </html>
+                <html>
+                  <body>
+                    <p>example content</p>
+                    <p>#{original_value}#{random_value1}&#39;"= /><#{random_value2}</p>
+                    <p>more content</p>
+                  </body>
+                </html>
               HTML
             end
 
@@ -801,13 +801,13 @@ describe Ronin::Vulns::ReflectedXSS do
           context "but the '\\'' character was URI escaped" do
             let(:response_body) do
               <<~HTML
-              <html>
-                <body>
-                  <p>example content</p>
-                  <p>#{original_value}#{random_value1}%27"= /><#{random_value2}</p>
-                  <p>more content</p>
-                </body>
-              </html>
+                <html>
+                  <body>
+                    <p>example content</p>
+                    <p>#{original_value}#{random_value1}%27"= /><#{random_value2}</p>
+                    <p>more content</p>
+                  </body>
+                </html>
               HTML
             end
 
@@ -825,13 +825,13 @@ describe Ronin::Vulns::ReflectedXSS do
           context "but the '\\'' character was filtered" do
             let(:response_body) do
               <<~HTML
-              <html>
-                <body>
-                  <p>example content</p>
-                  <p>#{original_value}#{random_value1}"= /><#{random_value2}</p>
-                  <p>more content</p>
-                </body>
-              </html>
+                <html>
+                  <body>
+                    <p>example content</p>
+                    <p>#{original_value}#{random_value1}"= /><#{random_value2}</p>
+                    <p>more content</p>
+                  </body>
+                </html>
               HTML
             end
 
@@ -849,13 +849,13 @@ describe Ronin::Vulns::ReflectedXSS do
           context "but the '\"' character was HTML escaped" do
             let(:response_body) do
               <<~HTML
-              <html>
-                <body>
-                  <p>example content</p>
-                  <p>#{original_value}#{random_value1}'&quot;= /><#{random_value2}</p>
-                  <p>more content</p>
-                </body>
-              </html>
+                <html>
+                  <body>
+                    <p>example content</p>
+                    <p>#{original_value}#{random_value1}'&quot;= /><#{random_value2}</p>
+                    <p>more content</p>
+                  </body>
+                </html>
               HTML
             end
 
@@ -873,13 +873,13 @@ describe Ronin::Vulns::ReflectedXSS do
           context "but the '\"' character was filtered" do
             let(:response_body) do
               <<~HTML
-              <html>
-                <body>
-                  <p>example content</p>
-                  <p>#{original_value}#{random_value1}'= /><#{random_value2}</p>
-                  <p>more content</p>
-                </body>
-              </html>
+                <html>
+                  <body>
+                    <p>example content</p>
+                    <p>#{original_value}#{random_value1}'= /><#{random_value2}</p>
+                    <p>more content</p>
+                  </body>
+                </html>
               HTML
             end
 
@@ -897,13 +897,13 @@ describe Ronin::Vulns::ReflectedXSS do
           context "but the '=' character was URI escaped" do
             let(:response_body) do
               <<~HTML
-              <html>
-                <body>
-                  <p>example content</p>
-                  <p>#{original_value}#{random_value1}'"%3D /><#{random_value2}</p>
-                  <p>more content</p>
-                </body>
-              </html>
+                <html>
+                  <body>
+                    <p>example content</p>
+                    <p>#{original_value}#{random_value1}'"%3D /><#{random_value2}</p>
+                    <p>more content</p>
+                  </body>
+                </html>
               HTML
             end
 
@@ -921,13 +921,13 @@ describe Ronin::Vulns::ReflectedXSS do
           context "but the '=' character was filtered" do
             let(:response_body) do
               <<~HTML
-              <html>
-                <body>
-                  <p>example content</p>
-                  <p>#{original_value}#{random_value1}'" /><#{random_value2}</p>
-                  <p>more content</p>
-                </body>
-              </html>
+                <html>
+                  <body>
+                    <p>example content</p>
+                    <p>#{original_value}#{random_value1}'" /><#{random_value2}</p>
+                    <p>more content</p>
+                  </body>
+                </html>
               HTML
             end
 
@@ -945,13 +945,13 @@ describe Ronin::Vulns::ReflectedXSS do
           context "but the '>' character was HTML escaped" do
             let(:response_body) do
               <<~HTML
-              <html>
-                <body>
-                  <p>example content</p>
-                  <p>#{original_value}#{random_value1}'"= /&gt;<#{random_value2}</p>
-                  <p>more content</p>
-                </body>
-              </html>
+                <html>
+                  <body>
+                    <p>example content</p>
+                    <p>#{original_value}#{random_value1}'"= /&gt;<#{random_value2}</p>
+                    <p>more content</p>
+                  </body>
+                </html>
               HTML
             end
 
@@ -969,13 +969,13 @@ describe Ronin::Vulns::ReflectedXSS do
           context "but the '>' character was URI escaped" do
             let(:response_body) do
               <<~HTML
-              <html>
-                <body>
-                  <p>example content</p>
-                  <p>#{original_value}#{random_value1}'"= /%3E<#{random_value2}</p>
-                  <p>more content</p>
-                </body>
-              </html>
+                <html>
+                  <body>
+                    <p>example content</p>
+                    <p>#{original_value}#{random_value1}'"= /%3E<#{random_value2}</p>
+                    <p>more content</p>
+                  </body>
+                </html>
               HTML
             end
 
@@ -993,13 +993,13 @@ describe Ronin::Vulns::ReflectedXSS do
           context "but the '>' character was filtered" do
             let(:response_body) do
               <<~HTML
-              <html>
-                <body>
-                  <p>example content</p>
-                  <p>#{original_value}#{random_value1}'"= /<#{random_value2}</p>
-                  <p>more content</p>
-                </body>
-              </html>
+                <html>
+                  <body>
+                    <p>example content</p>
+                    <p>#{original_value}#{random_value1}'"= /<#{random_value2}</p>
+                    <p>more content</p>
+                  </body>
+                </html>
               HTML
             end
 
@@ -1017,13 +1017,13 @@ describe Ronin::Vulns::ReflectedXSS do
           context "but the ' ' character was HTML escaped" do
             let(:response_body) do
               <<~HTML
-              <html>
-                <body>
-                  <p>example content</p>
-                  <p>#{original_value}#{random_value1}'"=&nbsp;/><#{random_value2}</p>
-                  <p>more content</p>
-                </body>
-              </html>
+                <html>
+                  <body>
+                    <p>example content</p>
+                    <p>#{original_value}#{random_value1}'"=&nbsp;/><#{random_value2}</p>
+                    <p>more content</p>
+                  </body>
+                </html>
               HTML
             end
 
@@ -1041,13 +1041,13 @@ describe Ronin::Vulns::ReflectedXSS do
           context "but the ' ' character was URI escaped" do
             let(:response_body) do
               <<~HTML
-              <html>
-                <body>
-                  <p>example content</p>
-                  <p>#{original_value}#{random_value1}'"=%20/><#{random_value2}</p>
-                  <p>more content</p>
-                </body>
-              </html>
+                <html>
+                  <body>
+                    <p>example content</p>
+                    <p>#{original_value}#{random_value1}'"=%20/><#{random_value2}</p>
+                    <p>more content</p>
+                  </body>
+                </html>
               HTML
             end
 
@@ -1065,13 +1065,13 @@ describe Ronin::Vulns::ReflectedXSS do
           context "but the ' ' character was filtered" do
             let(:response_body) do
               <<~HTML
-              <html>
-                <body>
-                  <p>example content</p>
-                  <p>#{original_value}#{random_value1}'"=/><#{random_value2}</p>
-                  <p>more content</p>
-                </body>
-              </html>
+                <html>
+                  <body>
+                    <p>example content</p>
+                    <p>#{original_value}#{random_value1}'"=/><#{random_value2}</p>
+                    <p>more content</p>
+                  </body>
+                </html>
               HTML
             end
 
@@ -1089,13 +1089,13 @@ describe Ronin::Vulns::ReflectedXSS do
           context "but the '/' character was URI escaped" do
             let(:response_body) do
               <<~HTML
-              <html>
-                <body>
-                  <p>example content</p>
-                  <p>#{original_value}#{random_value1}'"= %2F><#{random_value2}</p>
-                  <p>more content</p>
-                </body>
-              </html>
+                <html>
+                  <body>
+                    <p>example content</p>
+                    <p>#{original_value}#{random_value1}'"= %2F><#{random_value2}</p>
+                    <p>more content</p>
+                  </body>
+                </html>
               HTML
             end
 
@@ -1113,13 +1113,13 @@ describe Ronin::Vulns::ReflectedXSS do
           context "but the '/' character was filtered" do
             let(:response_body) do
               <<~HTML
-              <html>
-                <body>
-                  <p>example content</p>
-                  <p>#{original_value}#{random_value1}'"= ><#{random_value2}</p>
-                  <p>more content</p>
-                </body>
-              </html>
+                <html>
+                  <body>
+                    <p>example content</p>
+                    <p>#{original_value}#{random_value1}'"= ><#{random_value2}</p>
+                    <p>more content</p>
+                  </body>
+                </html>
               HTML
             end
 
@@ -1137,13 +1137,13 @@ describe Ronin::Vulns::ReflectedXSS do
           context "but the '<' character was HTML escaped" do
             let(:response_body) do
               <<~HTML
-              <html>
-                <body>
-                  <p>example content</p>
-                  <p>#{original_value}#{random_value1}'"= />&lt;#{random_value2}</p>
-                  <p>more content</p>
-                </body>
-              </html>
+                <html>
+                  <body>
+                    <p>example content</p>
+                    <p>#{original_value}#{random_value1}'"= />&lt;#{random_value2}</p>
+                    <p>more content</p>
+                  </body>
+                </html>
               HTML
             end
 
@@ -1161,13 +1161,13 @@ describe Ronin::Vulns::ReflectedXSS do
           context "but the '<' character was URI escaped" do
             let(:response_body) do
               <<~HTML
-              <html>
-                <body>
-                  <p>example content</p>
-                  <p>#{original_value}#{random_value1}'"= />%3C#{random_value2}</p>
-                  <p>more content</p>
-                </body>
-              </html>
+                <html>
+                  <body>
+                    <p>example content</p>
+                    <p>#{original_value}#{random_value1}'"= />%3C#{random_value2}</p>
+                    <p>more content</p>
+                  </body>
+                </html>
               HTML
             end
 
@@ -1185,13 +1185,13 @@ describe Ronin::Vulns::ReflectedXSS do
           context "but the '<' character was filtered" do
             let(:response_body) do
               <<~HTML
-              <html>
-                <body>
-                  <p>example content</p>
-                  <p>#{original_value}#{random_value1}'"= />#{random_value2}</p>
-                  <p>more content</p>
-                </body>
-              </html>
+                <html>
+                  <body>
+                    <p>example content</p>
+                    <p>#{original_value}#{random_value1}'"= />#{random_value2}</p>
+                    <p>more content</p>
+                  </body>
+                </html>
               HTML
             end
 
@@ -1210,13 +1210,13 @@ describe Ronin::Vulns::ReflectedXSS do
         context "and the HTML test string occurs within a HTML attribute's double-quoted value" do
           let(:response_body) do
             <<~HTML
-            <html>
-              <body>
-                <p>example content</p>
-                <p attr="#{original_value}#{random_value1}#{test_string}#{random_value2}"></p>
-                <p>more content</p>
-              </body>
-            </html>
+              <html>
+                <body>
+                  <p>example content</p>
+                  <p attr="#{original_value}#{random_value1}#{test_string}#{random_value2}"></p>
+                  <p>more content</p>
+                </body>
+              </html>
             HTML
           end
 
@@ -1241,13 +1241,13 @@ describe Ronin::Vulns::ReflectedXSS do
           context "but the '\\'' character was HTML escaped" do
             let(:response_body) do
               <<~HTML
-              <html>
-                <body>
-                  <p>example content</p>
-                  <p attr="#{original_value}#{random_value1}&#39;"= /><#{random_value2}"></p>
-                  <p>more content</p>
-                </body>
-              </html>
+                <html>
+                  <body>
+                    <p>example content</p>
+                    <p attr="#{original_value}#{random_value1}&#39;"= /><#{random_value2}"></p>
+                    <p>more content</p>
+                  </body>
+                </html>
               HTML
             end
 
@@ -1265,13 +1265,13 @@ describe Ronin::Vulns::ReflectedXSS do
           context "but the '\\'' character was URI escaped" do
             let(:response_body) do
               <<~HTML
-              <html>
-                <body>
-                  <p>example content</p>
-                  <p attr="#{original_value}#{random_value1}%27"= /><#{random_value2}"></p>
-                  <p>more content</p>
-                </body>
-              </html>
+                <html>
+                  <body>
+                    <p>example content</p>
+                    <p attr="#{original_value}#{random_value1}%27"= /><#{random_value2}"></p>
+                    <p>more content</p>
+                  </body>
+                </html>
               HTML
             end
 
@@ -1289,13 +1289,13 @@ describe Ronin::Vulns::ReflectedXSS do
           context "but the '\\'' character was filtered" do
             let(:response_body) do
               <<~HTML
-              <html>
-                <body>
-                  <p>example content</p>
-                  <p attr="#{original_value}#{random_value1}"= /><#{random_value2}"></p>
-                  <p>more content</p>
-                </body>
-              </html>
+                <html>
+                  <body>
+                    <p>example content</p>
+                    <p attr="#{original_value}#{random_value1}"= /><#{random_value2}"></p>
+                    <p>more content</p>
+                  </body>
+                </html>
               HTML
             end
 
@@ -1313,13 +1313,13 @@ describe Ronin::Vulns::ReflectedXSS do
           context "but the '\"' character was HTML escaped" do
             let(:response_body) do
               <<~HTML
-              <html>
-                <body>
-                  <p>example content</p>
-                  <p attr="#{original_value}#{random_value1}'&quot;= /><#{random_value2}"></p>
-                  <p>more content</p>
-                </body>
-              </html>
+                <html>
+                  <body>
+                    <p>example content</p>
+                    <p attr="#{original_value}#{random_value1}'&quot;= /><#{random_value2}"></p>
+                    <p>more content</p>
+                  </body>
+                </html>
               HTML
             end
 
@@ -1337,13 +1337,13 @@ describe Ronin::Vulns::ReflectedXSS do
           context "but the '\"' character was filtered" do
             let(:response_body) do
               <<~HTML
-              <html>
-                <body>
-                  <p>example content</p>
-                  <p attr="#{original_value}#{random_value1}'= /><#{random_value2}"></p>
-                  <p>more content</p>
-                </body>
-              </html>
+                <html>
+                  <body>
+                    <p>example content</p>
+                    <p attr="#{original_value}#{random_value1}'= /><#{random_value2}"></p>
+                    <p>more content</p>
+                  </body>
+                </html>
               HTML
             end
 
@@ -1361,13 +1361,13 @@ describe Ronin::Vulns::ReflectedXSS do
           context "but the '=' character was URI escaped" do
             let(:response_body) do
               <<~HTML
-              <html>
-                <body>
-                  <p>example content</p>
-                  <p attr="#{original_value}#{random_value1}'"%3D /><#{random_value2}"></p>
-                  <p>more content</p>
-                </body>
-              </html>
+                <html>
+                  <body>
+                    <p>example content</p>
+                    <p attr="#{original_value}#{random_value1}'"%3D /><#{random_value2}"></p>
+                    <p>more content</p>
+                  </body>
+                </html>
               HTML
             end
 
@@ -1385,13 +1385,13 @@ describe Ronin::Vulns::ReflectedXSS do
           context "but the '=' character was filtered" do
             let(:response_body) do
               <<~HTML
-              <html>
-                <body>
-                  <p>example content</p>
-                  <p attr="#{original_value}#{random_value1}'" /><#{random_value2}"></p>
-                  <p>more content</p>
-                </body>
-              </html>
+                <html>
+                  <body>
+                    <p>example content</p>
+                    <p attr="#{original_value}#{random_value1}'" /><#{random_value2}"></p>
+                    <p>more content</p>
+                  </body>
+                </html>
               HTML
             end
 
@@ -1409,13 +1409,13 @@ describe Ronin::Vulns::ReflectedXSS do
           context "but the '>' character was HTML escaped" do
             let(:response_body) do
               <<~HTML
-              <html>
-                <body>
-                  <p>example content</p>
-                  <p attr="#{original_value}#{random_value1}'"= /&gt;<#{random_value2}"></p>
-                  <p>more content</p>
-                </body>
-              </html>
+                <html>
+                  <body>
+                    <p>example content</p>
+                    <p attr="#{original_value}#{random_value1}'"= /&gt;<#{random_value2}"></p>
+                    <p>more content</p>
+                  </body>
+                </html>
               HTML
             end
 
@@ -1433,13 +1433,13 @@ describe Ronin::Vulns::ReflectedXSS do
           context "but the '>' character was URI escaped" do
             let(:response_body) do
               <<~HTML
-              <html>
-                <body>
-                  <p>example content</p>
-                  <p attr="#{original_value}#{random_value1}'"= /%3E<#{random_value2}"></p>
-                  <p>more content</p>
-                </body>
-              </html>
+                <html>
+                  <body>
+                    <p>example content</p>
+                    <p attr="#{original_value}#{random_value1}'"= /%3E<#{random_value2}"></p>
+                    <p>more content</p>
+                  </body>
+                </html>
               HTML
             end
 
@@ -1457,13 +1457,13 @@ describe Ronin::Vulns::ReflectedXSS do
           context "but the '>' character was filtered" do
             let(:response_body) do
               <<~HTML
-              <html>
-                <body>
-                  <p>example content</p>
-                  <p attr="#{original_value}#{random_value1}'"= /<#{random_value2}"></p>
-                  <p>more content</p>
-                </body>
-              </html>
+                <html>
+                  <body>
+                    <p>example content</p>
+                    <p attr="#{original_value}#{random_value1}'"= /<#{random_value2}"></p>
+                    <p>more content</p>
+                  </body>
+                </html>
               HTML
             end
 
@@ -1481,13 +1481,13 @@ describe Ronin::Vulns::ReflectedXSS do
           context "but the ' ' character was HTML escaped" do
             let(:response_body) do
               <<~HTML
-              <html>
-                <body>
-                  <p>example content</p>
-                  <p attr="#{original_value}#{random_value1}'"=&nbsp;/><#{random_value2}"></p>
-                  <p>more content</p>
-                </body>
-              </html>
+                <html>
+                  <body>
+                    <p>example content</p>
+                    <p attr="#{original_value}#{random_value1}'"=&nbsp;/><#{random_value2}"></p>
+                    <p>more content</p>
+                  </body>
+                </html>
               HTML
             end
 
@@ -1505,13 +1505,13 @@ describe Ronin::Vulns::ReflectedXSS do
           context "but the ' ' character was URI escaped" do
             let(:response_body) do
               <<~HTML
-              <html>
-                <body>
-                  <p>example content</p>
-                  <p attr="#{original_value}#{random_value1}'"=%20/><#{random_value2}"></p>
-                  <p>more content</p>
-                </body>
-              </html>
+                <html>
+                  <body>
+                    <p>example content</p>
+                    <p attr="#{original_value}#{random_value1}'"=%20/><#{random_value2}"></p>
+                    <p>more content</p>
+                  </body>
+                </html>
               HTML
             end
 
@@ -1529,13 +1529,13 @@ describe Ronin::Vulns::ReflectedXSS do
           context "but the ' ' character was filtered" do
             let(:response_body) do
               <<~HTML
-              <html>
-                <body>
-                  <p>example content</p>
-                  <p attr="#{original_value}#{random_value1}'"=/><#{random_value2}"></p>
-                  <p>more content</p>
-                </body>
-              </html>
+                <html>
+                  <body>
+                    <p>example content</p>
+                    <p attr="#{original_value}#{random_value1}'"=/><#{random_value2}"></p>
+                    <p>more content</p>
+                  </body>
+                </html>
               HTML
             end
 
@@ -1553,13 +1553,13 @@ describe Ronin::Vulns::ReflectedXSS do
           context "but the '/' character was URI escaped" do
             let(:response_body) do
               <<~HTML
-              <html>
-                <body>
-                  <p>example content</p>
-                  <p attr="#{original_value}#{random_value1}'"= %2F><#{random_value2}"></p>
-                  <p>more content</p>
-                </body>
-              </html>
+                <html>
+                  <body>
+                    <p>example content</p>
+                    <p attr="#{original_value}#{random_value1}'"= %2F><#{random_value2}"></p>
+                    <p>more content</p>
+                  </body>
+                </html>
               HTML
             end
 
@@ -1577,13 +1577,13 @@ describe Ronin::Vulns::ReflectedXSS do
           context "but the '/' character was filtered" do
             let(:response_body) do
               <<~HTML
-              <html>
-                <body>
-                  <p>example content</p>
-                  <p attr="#{original_value}#{random_value1}'"= ><#{random_value2}"></p>
-                  <p>more content</p>
-                </body>
-              </html>
+                <html>
+                  <body>
+                    <p>example content</p>
+                    <p attr="#{original_value}#{random_value1}'"= ><#{random_value2}"></p>
+                    <p>more content</p>
+                  </body>
+                </html>
               HTML
             end
 
@@ -1601,13 +1601,13 @@ describe Ronin::Vulns::ReflectedXSS do
           context "but the '<' character was HTML escaped" do
             let(:response_body) do
               <<~HTML
-              <html>
-                <body>
-                  <p>example content</p>
-                  <p attr="#{original_value}#{random_value1}'"= />&lt;#{random_value2}"></p>
-                  <p>more content</p>
-                </body>
-              </html>
+                <html>
+                  <body>
+                    <p>example content</p>
+                    <p attr="#{original_value}#{random_value1}'"= />&lt;#{random_value2}"></p>
+                    <p>more content</p>
+                  </body>
+                </html>
               HTML
             end
 
@@ -1625,13 +1625,13 @@ describe Ronin::Vulns::ReflectedXSS do
           context "but the '<' character was URI escaped" do
             let(:response_body) do
               <<~HTML
-              <html>
-                <body>
-                  <p>example content</p>
-                  <p attr="#{original_value}#{random_value1}'"= />%3C#{random_value2}"></p>
-                  <p>more content</p>
-                </body>
-              </html>
+                <html>
+                  <body>
+                    <p>example content</p>
+                    <p attr="#{original_value}#{random_value1}'"= />%3C#{random_value2}"></p>
+                    <p>more content</p>
+                  </body>
+                </html>
               HTML
             end
 
@@ -1649,13 +1649,13 @@ describe Ronin::Vulns::ReflectedXSS do
           context "but the '<' character was filtered" do
             let(:response_body) do
               <<~HTML
-              <html>
-                <body>
-                  <p>example content</p>
-                  <p attr="#{original_value}#{random_value1}'"= />#{random_value2}"></p>
-                  <p>more content</p>
-                </body>
-              </html>
+                <html>
+                  <body>
+                    <p>example content</p>
+                    <p attr="#{original_value}#{random_value1}'"= />#{random_value2}"></p>
+                    <p>more content</p>
+                  </body>
+                </html>
               HTML
             end
 
@@ -1674,13 +1674,13 @@ describe Ronin::Vulns::ReflectedXSS do
         context "and the HTML test string occurs within a HTML attribute's single-quoted value" do
           let(:response_body) do
             <<~HTML
-            <html>
-              <body>
-                <p>example content</p>
-                <p attr='#{original_value}#{random_value1}#{test_string}#{random_value2}'></p>
-                <p>more content</p>
-              </body>
-            </html>
+              <html>
+                <body>
+                  <p>example content</p>
+                  <p attr='#{original_value}#{random_value1}#{test_string}#{random_value2}'></p>
+                  <p>more content</p>
+                </body>
+              </html>
             HTML
           end
 
@@ -1705,13 +1705,13 @@ describe Ronin::Vulns::ReflectedXSS do
           context "but the '\\'' character was HTML escaped" do
             let(:response_body) do
               <<~HTML
-              <html>
-                <body>
-                  <p>example content</p>
-                  <p attr='#{original_value}#{random_value1}&#39;"= /><#{random_value2}'></p>
-                  <p>more content</p>
-                </body>
-              </html>
+                <html>
+                  <body>
+                    <p>example content</p>
+                    <p attr='#{original_value}#{random_value1}&#39;"= /><#{random_value2}'></p>
+                    <p>more content</p>
+                  </body>
+                </html>
               HTML
             end
 
@@ -1729,13 +1729,13 @@ describe Ronin::Vulns::ReflectedXSS do
           context "but the '\\'' character was URI escaped" do
             let(:response_body) do
               <<~HTML
-              <html>
-                <body>
-                  <p>example content</p>
-                  <p attr='#{original_value}#{random_value1}%27"= /><#{random_value2}'></p>
-                  <p>more content</p>
-                </body>
-              </html>
+                <html>
+                  <body>
+                    <p>example content</p>
+                    <p attr='#{original_value}#{random_value1}%27"= /><#{random_value2}'></p>
+                    <p>more content</p>
+                  </body>
+                </html>
               HTML
             end
 
@@ -1753,13 +1753,13 @@ describe Ronin::Vulns::ReflectedXSS do
           context "but the '\\'' character was filtered" do
             let(:response_body) do
               <<~HTML
-              <html>
-                <body>
-                  <p>example content</p>
-                  <p attr='#{original_value}#{random_value1}"= /><#{random_value2}'></p>
-                  <p>more content</p>
-                </body>
-              </html>
+                <html>
+                  <body>
+                    <p>example content</p>
+                    <p attr='#{original_value}#{random_value1}"= /><#{random_value2}'></p>
+                    <p>more content</p>
+                  </body>
+                </html>
               HTML
             end
 
@@ -1777,13 +1777,13 @@ describe Ronin::Vulns::ReflectedXSS do
           context "but the '\"' character was HTML escaped" do
             let(:response_body) do
               <<~HTML
-              <html>
-                <body>
-                  <p>example content</p>
-                  <p attr='#{original_value}#{random_value1}'&quot;= /><#{random_value2}'></p>
-                  <p>more content</p>
-                </body>
-              </html>
+                <html>
+                  <body>
+                    <p>example content</p>
+                    <p attr='#{original_value}#{random_value1}'&quot;= /><#{random_value2}'></p>
+                    <p>more content</p>
+                  </body>
+                </html>
               HTML
             end
 
@@ -1801,13 +1801,13 @@ describe Ronin::Vulns::ReflectedXSS do
           context "but the '\"' character was filtered" do
             let(:response_body) do
               <<~HTML
-              <html>
-                <body>
-                  <p>example content</p>
-                  <p attr='#{original_value}#{random_value1}'= /><#{random_value2}'></p>
-                  <p>more content</p>
-                </body>
-              </html>
+                <html>
+                  <body>
+                    <p>example content</p>
+                    <p attr='#{original_value}#{random_value1}'= /><#{random_value2}'></p>
+                    <p>more content</p>
+                  </body>
+                </html>
               HTML
             end
 
@@ -1825,13 +1825,13 @@ describe Ronin::Vulns::ReflectedXSS do
           context "but the '=' character was URI escaped" do
             let(:response_body) do
               <<~HTML
-              <html>
-                <body>
-                  <p>example content</p>
-                  <p attr='#{original_value}#{random_value1}'"%3D /><#{random_value2}'></p>
-                  <p>more content</p>
-                </body>
-              </html>
+                <html>
+                  <body>
+                    <p>example content</p>
+                    <p attr='#{original_value}#{random_value1}'"%3D /><#{random_value2}'></p>
+                    <p>more content</p>
+                  </body>
+                </html>
               HTML
             end
 
@@ -1849,13 +1849,13 @@ describe Ronin::Vulns::ReflectedXSS do
           context "but the '=' character was filtered" do
             let(:response_body) do
               <<~HTML
-              <html>
-                <body>
-                  <p>example content</p>
-                  <p attr='#{original_value}#{random_value1}'" /><#{random_value2}'></p>
-                  <p>more content</p>
-                </body>
-              </html>
+                <html>
+                  <body>
+                    <p>example content</p>
+                    <p attr='#{original_value}#{random_value1}'" /><#{random_value2}'></p>
+                    <p>more content</p>
+                  </body>
+                </html>
               HTML
             end
 
@@ -1873,13 +1873,13 @@ describe Ronin::Vulns::ReflectedXSS do
           context "but the '>' character was HTML escaped" do
             let(:response_body) do
               <<~HTML
-              <html>
-                <body>
-                  <p>example content</p>
-                  <p attr='#{original_value}#{random_value1}'"= /&gt;<#{random_value2}'></p>
-                  <p>more content</p>
-                </body>
-              </html>
+                <html>
+                  <body>
+                    <p>example content</p>
+                    <p attr='#{original_value}#{random_value1}'"= /&gt;<#{random_value2}'></p>
+                    <p>more content</p>
+                  </body>
+                </html>
               HTML
             end
 
@@ -1897,13 +1897,13 @@ describe Ronin::Vulns::ReflectedXSS do
           context "but the '>' character was URI escaped" do
             let(:response_body) do
               <<~HTML
-              <html>
-                <body>
-                  <p>example content</p>
-                  <p attr='#{original_value}#{random_value1}'"= /%3E<#{random_value2}'></p>
-                  <p>more content</p>
-                </body>
-              </html>
+                <html>
+                  <body>
+                    <p>example content</p>
+                    <p attr='#{original_value}#{random_value1}'"= /%3E<#{random_value2}'></p>
+                    <p>more content</p>
+                  </body>
+                </html>
               HTML
             end
 
@@ -1921,13 +1921,13 @@ describe Ronin::Vulns::ReflectedXSS do
           context "but the '>' character was filtered" do
             let(:response_body) do
               <<~HTML
-              <html>
-                <body>
-                  <p>example content</p>
-                  <p attr='#{original_value}#{random_value1}'"= /<#{random_value2}'></p>
-                  <p>more content</p>
-                </body>
-              </html>
+                <html>
+                  <body>
+                    <p>example content</p>
+                    <p attr='#{original_value}#{random_value1}'"= /<#{random_value2}'></p>
+                    <p>more content</p>
+                  </body>
+                </html>
               HTML
             end
 
@@ -1945,13 +1945,13 @@ describe Ronin::Vulns::ReflectedXSS do
           context "but the ' ' character was HTML escaped" do
             let(:response_body) do
               <<~HTML
-              <html>
-                <body>
-                  <p>example content</p>
-                  <p attr='#{original_value}#{random_value1}'"=&nbsp;/><#{random_value2}'></p>
-                  <p>more content</p>
-                </body>
-              </html>
+                <html>
+                  <body>
+                    <p>example content</p>
+                    <p attr='#{original_value}#{random_value1}'"=&nbsp;/><#{random_value2}'></p>
+                    <p>more content</p>
+                  </body>
+                </html>
               HTML
             end
 
@@ -1969,13 +1969,13 @@ describe Ronin::Vulns::ReflectedXSS do
           context "but the ' ' character was URI escaped" do
             let(:response_body) do
               <<~HTML
-              <html>
-                <body>
-                  <p>example content</p>
-                  <p attr='#{original_value}#{random_value1}'"=%20/><#{random_value2}'></p>
-                  <p>more content</p>
-                </body>
-              </html>
+                <html>
+                  <body>
+                    <p>example content</p>
+                    <p attr='#{original_value}#{random_value1}'"=%20/><#{random_value2}'></p>
+                    <p>more content</p>
+                  </body>
+                </html>
               HTML
             end
 
@@ -1993,13 +1993,13 @@ describe Ronin::Vulns::ReflectedXSS do
           context "but the ' ' character was filtered" do
             let(:response_body) do
               <<~HTML
-              <html>
-                <body>
-                  <p>example content</p>
-                  <p attr='#{original_value}#{random_value1}'"=/><#{random_value2}'></p>
-                  <p>more content</p>
-                </body>
-              </html>
+                <html>
+                  <body>
+                    <p>example content</p>
+                    <p attr='#{original_value}#{random_value1}'"=/><#{random_value2}'></p>
+                    <p>more content</p>
+                  </body>
+                </html>
               HTML
             end
 
@@ -2017,13 +2017,13 @@ describe Ronin::Vulns::ReflectedXSS do
           context "but the '/' character was URI escaped" do
             let(:response_body) do
               <<~HTML
-              <html>
-                <body>
-                  <p>example content</p>
-                  <p attr='#{original_value}#{random_value1}'"= %2F><#{random_value2}'></p>
-                  <p>more content</p>
-                </body>
-              </html>
+                <html>
+                  <body>
+                    <p>example content</p>
+                    <p attr='#{original_value}#{random_value1}'"= %2F><#{random_value2}'></p>
+                    <p>more content</p>
+                  </body>
+                </html>
               HTML
             end
 
@@ -2041,13 +2041,13 @@ describe Ronin::Vulns::ReflectedXSS do
           context "but the '/' character was filtered" do
             let(:response_body) do
               <<~HTML
-              <html>
-                <body>
-                  <p>example content</p>
-                  <p attr='#{original_value}#{random_value1}'"= ><#{random_value2}'></p>
-                  <p>more content</p>
-                </body>
-              </html>
+                <html>
+                  <body>
+                    <p>example content</p>
+                    <p attr='#{original_value}#{random_value1}'"= ><#{random_value2}'></p>
+                    <p>more content</p>
+                  </body>
+                </html>
               HTML
             end
 
@@ -2065,13 +2065,13 @@ describe Ronin::Vulns::ReflectedXSS do
           context "but the '<' character was HTML escaped" do
             let(:response_body) do
               <<~HTML
-              <html>
-                <body>
-                  <p>example content</p>
-                  <p attr='#{original_value}#{random_value1}'"= />&lt;#{random_value2}'></p>
-                  <p>more content</p>
-                </body>
-              </html>
+                <html>
+                  <body>
+                    <p>example content</p>
+                    <p attr='#{original_value}#{random_value1}'"= />&lt;#{random_value2}'></p>
+                    <p>more content</p>
+                  </body>
+                </html>
               HTML
             end
 
@@ -2089,13 +2089,13 @@ describe Ronin::Vulns::ReflectedXSS do
           context "but the '<' character was URI escaped" do
             let(:response_body) do
               <<~HTML
-              <html>
-                <body>
-                  <p>example content</p>
-                  <p attr='#{original_value}#{random_value1}'"= />%3C#{random_value2}'></p>
-                  <p>more content</p>
-                </body>
-              </html>
+                <html>
+                  <body>
+                    <p>example content</p>
+                    <p attr='#{original_value}#{random_value1}'"= />%3C#{random_value2}'></p>
+                    <p>more content</p>
+                  </body>
+                </html>
               HTML
             end
 
@@ -2113,13 +2113,13 @@ describe Ronin::Vulns::ReflectedXSS do
           context "but the '<' character was filtered" do
             let(:response_body) do
               <<~HTML
-              <html>
-                <body>
-                  <p>example content</p>
-                  <p attr='#{original_value}#{random_value1}'"= />#{random_value2}'></p>
-                  <p>more content</p>
-                </body>
-              </html>
+                <html>
+                  <body>
+                    <p>example content</p>
+                    <p attr='#{original_value}#{random_value1}'"= />#{random_value2}'></p>
+                    <p>more content</p>
+                  </body>
+                </html>
               HTML
             end
 
@@ -2138,13 +2138,13 @@ describe Ronin::Vulns::ReflectedXSS do
         context "and the HTML test string occurs within a HTML attribute's unquoted value" do
           let(:response_body) do
             <<~HTML
-            <html>
-              <body>
-                <p>example content</p>
-                <p attr=#{original_value}#{random_value1}#{test_string}#{random_value2}></p>
-                <p>more content</p>
-              </body>
-            </html>
+              <html>
+                <body>
+                  <p>example content</p>
+                  <p attr=#{original_value}#{random_value1}#{test_string}#{random_value2}></p>
+                  <p>more content</p>
+                </body>
+              </html>
             HTML
           end
 
@@ -2169,13 +2169,13 @@ describe Ronin::Vulns::ReflectedXSS do
           context "but the '\\'' character was HTML escaped" do
             let(:response_body) do
               <<~HTML
-              <html>
-                <body>
-                  <p>example content</p>
-                  <p attr=#{original_value}#{random_value1}&#39;"= /><#{random_value2}></p>
-                  <p>more content</p>
-                </body>
-              </html>
+                <html>
+                  <body>
+                    <p>example content</p>
+                    <p attr=#{original_value}#{random_value1}&#39;"= /><#{random_value2}></p>
+                    <p>more content</p>
+                  </body>
+                </html>
               HTML
             end
 
@@ -2193,13 +2193,13 @@ describe Ronin::Vulns::ReflectedXSS do
           context "but the '\\'' character was URI escaped" do
             let(:response_body) do
               <<~HTML
-              <html>
-                <body>
-                  <p>example content</p>
-                  <p attr=#{original_value}#{random_value1}%27"= /><#{random_value2}></p>
-                  <p>more content</p>
-                </body>
-              </html>
+                <html>
+                  <body>
+                    <p>example content</p>
+                    <p attr=#{original_value}#{random_value1}%27"= /><#{random_value2}></p>
+                    <p>more content</p>
+                  </body>
+                </html>
               HTML
             end
 
@@ -2217,13 +2217,13 @@ describe Ronin::Vulns::ReflectedXSS do
           context "but the '\\'' character was filtered" do
             let(:response_body) do
               <<~HTML
-              <html>
-                <body>
-                  <p>example content</p>
-                  <p attr=#{original_value}#{random_value1}"= /><#{random_value2}></p>
-                  <p>more content</p>
-                </body>
-              </html>
+                <html>
+                  <body>
+                    <p>example content</p>
+                    <p attr=#{original_value}#{random_value1}"= /><#{random_value2}></p>
+                    <p>more content</p>
+                  </body>
+                </html>
               HTML
             end
 
@@ -2241,13 +2241,13 @@ describe Ronin::Vulns::ReflectedXSS do
           context "but the '\"' character was HTML escaped" do
             let(:response_body) do
               <<~HTML
-              <html>
-                <body>
-                  <p>example content</p>
-                  <p attr='#{original_value}#{random_value1}'&quot;= /><#{random_value2}'></p>
-                  <p>more content</p>
-                </body>
-              </html>
+                <html>
+                  <body>
+                    <p>example content</p>
+                    <p attr='#{original_value}#{random_value1}'&quot;= /><#{random_value2}'></p>
+                    <p>more content</p>
+                  </body>
+                </html>
               HTML
             end
 
@@ -2265,13 +2265,13 @@ describe Ronin::Vulns::ReflectedXSS do
           context "but the '\"' character was filtered" do
             let(:response_body) do
               <<~HTML
-              <html>
-                <body>
-                  <p>example content</p>
-                  <p attr='#{original_value}#{random_value1}'= /><#{random_value2}'></p>
-                  <p>more content</p>
-                </body>
-              </html>
+                <html>
+                  <body>
+                    <p>example content</p>
+                    <p attr='#{original_value}#{random_value1}'= /><#{random_value2}'></p>
+                    <p>more content</p>
+                  </body>
+                </html>
               HTML
             end
 
@@ -2289,13 +2289,13 @@ describe Ronin::Vulns::ReflectedXSS do
           context "but the '=' character was URI escaped" do
             let(:response_body) do
               <<~HTML
-              <html>
-                <body>
-                  <p>example content</p>
-                  <p attr='#{original_value}#{random_value1}'"%3D /><#{random_value2}'></p>
-                  <p>more content</p>
-                </body>
-              </html>
+                <html>
+                  <body>
+                    <p>example content</p>
+                    <p attr='#{original_value}#{random_value1}'"%3D /><#{random_value2}'></p>
+                    <p>more content</p>
+                  </body>
+                </html>
               HTML
             end
 
@@ -2313,13 +2313,13 @@ describe Ronin::Vulns::ReflectedXSS do
           context "but the '=' character was filtered" do
             let(:response_body) do
               <<~HTML
-              <html>
-                <body>
-                  <p>example content</p>
-                  <p attr='#{original_value}#{random_value1}'" /><#{random_value2}'></p>
-                  <p>more content</p>
-                </body>
-              </html>
+                <html>
+                  <body>
+                    <p>example content</p>
+                    <p attr='#{original_value}#{random_value1}'" /><#{random_value2}'></p>
+                    <p>more content</p>
+                  </body>
+                </html>
               HTML
             end
 
@@ -2337,13 +2337,13 @@ describe Ronin::Vulns::ReflectedXSS do
           context "but the '>' character was HTML escaped" do
             let(:response_body) do
               <<~HTML
-              <html>
-                <body>
-                  <p>example content</p>
-                  <p attr='#{original_value}#{random_value1}'"= /&gt;<#{random_value2}'></p>
-                  <p>more content</p>
-                </body>
-              </html>
+                <html>
+                  <body>
+                    <p>example content</p>
+                    <p attr='#{original_value}#{random_value1}'"= /&gt;<#{random_value2}'></p>
+                    <p>more content</p>
+                  </body>
+                </html>
               HTML
             end
 
@@ -2361,13 +2361,13 @@ describe Ronin::Vulns::ReflectedXSS do
           context "but the '>' character was URI escaped" do
             let(:response_body) do
               <<~HTML
-              <html>
-                <body>
-                  <p>example content</p>
-                  <p attr='#{original_value}#{random_value1}'"= /%3E<#{random_value2}'></p>
-                  <p>more content</p>
-                </body>
-              </html>
+                <html>
+                  <body>
+                    <p>example content</p>
+                    <p attr='#{original_value}#{random_value1}'"= /%3E<#{random_value2}'></p>
+                    <p>more content</p>
+                  </body>
+                </html>
               HTML
             end
 
@@ -2385,13 +2385,13 @@ describe Ronin::Vulns::ReflectedXSS do
           context "but the '>' character was filtered" do
             let(:response_body) do
               <<~HTML
-              <html>
-                <body>
-                  <p>example content</p>
-                  <p attr='#{original_value}#{random_value1}'"= /<#{random_value2}'></p>
-                  <p>more content</p>
-                </body>
-              </html>
+                <html>
+                  <body>
+                    <p>example content</p>
+                    <p attr='#{original_value}#{random_value1}'"= /<#{random_value2}'></p>
+                    <p>more content</p>
+                  </body>
+                </html>
               HTML
             end
 
@@ -2409,13 +2409,13 @@ describe Ronin::Vulns::ReflectedXSS do
           context "but the ' ' character was HTML escaped" do
             let(:response_body) do
               <<~HTML
-              <html>
-                <body>
-                  <p>example content</p>
-                  <p attr='#{original_value}#{random_value1}'"=&nbsp;/><#{random_value2}'></p>
-                  <p>more content</p>
-                </body>
-              </html>
+                <html>
+                  <body>
+                    <p>example content</p>
+                    <p attr='#{original_value}#{random_value1}'"=&nbsp;/><#{random_value2}'></p>
+                    <p>more content</p>
+                  </body>
+                </html>
               HTML
             end
 
@@ -2433,13 +2433,13 @@ describe Ronin::Vulns::ReflectedXSS do
           context "but the ' ' character was URI escaped" do
             let(:response_body) do
               <<~HTML
-              <html>
-                <body>
-                  <p>example content</p>
-                  <p attr='#{original_value}#{random_value1}'"=%20/><#{random_value2}'></p>
-                  <p>more content</p>
-                </body>
-              </html>
+                <html>
+                  <body>
+                    <p>example content</p>
+                    <p attr='#{original_value}#{random_value1}'"=%20/><#{random_value2}'></p>
+                    <p>more content</p>
+                  </body>
+                </html>
               HTML
             end
 
@@ -2457,13 +2457,13 @@ describe Ronin::Vulns::ReflectedXSS do
           context "but the ' ' character was filtered" do
             let(:response_body) do
               <<~HTML
-              <html>
-                <body>
-                  <p>example content</p>
-                  <p attr='#{original_value}#{random_value1}'"=/><#{random_value2}'></p>
-                  <p>more content</p>
-                </body>
-              </html>
+                <html>
+                  <body>
+                    <p>example content</p>
+                    <p attr='#{original_value}#{random_value1}'"=/><#{random_value2}'></p>
+                    <p>more content</p>
+                  </body>
+                </html>
               HTML
             end
 
@@ -2481,13 +2481,13 @@ describe Ronin::Vulns::ReflectedXSS do
           context "but the '/' character was URI escaped" do
             let(:response_body) do
               <<~HTML
-              <html>
-                <body>
-                  <p>example content</p>
-                  <p attr='#{original_value}#{random_value1}'"= %2F><#{random_value2}'></p>
-                  <p>more content</p>
-                </body>
-              </html>
+                <html>
+                  <body>
+                    <p>example content</p>
+                    <p attr='#{original_value}#{random_value1}'"= %2F><#{random_value2}'></p>
+                    <p>more content</p>
+                  </body>
+                </html>
               HTML
             end
 
@@ -2505,13 +2505,13 @@ describe Ronin::Vulns::ReflectedXSS do
           context "but the '/' character was filtered" do
             let(:response_body) do
               <<~HTML
-              <html>
-                <body>
-                  <p>example content</p>
-                  <p attr='#{original_value}#{random_value1}'"= ><#{random_value2}'></p>
-                  <p>more content</p>
-                </body>
-              </html>
+                <html>
+                  <body>
+                    <p>example content</p>
+                    <p attr='#{original_value}#{random_value1}'"= ><#{random_value2}'></p>
+                    <p>more content</p>
+                  </body>
+                </html>
               HTML
             end
 
@@ -2529,13 +2529,13 @@ describe Ronin::Vulns::ReflectedXSS do
           context "but the '<' character was HTML escaped" do
             let(:response_body) do
               <<~HTML
-              <html>
-                <body>
-                  <p>example content</p>
-                  <p attr='#{original_value}#{random_value1}'"= />&lt;#{random_value2}'></p>
-                  <p>more content</p>
-                </body>
-              </html>
+                <html>
+                  <body>
+                    <p>example content</p>
+                    <p attr='#{original_value}#{random_value1}'"= />&lt;#{random_value2}'></p>
+                    <p>more content</p>
+                  </body>
+                </html>
               HTML
             end
 
@@ -2553,13 +2553,13 @@ describe Ronin::Vulns::ReflectedXSS do
           context "but the '<' character was URI escaped" do
             let(:response_body) do
               <<~HTML
-              <html>
-                <body>
-                  <p>example content</p>
-                  <p attr='#{original_value}#{random_value1}'"= />%3C#{random_value2}'></p>
-                  <p>more content</p>
-                </body>
-              </html>
+                <html>
+                  <body>
+                    <p>example content</p>
+                    <p attr='#{original_value}#{random_value1}'"= />%3C#{random_value2}'></p>
+                    <p>more content</p>
+                  </body>
+                </html>
               HTML
             end
 
@@ -2577,13 +2577,13 @@ describe Ronin::Vulns::ReflectedXSS do
           context "but the '<' character was filtered" do
             let(:response_body) do
               <<~HTML
-              <html>
-                <body>
-                  <p>example content</p>
-                  <p attr='#{original_value}#{random_value1}'"= />#{random_value2}'></p>
-                  <p>more content</p>
-                </body>
-              </html>
+                <html>
+                  <body>
+                    <p>example content</p>
+                    <p attr='#{original_value}#{random_value1}'"= />#{random_value2}'></p>
+                    <p>more content</p>
+                  </body>
+                </html>
               HTML
             end
 
@@ -2602,13 +2602,13 @@ describe Ronin::Vulns::ReflectedXSS do
         context "and the HTML test string occurs within a HTML attribute's name" do
           let(:response_body) do
             <<~HTML
-            <html>
-              <body>
-                <p>example content</p>
-                <p attr#{original_value}#{random_value1}#{test_string}#{random_value2}></p>
-                <p>more content</p>
-              </body>
-            </html>
+              <html>
+                <body>
+                  <p>example content</p>
+                  <p attr#{original_value}#{random_value1}#{test_string}#{random_value2}></p>
+                  <p>more content</p>
+                </body>
+              </html>
             HTML
           end
 
@@ -2633,13 +2633,13 @@ describe Ronin::Vulns::ReflectedXSS do
           context "but the '\\'' character was HTML escaped" do
             let(:response_body) do
               <<~HTML
-              <html>
-                <body>
-                  <p>example content</p>
-                  <p attr#{original_value}#{random_value1}&#39;"= /><#{random_value2}></p>
-                  <p>more content</p>
-                </body>
-              </html>
+                <html>
+                  <body>
+                    <p>example content</p>
+                    <p attr#{original_value}#{random_value1}&#39;"= /><#{random_value2}></p>
+                    <p>more content</p>
+                  </body>
+                </html>
               HTML
             end
 
@@ -2657,13 +2657,13 @@ describe Ronin::Vulns::ReflectedXSS do
           context "but the '\\'' character was URI escaped" do
             let(:response_body) do
               <<~HTML
-              <html>
-                <body>
-                  <p>example content</p>
-                  <p attr#{original_value}#{random_value1}%27"= /><#{random_value2}></p>
-                  <p>more content</p>
-                </body>
-              </html>
+                <html>
+                  <body>
+                    <p>example content</p>
+                    <p attr#{original_value}#{random_value1}%27"= /><#{random_value2}></p>
+                    <p>more content</p>
+                  </body>
+                </html>
               HTML
             end
 
@@ -2681,13 +2681,13 @@ describe Ronin::Vulns::ReflectedXSS do
           context "but the '\\'' character was filtered" do
             let(:response_body) do
               <<~HTML
-              <html>
-                <body>
-                  <p>example content</p>
-                  <p attr#{original_value}#{random_value1}"= /><#{random_value2}></p>
-                  <p>more content</p>
-                </body>
-              </html>
+                <html>
+                  <body>
+                    <p>example content</p>
+                    <p attr#{original_value}#{random_value1}"= /><#{random_value2}></p>
+                    <p>more content</p>
+                  </body>
+                </html>
               HTML
             end
 
@@ -2705,13 +2705,13 @@ describe Ronin::Vulns::ReflectedXSS do
           context "but the '\"' character was HTML escaped" do
             let(:response_body) do
               <<~HTML
-              <html>
-                <body>
-                  <p>example content</p>
-                  <p attr#{original_value}#{random_value1}'&quot;= /><#{random_value2}></p>
-                  <p>more content</p>
-                </body>
-              </html>
+                <html>
+                  <body>
+                    <p>example content</p>
+                    <p attr#{original_value}#{random_value1}'&quot;= /><#{random_value2}></p>
+                    <p>more content</p>
+                  </body>
+                </html>
               HTML
             end
 
@@ -2729,13 +2729,13 @@ describe Ronin::Vulns::ReflectedXSS do
           context "but the '\"' character was filtered" do
             let(:response_body) do
               <<~HTML
-              <html>
-                <body>
-                  <p>example content</p>
-                  <p attr#{original_value}#{random_value1}'= /><#{random_value2}></p>
-                  <p>more content</p>
-                </body>
-              </html>
+                <html>
+                  <body>
+                    <p>example content</p>
+                    <p attr#{original_value}#{random_value1}'= /><#{random_value2}></p>
+                    <p>more content</p>
+                  </body>
+                </html>
               HTML
             end
 
@@ -2753,13 +2753,13 @@ describe Ronin::Vulns::ReflectedXSS do
           context "but the '=' character was URI escaped" do
             let(:response_body) do
               <<~HTML
-              <html>
-                <body>
-                  <p>example content</p>
-                  <p attr#{original_value}#{random_value1}'"%3D /><#{random_value2}></p>
-                  <p>more content</p>
-                </body>
-              </html>
+                <html>
+                  <body>
+                    <p>example content</p>
+                    <p attr#{original_value}#{random_value1}'"%3D /><#{random_value2}></p>
+                    <p>more content</p>
+                  </body>
+                </html>
               HTML
             end
 
@@ -2777,13 +2777,13 @@ describe Ronin::Vulns::ReflectedXSS do
           context "but the '=' character was filtered" do
             let(:response_body) do
               <<~HTML
-              <html>
-                <body>
-                  <p>example content</p>
-                  <p attr#{original_value}#{random_value1}'" /><#{random_value2}></p>
-                  <p>more content</p>
-                </body>
-              </html>
+                <html>
+                  <body>
+                    <p>example content</p>
+                    <p attr#{original_value}#{random_value1}'" /><#{random_value2}></p>
+                    <p>more content</p>
+                  </body>
+                </html>
               HTML
             end
 
@@ -2801,13 +2801,13 @@ describe Ronin::Vulns::ReflectedXSS do
           context "but the '>' character was HTML escaped" do
             let(:response_body) do
               <<~HTML
-              <html>
-                <body>
-                  <p>example content</p>
-                  <p attr#{original_value}#{random_value1}'"= /&gt;<#{random_value2}></p>
-                  <p>more content</p>
-                </body>
-              </html>
+                <html>
+                  <body>
+                    <p>example content</p>
+                    <p attr#{original_value}#{random_value1}'"= /&gt;<#{random_value2}></p>
+                    <p>more content</p>
+                  </body>
+                </html>
               HTML
             end
 
@@ -2825,13 +2825,13 @@ describe Ronin::Vulns::ReflectedXSS do
           context "but the '>' character was URI escaped" do
             let(:response_body) do
               <<~HTML
-              <html>
-                <body>
-                  <p>example content</p>
-                  <p attr#{original_value}#{random_value1}'"= /%3E<#{random_value2}></p>
-                  <p>more content</p>
-                </body>
-              </html>
+                <html>
+                  <body>
+                    <p>example content</p>
+                    <p attr#{original_value}#{random_value1}'"= /%3E<#{random_value2}></p>
+                    <p>more content</p>
+                  </body>
+                </html>
               HTML
             end
 
@@ -2849,13 +2849,13 @@ describe Ronin::Vulns::ReflectedXSS do
           context "but the '>' character was filtered" do
             let(:response_body) do
               <<~HTML
-              <html>
-                <body>
-                  <p>example content</p>
-                  <p attr#{original_value}#{random_value1}'"= /<#{random_value2}></p>
-                  <p>more content</p>
-                </body>
-              </html>
+                <html>
+                  <body>
+                    <p>example content</p>
+                    <p attr#{original_value}#{random_value1}'"= /<#{random_value2}></p>
+                    <p>more content</p>
+                  </body>
+                </html>
               HTML
             end
 
@@ -2873,13 +2873,13 @@ describe Ronin::Vulns::ReflectedXSS do
           context "but the ' ' character was HTML escaped" do
             let(:response_body) do
               <<~HTML
-              <html>
-                <body>
-                  <p>example content</p>
-                  <p attr#{original_value}#{random_value1}'"=&nbsp;/><#{random_value2}></p>
-                  <p>more content</p>
-                </body>
-              </html>
+                <html>
+                  <body>
+                    <p>example content</p>
+                    <p attr#{original_value}#{random_value1}'"=&nbsp;/><#{random_value2}></p>
+                    <p>more content</p>
+                  </body>
+                </html>
               HTML
             end
 
@@ -2897,13 +2897,13 @@ describe Ronin::Vulns::ReflectedXSS do
           context "but the ' ' character was URI escaped" do
             let(:response_body) do
               <<~HTML
-              <html>
-                <body>
-                  <p>example content</p>
-                  <p attr#{original_value}#{random_value1}'"=%20/><#{random_value2}></p>
-                  <p>more content</p>
-                </body>
-              </html>
+                <html>
+                  <body>
+                    <p>example content</p>
+                    <p attr#{original_value}#{random_value1}'"=%20/><#{random_value2}></p>
+                    <p>more content</p>
+                  </body>
+                </html>
               HTML
             end
 
@@ -2921,13 +2921,13 @@ describe Ronin::Vulns::ReflectedXSS do
           context "but the ' ' character was filtered" do
             let(:response_body) do
               <<~HTML
-              <html>
-                <body>
-                  <p>example content</p>
-                  <p attr#{original_value}#{random_value1}'"=/><#{random_value2}></p>
-                  <p>more content</p>
-                </body>
-              </html>
+                <html>
+                  <body>
+                    <p>example content</p>
+                    <p attr#{original_value}#{random_value1}'"=/><#{random_value2}></p>
+                    <p>more content</p>
+                  </body>
+                </html>
               HTML
             end
 
@@ -2945,13 +2945,13 @@ describe Ronin::Vulns::ReflectedXSS do
           context "but the '/' character was URI escaped" do
             let(:response_body) do
               <<~HTML
-              <html>
-                <body>
-                  <p>example content</p>
-                  <p attr#{original_value}#{random_value1}'"= %2F><#{random_value2}></p>
-                  <p>more content</p>
-                </body>
-              </html>
+                <html>
+                  <body>
+                    <p>example content</p>
+                    <p attr#{original_value}#{random_value1}'"= %2F><#{random_value2}></p>
+                    <p>more content</p>
+                  </body>
+                </html>
               HTML
             end
 
@@ -2969,13 +2969,13 @@ describe Ronin::Vulns::ReflectedXSS do
           context "but the '/' character was filtered" do
             let(:response_body) do
               <<~HTML
-              <html>
-                <body>
-                  <p>example content</p>
-                  <p attr#{original_value}#{random_value1}'"= ><#{random_value2}></p>
-                  <p>more content</p>
-                </body>
-              </html>
+                <html>
+                  <body>
+                    <p>example content</p>
+                    <p attr#{original_value}#{random_value1}'"= ><#{random_value2}></p>
+                    <p>more content</p>
+                  </body>
+                </html>
               HTML
             end
 
@@ -2993,13 +2993,13 @@ describe Ronin::Vulns::ReflectedXSS do
           context "but the '<' character was HTML escaped" do
             let(:response_body) do
               <<~HTML
-              <html>
-                <body>
-                  <p>example content</p>
-                  <p attr#{original_value}#{random_value1}'"= />&lt;#{random_value2}></p>
-                  <p>more content</p>
-                </body>
-              </html>
+                <html>
+                  <body>
+                    <p>example content</p>
+                    <p attr#{original_value}#{random_value1}'"= />&lt;#{random_value2}></p>
+                    <p>more content</p>
+                  </body>
+                </html>
               HTML
             end
 
@@ -3017,13 +3017,13 @@ describe Ronin::Vulns::ReflectedXSS do
           context "but the '<' character was URI escaped" do
             let(:response_body) do
               <<~HTML
-              <html>
-                <body>
-                  <p>example content</p>
-                  <p attr#{original_value}#{random_value1}'"= />%3C#{random_value2}></p>
-                  <p>more content</p>
-                </body>
-              </html>
+                <html>
+                  <body>
+                    <p>example content</p>
+                    <p attr#{original_value}#{random_value1}'"= />%3C#{random_value2}></p>
+                    <p>more content</p>
+                  </body>
+                </html>
               HTML
             end
 
@@ -3041,13 +3041,13 @@ describe Ronin::Vulns::ReflectedXSS do
           context "but the '<' character was filtered" do
             let(:response_body) do
               <<~HTML
-              <html>
-                <body>
-                  <p>example content</p>
-                  <p attr#{original_value}#{random_value1}'"= />#{random_value2}></p>
-                  <p>more content</p>
-                </body>
-              </html>
+                <html>
+                  <body>
+                    <p>example content</p>
+                    <p attr#{original_value}#{random_value1}'"= />#{random_value2}></p>
+                    <p>more content</p>
+                  </body>
+                </html>
               HTML
             end
 
@@ -3066,13 +3066,13 @@ describe Ronin::Vulns::ReflectedXSS do
         context "and the HTML test string occurs within a HTML attribute's list" do
           let(:response_body) do
             <<~HTML
-            <html>
-              <body>
-                <p>example content</p>
-                <p #{random_value1}#{test_string}#{random_value2}></p>
-                <p>more content</p>
-              </body>
-            </html>
+              <html>
+                <body>
+                  <p>example content</p>
+                  <p #{random_value1}#{test_string}#{random_value2}></p>
+                  <p>more content</p>
+                </body>
+              </html>
             HTML
           end
 
@@ -3097,13 +3097,13 @@ describe Ronin::Vulns::ReflectedXSS do
           context "but the '\\'' character was HTML escaped" do
             let(:response_body) do
               <<~HTML
-              <html>
-                <body>
-                  <p>example content</p>
-                  <p #{original_value}#{random_value1}&#39;"= /><#{random_value2}></p>
-                  <p>more content</p>
-                </body>
-              </html>
+                <html>
+                  <body>
+                    <p>example content</p>
+                    <p #{original_value}#{random_value1}&#39;"= /><#{random_value2}></p>
+                    <p>more content</p>
+                  </body>
+                </html>
               HTML
             end
 
@@ -3121,13 +3121,13 @@ describe Ronin::Vulns::ReflectedXSS do
           context "but the '\\'' character was URI escaped" do
             let(:response_body) do
               <<~HTML
-              <html>
-                <body>
-                  <p>example content</p>
-                  <p #{original_value}#{random_value1}%27"= /><#{random_value2}></p>
-                  <p>more content</p>
-                </body>
-              </html>
+                <html>
+                  <body>
+                    <p>example content</p>
+                    <p #{original_value}#{random_value1}%27"= /><#{random_value2}></p>
+                    <p>more content</p>
+                  </body>
+                </html>
               HTML
             end
 
@@ -3145,13 +3145,13 @@ describe Ronin::Vulns::ReflectedXSS do
           context "but the '\\'' character was filtered" do
             let(:response_body) do
               <<~HTML
-              <html>
-                <body>
-                  <p>example content</p>
-                  <p #{original_value}#{random_value1}"= /><#{random_value2}></p>
-                  <p>more content</p>
-                </body>
-              </html>
+                <html>
+                  <body>
+                    <p>example content</p>
+                    <p #{original_value}#{random_value1}"= /><#{random_value2}></p>
+                    <p>more content</p>
+                  </body>
+                </html>
               HTML
             end
 
@@ -3169,13 +3169,13 @@ describe Ronin::Vulns::ReflectedXSS do
           context "but the '\"' character was HTML escaped" do
             let(:response_body) do
               <<~HTML
-              <html>
-                <body>
-                  <p>example content</p>
-                  <p #{original_value}#{random_value1}'&quot;= /><#{random_value2}></p>
-                  <p>more content</p>
-                </body>
-              </html>
+                <html>
+                  <body>
+                    <p>example content</p>
+                    <p #{original_value}#{random_value1}'&quot;= /><#{random_value2}></p>
+                    <p>more content</p>
+                  </body>
+                </html>
               HTML
             end
 
@@ -3193,13 +3193,13 @@ describe Ronin::Vulns::ReflectedXSS do
           context "but the '\"' character was filtered" do
             let(:response_body) do
               <<~HTML
-              <html>
-                <body>
-                  <p>example content</p>
-                  <p #{original_value}#{random_value1}'= /><#{random_value2}></p>
-                  <p>more content</p>
-                </body>
-              </html>
+                <html>
+                  <body>
+                    <p>example content</p>
+                    <p #{original_value}#{random_value1}'= /><#{random_value2}></p>
+                    <p>more content</p>
+                  </body>
+                </html>
               HTML
             end
 
@@ -3217,13 +3217,13 @@ describe Ronin::Vulns::ReflectedXSS do
           context "but the '=' character was URI escaped" do
             let(:response_body) do
               <<~HTML
-              <html>
-                <body>
-                  <p>example content</p>
-                  <p #{original_value}#{random_value1}'"%3D /><#{random_value2}></p>
-                  <p>more content</p>
-                </body>
-              </html>
+                <html>
+                  <body>
+                    <p>example content</p>
+                    <p #{original_value}#{random_value1}'"%3D /><#{random_value2}></p>
+                    <p>more content</p>
+                  </body>
+                </html>
               HTML
             end
 
@@ -3241,13 +3241,13 @@ describe Ronin::Vulns::ReflectedXSS do
           context "but the '=' character was filtered" do
             let(:response_body) do
               <<~HTML
-              <html>
-                <body>
-                  <p>example content</p>
-                  <p #{original_value}#{random_value1}'" /><#{random_value2}></p>
-                  <p>more content</p>
-                </body>
-              </html>
+                <html>
+                  <body>
+                    <p>example content</p>
+                    <p #{original_value}#{random_value1}'" /><#{random_value2}></p>
+                    <p>more content</p>
+                  </body>
+                </html>
               HTML
             end
 
@@ -3265,13 +3265,13 @@ describe Ronin::Vulns::ReflectedXSS do
           context "but the '>' character was HTML escaped" do
             let(:response_body) do
               <<~HTML
-              <html>
-                <body>
-                  <p>example content</p>
-                  <p #{original_value}#{random_value1}'"= /&gt;<#{random_value2}></p>
-                  <p>more content</p>
-                </body>
-              </html>
+                <html>
+                  <body>
+                    <p>example content</p>
+                    <p #{original_value}#{random_value1}'"= /&gt;<#{random_value2}></p>
+                    <p>more content</p>
+                  </body>
+                </html>
               HTML
             end
 
@@ -3289,13 +3289,13 @@ describe Ronin::Vulns::ReflectedXSS do
           context "but the '>' character was URI escaped" do
             let(:response_body) do
               <<~HTML
-              <html>
-                <body>
-                  <p>example content</p>
-                  <p #{original_value}#{random_value1}'"= /%3E<#{random_value2}></p>
-                  <p>more content</p>
-                </body>
-              </html>
+                <html>
+                  <body>
+                    <p>example content</p>
+                    <p #{original_value}#{random_value1}'"= /%3E<#{random_value2}></p>
+                    <p>more content</p>
+                  </body>
+                </html>
               HTML
             end
 
@@ -3313,13 +3313,13 @@ describe Ronin::Vulns::ReflectedXSS do
           context "but the '>' character was filtered" do
             let(:response_body) do
               <<~HTML
-              <html>
-                <body>
-                  <p>example content</p>
-                  <p #{original_value}#{random_value1}'"= /<#{random_value2}></p>
-                  <p>more content</p>
-                </body>
-              </html>
+                <html>
+                  <body>
+                    <p>example content</p>
+                    <p #{original_value}#{random_value1}'"= /<#{random_value2}></p>
+                    <p>more content</p>
+                  </body>
+                </html>
               HTML
             end
 
@@ -3337,13 +3337,13 @@ describe Ronin::Vulns::ReflectedXSS do
           context "but the ' ' character was HTML escaped" do
             let(:response_body) do
               <<~HTML
-              <html>
-                <body>
-                  <p>example content</p>
-                  <p #{original_value}#{random_value1}'"=&nbsp;/><#{random_value2}></p>
-                  <p>more content</p>
-                </body>
-              </html>
+                <html>
+                  <body>
+                    <p>example content</p>
+                    <p #{original_value}#{random_value1}'"=&nbsp;/><#{random_value2}></p>
+                    <p>more content</p>
+                  </body>
+                </html>
               HTML
             end
 
@@ -3361,13 +3361,13 @@ describe Ronin::Vulns::ReflectedXSS do
           context "but the ' ' character was URI escaped" do
             let(:response_body) do
               <<~HTML
-              <html>
-                <body>
-                  <p>example content</p>
-                  <p #{original_value}#{random_value1}'"=%20/><#{random_value2}></p>
-                  <p>more content</p>
-                </body>
-              </html>
+                <html>
+                  <body>
+                    <p>example content</p>
+                    <p #{original_value}#{random_value1}'"=%20/><#{random_value2}></p>
+                    <p>more content</p>
+                  </body>
+                </html>
               HTML
             end
 
@@ -3385,13 +3385,13 @@ describe Ronin::Vulns::ReflectedXSS do
           context "but the ' ' character was filtered" do
             let(:response_body) do
               <<~HTML
-              <html>
-                <body>
-                  <p>example content</p>
-                  <p #{original_value}#{random_value1}'"=/><#{random_value2}></p>
-                  <p>more content</p>
-                </body>
-              </html>
+                <html>
+                  <body>
+                    <p>example content</p>
+                    <p #{original_value}#{random_value1}'"=/><#{random_value2}></p>
+                    <p>more content</p>
+                  </body>
+                </html>
               HTML
             end
 
@@ -3409,13 +3409,13 @@ describe Ronin::Vulns::ReflectedXSS do
           context "but the '/' character was URI escaped" do
             let(:response_body) do
               <<~HTML
-              <html>
-                <body>
-                  <p>example content</p>
-                  <p #{original_value}#{random_value1}'"= %2F><#{random_value2}></p>
-                  <p>more content</p>
-                </body>
-              </html>
+                <html>
+                  <body>
+                    <p>example content</p>
+                    <p #{original_value}#{random_value1}'"= %2F><#{random_value2}></p>
+                    <p>more content</p>
+                  </body>
+                </html>
               HTML
             end
 
@@ -3433,13 +3433,13 @@ describe Ronin::Vulns::ReflectedXSS do
           context "but the '/' character was filtered" do
             let(:response_body) do
               <<~HTML
-              <html>
-                <body>
-                  <p>example content</p>
-                  <p #{original_value}#{random_value1}'"= ><#{random_value2}></p>
-                  <p>more content</p>
-                </body>
-              </html>
+                <html>
+                  <body>
+                    <p>example content</p>
+                    <p #{original_value}#{random_value1}'"= ><#{random_value2}></p>
+                    <p>more content</p>
+                  </body>
+                </html>
               HTML
             end
 
@@ -3457,13 +3457,13 @@ describe Ronin::Vulns::ReflectedXSS do
           context "but the '<' character was HTML escaped" do
             let(:response_body) do
               <<~HTML
-              <html>
-                <body>
-                  <p>example content</p>
-                  <p #{original_value}#{random_value1}'"= />&lt;#{random_value2}></p>
-                  <p>more content</p>
-                </body>
-              </html>
+                <html>
+                  <body>
+                    <p>example content</p>
+                    <p #{original_value}#{random_value1}'"= />&lt;#{random_value2}></p>
+                    <p>more content</p>
+                  </body>
+                </html>
               HTML
             end
 
@@ -3481,13 +3481,13 @@ describe Ronin::Vulns::ReflectedXSS do
           context "but the '<' character was URI escaped" do
             let(:response_body) do
               <<~HTML
-              <html>
-                <body>
-                  <p>example content</p>
-                  <p #{original_value}#{random_value1}'"= />%3C#{random_value2}></p>
-                  <p>more content</p>
-                </body>
-              </html>
+                <html>
+                  <body>
+                    <p>example content</p>
+                    <p #{original_value}#{random_value1}'"= />%3C#{random_value2}></p>
+                    <p>more content</p>
+                  </body>
+                </html>
               HTML
             end
 
@@ -3505,13 +3505,13 @@ describe Ronin::Vulns::ReflectedXSS do
           context "but the '<' character was filtered" do
             let(:response_body) do
               <<~HTML
-              <html>
-                <body>
-                  <p>example content</p>
-                  <p #{original_value}#{random_value1}'"= />#{random_value2}></p>
-                  <p>more content</p>
-                </body>
-              </html>
+                <html>
+                  <body>
+                    <p>example content</p>
+                    <p #{original_value}#{random_value1}'"= />#{random_value2}></p>
+                    <p>more content</p>
+                  </body>
+                </html>
               HTML
             end
 
@@ -3530,13 +3530,13 @@ describe Ronin::Vulns::ReflectedXSS do
         context "and the HTML test string occurs within a HTML tag name" do
           let(:response_body) do
             <<~HTML
-            <html>
-              <body>
-                <p>example content</p>
-                <p#{random_value1}#{test_string}#{random_value2}></p>
-                <p>more content</p>
-              </body>
-            </html>
+              <html>
+                <body>
+                  <p>example content</p>
+                  <p#{random_value1}#{test_string}#{random_value2}></p>
+                  <p>more content</p>
+                </body>
+              </html>
             HTML
           end
 
@@ -3561,13 +3561,13 @@ describe Ronin::Vulns::ReflectedXSS do
           context "but the '\\'' character was HTML escaped" do
             let(:response_body) do
               <<~HTML
-              <html>
-                <body>
-                  <p>example content</p>
-                  <p#{original_value}#{random_value1}&#39;"= /><#{random_value2}></p>
-                  <p>more content</p>
-                </body>
-              </html>
+                <html>
+                  <body>
+                    <p>example content</p>
+                    <p#{original_value}#{random_value1}&#39;"= /><#{random_value2}></p>
+                    <p>more content</p>
+                  </body>
+                </html>
               HTML
             end
 
@@ -3585,13 +3585,13 @@ describe Ronin::Vulns::ReflectedXSS do
           context "but the '\\'' character was URI escaped" do
             let(:response_body) do
               <<~HTML
-              <html>
-                <body>
-                  <p>example content</p>
-                  <p#{original_value}#{random_value1}%27"= /><#{random_value2}></p>
-                  <p>more content</p>
-                </body>
-              </html>
+                <html>
+                  <body>
+                    <p>example content</p>
+                    <p#{original_value}#{random_value1}%27"= /><#{random_value2}></p>
+                    <p>more content</p>
+                  </body>
+                </html>
               HTML
             end
 
@@ -3609,13 +3609,13 @@ describe Ronin::Vulns::ReflectedXSS do
           context "but the '\\'' character was filtered" do
             let(:response_body) do
               <<~HTML
-              <html>
-                <body>
-                  <p>example content</p>
-                  <p#{original_value}#{random_value1}"= /><#{random_value2}></p>
-                  <p>more content</p>
-                </body>
-              </html>
+                <html>
+                  <body>
+                    <p>example content</p>
+                    <p#{original_value}#{random_value1}"= /><#{random_value2}></p>
+                    <p>more content</p>
+                  </body>
+                </html>
               HTML
             end
 
@@ -3633,13 +3633,13 @@ describe Ronin::Vulns::ReflectedXSS do
           context "but the '\"' character was HTML escaped" do
             let(:response_body) do
               <<~HTML
-              <html>
-                <body>
-                  <p>example content</p>
-                  <p#{original_value}#{random_value1}'&quot;= /><#{random_value2}></p>
-                  <p>more content</p>
-                </body>
-              </html>
+                <html>
+                  <body>
+                    <p>example content</p>
+                    <p#{original_value}#{random_value1}'&quot;= /><#{random_value2}></p>
+                    <p>more content</p>
+                  </body>
+                </html>
               HTML
             end
 
@@ -3657,13 +3657,13 @@ describe Ronin::Vulns::ReflectedXSS do
           context "but the '\"' character was filtered" do
             let(:response_body) do
               <<~HTML
-              <html>
-                <body>
-                  <p>example content</p>
-                  <p#{original_value}#{random_value1}'= /><#{random_value2}></p>
-                  <p>more content</p>
-                </body>
-              </html>
+                <html>
+                  <body>
+                    <p>example content</p>
+                    <p#{original_value}#{random_value1}'= /><#{random_value2}></p>
+                    <p>more content</p>
+                  </body>
+                </html>
               HTML
             end
 
@@ -3681,13 +3681,13 @@ describe Ronin::Vulns::ReflectedXSS do
           context "but the '=' character was URI escaped" do
             let(:response_body) do
               <<~HTML
-              <html>
-                <body>
-                  <p>example content</p>
-                  <p#{original_value}#{random_value1}'"%3D /><#{random_value2}></p>
-                  <p>more content</p>
-                </body>
-              </html>
+                <html>
+                  <body>
+                    <p>example content</p>
+                    <p#{original_value}#{random_value1}'"%3D /><#{random_value2}></p>
+                    <p>more content</p>
+                  </body>
+                </html>
               HTML
             end
 
@@ -3705,13 +3705,13 @@ describe Ronin::Vulns::ReflectedXSS do
           context "but the '=' character was filtered" do
             let(:response_body) do
               <<~HTML
-              <html>
-                <body>
-                  <p>example content</p>
-                  <p#{original_value}#{random_value1}'" /><#{random_value2}></p>
-                  <p>more content</p>
-                </body>
-              </html>
+                <html>
+                  <body>
+                    <p>example content</p>
+                    <p#{original_value}#{random_value1}'" /><#{random_value2}></p>
+                    <p>more content</p>
+                  </body>
+                </html>
               HTML
             end
 
@@ -3729,13 +3729,13 @@ describe Ronin::Vulns::ReflectedXSS do
           context "but the '>' character was HTML escaped" do
             let(:response_body) do
               <<~HTML
-              <html>
-                <body>
-                  <p>example content</p>
-                  <p#{original_value}#{random_value1}'"= /&gt;<#{random_value2}></p>
-                  <p>more content</p>
-                </body>
-              </html>
+                <html>
+                  <body>
+                    <p>example content</p>
+                    <p#{original_value}#{random_value1}'"= /&gt;<#{random_value2}></p>
+                    <p>more content</p>
+                  </body>
+                </html>
               HTML
             end
 
@@ -3753,13 +3753,13 @@ describe Ronin::Vulns::ReflectedXSS do
           context "but the '>' character was URI escaped" do
             let(:response_body) do
               <<~HTML
-              <html>
-                <body>
-                  <p>example content</p>
-                  <p#{original_value}#{random_value1}'"= /%3E<#{random_value2}></p>
-                  <p>more content</p>
-                </body>
-              </html>
+                <html>
+                  <body>
+                    <p>example content</p>
+                    <p#{original_value}#{random_value1}'"= /%3E<#{random_value2}></p>
+                    <p>more content</p>
+                  </body>
+                </html>
               HTML
             end
 
@@ -3777,13 +3777,13 @@ describe Ronin::Vulns::ReflectedXSS do
           context "but the '>' character was filtered" do
             let(:response_body) do
               <<~HTML
-              <html>
-                <body>
-                  <p>example content</p>
-                  <p#{original_value}#{random_value1}'"= /<#{random_value2}></p>
-                  <p>more content</p>
-                </body>
-              </html>
+                <html>
+                  <body>
+                    <p>example content</p>
+                    <p#{original_value}#{random_value1}'"= /<#{random_value2}></p>
+                    <p>more content</p>
+                  </body>
+                </html>
               HTML
             end
 
@@ -3801,13 +3801,13 @@ describe Ronin::Vulns::ReflectedXSS do
           context "but the ' ' character was HTML escaped" do
             let(:response_body) do
               <<~HTML
-              <html>
-                <body>
-                  <p>example content</p>
-                  <p#{original_value}#{random_value1}'"=&nbsp;/><#{random_value2}></p>
-                  <p>more content</p>
-                </body>
-              </html>
+                <html>
+                  <body>
+                    <p>example content</p>
+                    <p#{original_value}#{random_value1}'"=&nbsp;/><#{random_value2}></p>
+                    <p>more content</p>
+                  </body>
+                </html>
               HTML
             end
 
@@ -3825,13 +3825,13 @@ describe Ronin::Vulns::ReflectedXSS do
           context "but the ' ' character was URI escaped" do
             let(:response_body) do
               <<~HTML
-              <html>
-                <body>
-                  <p>example content</p>
-                  <p#{original_value}#{random_value1}'"=%20/><#{random_value2}></p>
-                  <p>more content</p>
-                </body>
-              </html>
+                <html>
+                  <body>
+                    <p>example content</p>
+                    <p#{original_value}#{random_value1}'"=%20/><#{random_value2}></p>
+                    <p>more content</p>
+                  </body>
+                </html>
               HTML
             end
 
@@ -3849,13 +3849,13 @@ describe Ronin::Vulns::ReflectedXSS do
           context "but the ' ' character was filtered" do
             let(:response_body) do
               <<~HTML
-              <html>
-                <body>
-                  <p>example content</p>
-                  <p#{original_value}#{random_value1}'"=/><#{random_value2}></p>
-                  <p>more content</p>
-                </body>
-              </html>
+                <html>
+                  <body>
+                    <p>example content</p>
+                    <p#{original_value}#{random_value1}'"=/><#{random_value2}></p>
+                    <p>more content</p>
+                  </body>
+                </html>
               HTML
             end
 
@@ -3873,13 +3873,13 @@ describe Ronin::Vulns::ReflectedXSS do
           context "but the '/' character was URI escaped" do
             let(:response_body) do
               <<~HTML
-              <html>
-                <body>
-                  <p>example content</p>
-                  <p#{original_value}#{random_value1}'"= %2F><#{random_value2}></p>
-                  <p>more content</p>
-                </body>
-              </html>
+                <html>
+                  <body>
+                    <p>example content</p>
+                    <p#{original_value}#{random_value1}'"= %2F><#{random_value2}></p>
+                    <p>more content</p>
+                  </body>
+                </html>
               HTML
             end
 
@@ -3897,13 +3897,13 @@ describe Ronin::Vulns::ReflectedXSS do
           context "but the '/' character was filtered" do
             let(:response_body) do
               <<~HTML
-              <html>
-                <body>
-                  <p>example content</p>
-                  <p#{original_value}#{random_value1}'"= ><#{random_value2}></p>
-                  <p>more content</p>
-                </body>
-              </html>
+                <html>
+                  <body>
+                    <p>example content</p>
+                    <p#{original_value}#{random_value1}'"= ><#{random_value2}></p>
+                    <p>more content</p>
+                  </body>
+                </html>
               HTML
             end
 
@@ -3921,13 +3921,13 @@ describe Ronin::Vulns::ReflectedXSS do
           context "but the '<' character was HTML escaped" do
             let(:response_body) do
               <<~HTML
-              <html>
-                <body>
-                  <p>example content</p>
-                  <p#{original_value}#{random_value1}'"= />&lt;#{random_value2}></p>
-                  <p>more content</p>
-                </body>
-              </html>
+                <html>
+                  <body>
+                    <p>example content</p>
+                    <p#{original_value}#{random_value1}'"= />&lt;#{random_value2}></p>
+                    <p>more content</p>
+                  </body>
+                </html>
               HTML
             end
 
@@ -3945,13 +3945,13 @@ describe Ronin::Vulns::ReflectedXSS do
           context "but the '<' character was URI escaped" do
             let(:response_body) do
               <<~HTML
-              <html>
-                <body>
-                  <p>example content</p>
-                  <p#{original_value}#{random_value1}'"= />%3C#{random_value2}></p>
-                  <p>more content</p>
-                </body>
-              </html>
+                <html>
+                  <body>
+                    <p>example content</p>
+                    <p#{original_value}#{random_value1}'"= />%3C#{random_value2}></p>
+                    <p>more content</p>
+                  </body>
+                </html>
               HTML
             end
 
@@ -3969,13 +3969,13 @@ describe Ronin::Vulns::ReflectedXSS do
           context "but the '<' character was filtered" do
             let(:response_body) do
               <<~HTML
-              <html>
-                <body>
-                  <p>example content</p>
-                  <p#{original_value}#{random_value1}'"= />#{random_value2}></p>
-                  <p>more content</p>
-                </body>
-              </html>
+                <html>
+                  <body>
+                    <p>example content</p>
+                    <p#{original_value}#{random_value1}'"= />#{random_value2}></p>
+                    <p>more content</p>
+                  </body>
+                </html>
               HTML
             end
 

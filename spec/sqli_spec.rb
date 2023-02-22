@@ -300,47 +300,47 @@ describe Ronin::Vulns::SQLI do
       context "but the first response is larger than the second response" do
         let(:response_body1) do
           <<~HTML
-          <html>
-            <body>
-              <p>example content</p>
-              <table>
-                <tr>
-                  <th>ID</th>
-                  <th>Value</th>
-                </tr>
-                <tr>
-                  <td>1</td>
-                  <td>Foo</td>
-                </tr>
-                <tr>
-                  <td>2</td>
-                  <td>Bar</td>
-                </tr>
-                <tr>
-                  <td>3</td>
-                  <td>Baz</td>
-                </tr>
-              </table>
-              <p>more content</p>
-            </body>
-          </html>
+            <html>
+              <body>
+                <p>example content</p>
+                <table>
+                  <tr>
+                    <th>ID</th>
+                    <th>Value</th>
+                  </tr>
+                  <tr>
+                    <td>1</td>
+                    <td>Foo</td>
+                  </tr>
+                  <tr>
+                    <td>2</td>
+                    <td>Bar</td>
+                  </tr>
+                  <tr>
+                    <td>3</td>
+                    <td>Baz</td>
+                  </tr>
+                </table>
+                <p>more content</p>
+              </body>
+            </html>
           HTML
         end
 
         let(:response_body2) do
           <<~HTML
-          <html>
-            <body>
-              <p>example content</p>
-              <table>
-                <tr>
-                  <th>ID</th>
-                  <th>Value</th>
-                </tr>
-              </table>
-              <p>more content</p>
-            </body>
-          </html>
+            <html>
+              <body>
+                <p>example content</p>
+                <table>
+                  <tr>
+                    <th>ID</th>
+                    <th>Value</th>
+                  </tr>
+                </table>
+                <p>more content</p>
+              </body>
+            </html>
           HTML
         end
 
@@ -364,47 +364,47 @@ describe Ronin::Vulns::SQLI do
       context "but the first response is smaller than the second response" do
         let(:response_body1) do
           <<~HTML
-          <html>
-            <body>
-              <p>example content</p>
-              <table>
-                <tr>
-                  <th>ID</th>
-                  <th>Value</th>
-                </tr>
-              </table>
-              <p>more content</p>
-            </body>
-          </html>
+            <html>
+              <body>
+                <p>example content</p>
+                <table>
+                  <tr>
+                    <th>ID</th>
+                    <th>Value</th>
+                  </tr>
+                </table>
+                <p>more content</p>
+              </body>
+            </html>
           HTML
         end
 
         let(:response_body2) do
           <<~HTML
-          <html>
-            <body>
-              <p>example content</p>
-              <table>
-                <tr>
-                  <th>ID</th>
-                  <th>Value</th>
-                </tr>
-                <tr>
-                  <td>1</td>
-                  <td>Foo</td>
-                </tr>
-                <tr>
-                  <td>2</td>
-                  <td>Bar</td>
-                </tr>
-                <tr>
-                  <td>3</td>
-                  <td>Baz</td>
-                </tr>
-              </table>
-              <p>more content</p>
-            </body>
-          </html>
+            <html>
+              <body>
+                <p>example content</p>
+                <table>
+                  <tr>
+                    <th>ID</th>
+                    <th>Value</th>
+                  </tr>
+                  <tr>
+                    <td>1</td>
+                    <td>Foo</td>
+                  </tr>
+                  <tr>
+                    <td>2</td>
+                    <td>Bar</td>
+                  </tr>
+                  <tr>
+                    <td>3</td>
+                    <td>Baz</td>
+                  </tr>
+                </table>
+                <p>more content</p>
+              </body>
+            </html>
           HTML
         end
 

@@ -22,13 +22,13 @@ describe Ronin::Vulns::LFI::TestFile do
       let(:file) { "foo\nbar\nbaz\n" }
       let(:response_body) do
         <<~HTML
-        <html>
-          <body>
-            <p>bla bla bla</p>
-            #{file}
-            <p>bla bla bla</p>
-          </body>
-        </html>
+          <html>
+            <body>
+              <p>bla bla bla</p>
+              #{file}
+              <p>bla bla bla</p>
+            </body>
+          </html>
         HTML
       end
 
@@ -44,13 +44,13 @@ describe Ronin::Vulns::LFI::TestFile do
     context "when the #regexp does not match the response body" do
       let(:response_body) do
         <<~HTML
-        <html>
-          <body>
-            <p>bla bla bla</p>
-            <p>bla bla bla</p>
-            <p>bla bla bla</p>
-          </body>
-        </html>
+          <html>
+            <body>
+              <p>bla bla bla</p>
+              <p>bla bla bla</p>
+              <p>bla bla bla</p>
+            </body>
+          </html>
         HTML
       end
 
@@ -65,13 +65,13 @@ describe Ronin::Vulns::LFI::TestFile do
       let(:file) { "foo\nbar\nbaz\n" }
       let(:response_body) do
         <<~HTML
-        <html>
-          <body>
-            <p>bla bla bla</p>
-            #{file}
-            <p>bla bla bla</p>
-          </body>
-        </html>
+          <html>
+            <body>
+              <p>bla bla bla</p>
+              #{file}
+              <p>bla bla bla</p>
+            </body>
+          </html>
         HTML
       end
 
@@ -83,13 +83,13 @@ describe Ronin::Vulns::LFI::TestFile do
     context "when the #regexp does not match the response body" do
       let(:response_body) do
         <<~HTML
-        <html>
-          <body>
-            <p>bla bla bla</p>
-            <p>bla bla bla</p>
-            <p>bla bla bla</p>
-          </body>
-        </html>
+          <html>
+            <body>
+              <p>bla bla bla</p>
+              <p>bla bla bla</p>
+              <p>bla bla bla</p>
+            </body>
+          </html>
         HTML
       end
 

@@ -83,13 +83,13 @@ describe Ronin::Vulns::ReflectedXSS::TestString do
     context "when the #regexp matches the response body" do
       let(:response_body) do
         <<~HTML
-        <html>
-          <body>
-            <p>bla bla bla</p>
-            ABCabcXYZ
-            <p>bla bla bla</p>
-          </body>
-        </html>
+          <html>
+            <body>
+              <p>bla bla bla</p>
+              ABCabcXYZ
+              <p>bla bla bla</p>
+            </body>
+          </html>
         HTML
       end
 
@@ -110,13 +110,13 @@ describe Ronin::Vulns::ReflectedXSS::TestString do
     context "when the #regexp does not match the response body" do
       let(:response_body) do
         <<~HTML
-        <html>
-          <body>
-            <p>bla bla bla</p>
-            <p>bla bla bla</p>
-            <p>bla bla bla</p>
-          </body>
-        </html>
+          <html>
+            <body>
+              <p>bla bla bla</p>
+              <p>bla bla bla</p>
+              <p>bla bla bla</p>
+            </body>
+          </html>
         HTML
       end
 

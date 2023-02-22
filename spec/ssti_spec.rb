@@ -182,13 +182,13 @@ describe Ronin::Vulns::SSTI do
     context "when the response contains #test_expr.result" do
       let(:response_body) do
         <<~HTML
-        <html>
-          <body>
-            <p>example content</p>
-            <p>#{test_expr.result}content</p>
-            <p>more content</p>
-          </body>
-        </html>
+          <html>
+            <body>
+              <p>example content</p>
+              <p>#{test_expr.result}content</p>
+              <p>more content</p>
+            </body>
+          </html>
         HTML
       end
 

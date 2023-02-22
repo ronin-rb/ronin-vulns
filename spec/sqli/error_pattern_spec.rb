@@ -45,13 +45,13 @@ describe Ronin::Vulns::SQLI::ErrorPattern do
       let(:error) { "PostgreSQL bla bla bla ERROR" }
       let(:response_body) do
         <<~HTML
-        <html>
-          <body>
-            <p>bla bla bla</p>
-            #{error} bla bla bla
-            <p>bla bla bla</p>
-          </body>
-        </html>
+          <html>
+            <body>
+              <p>bla bla bla</p>
+              #{error} bla bla bla
+              <p>bla bla bla</p>
+            </body>
+          </html>
         HTML
       end
 
@@ -67,13 +67,13 @@ describe Ronin::Vulns::SQLI::ErrorPattern do
     context "when the #regexp does not match the response body" do
       let(:response_body) do
         <<~HTML
-        <html>
-          <body>
-            <p>bla bla bla</p>
-            <p>bla bla bla</p>
-            <p>bla bla bla</p>
-          </body>
-        </html>
+          <html>
+            <body>
+              <p>bla bla bla</p>
+              <p>bla bla bla</p>
+              <p>bla bla bla</p>
+            </body>
+          </html>
         HTML
       end
 
@@ -88,13 +88,13 @@ describe Ronin::Vulns::SQLI::ErrorPattern do
       let(:error) { "PostgreSQL bla bla bla ERROR" }
       let(:response_body) do
         <<~HTML
-        <html>
-          <body>
-            <p>bla bla bla</p>
-            #{error} bla bla bla
-            <p>bla bla bla</p>
-          </body>
-        </html>
+          <html>
+            <body>
+              <p>bla bla bla</p>
+              #{error} bla bla bla
+              <p>bla bla bla</p>
+            </body>
+          </html>
         HTML
       end
 
@@ -106,13 +106,13 @@ describe Ronin::Vulns::SQLI::ErrorPattern do
     context "when the #regexp does not match the response body" do
       let(:response_body) do
         <<~HTML
-        <html>
-          <body>
-            <p>bla bla bla</p>
-            <p>bla bla bla</p>
-            <p>bla bla bla</p>
-          </body>
-        </html>
+          <html>
+            <body>
+              <p>bla bla bla</p>
+              <p>bla bla bla</p>
+              <p>bla bla bla</p>
+            </body>
+          </html>
         HTML
       end
 

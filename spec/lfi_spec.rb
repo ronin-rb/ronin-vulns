@@ -411,13 +411,13 @@ describe Ronin::Vulns::LFI do
         context "and when the response contains the included boot.ini file" do
           let(:response_body) do
             <<~HTML
-            <html>
-              <body>
-                <p>example content</p>
-                #{boot_ini}
-                <p>more content</p>
-              </body>
-            </html>
+              <html>
+                <body>
+                  <p>example content</p>
+                  #{boot_ini}
+                  <p>more content</p>
+                </body>
+              </html>
             HTML
           end
 
@@ -474,13 +474,13 @@ describe Ronin::Vulns::LFI do
         context "and when the response contains the included Base64 encoded boot.ini file" do
           let(:response_body) do
             <<~HTML
-            <html>
-              <body>
-                <p>example content</p>
-                #{Base64.strict_encode64(boot_ini)}
-                <p>more content</p>
-              </body>
-            </html>
+              <html>
+                <body>
+                  <p>example content</p>
+                  #{Base64.strict_encode64(boot_ini)}
+                  <p>more content</p>
+                </body>
+              </html>
             HTML
           end
 
@@ -537,13 +537,13 @@ describe Ronin::Vulns::LFI do
         context "and when the response contains the included ROT13 encoded boot.ini file" do
           let(:response_body) do
             <<~HTML
-            <html>
-              <body>
-                <p>example content</p>
-                #{Ronin::Support::Crypto.rot(boot_ini,13)}
-                <p>more content</p>
-              </body>
-            </html>
+              <html>
+                <body>
+                  <p>example content</p>
+                  #{Ronin::Support::Crypto.rot(boot_ini,13)}
+                  <p>more content</p>
+                </body>
+              </html>
             HTML
           end
 
@@ -592,13 +592,13 @@ describe Ronin::Vulns::LFI do
         context "but when the response contains other Base64 strings" do
           let(:response_body) do
             <<~HTML
-            <html>
-              <body>
-                <p>example content</p>
-                #{Base64.strict_encode64('hello')}
-                <p>more content</p>
-              </body>
-            </html>
+              <html>
+                <body>
+                  <p>example content</p>
+                  #{Base64.strict_encode64('hello')}
+                  <p>more content</p>
+                </body>
+              </html>
             HTML
           end
 
@@ -618,13 +618,13 @@ describe Ronin::Vulns::LFI do
         context "and when the response contains the included Base64 + Zlib compressed encoded boot.ini file" do
           let(:response_body) do
             <<~HTML
-            <html>
-              <body>
-                <p>example content</p>
-                #{Base64.strict_encode64(Zlib.deflate(boot_ini))}
-                <p>more content</p>
-              </body>
-            </html>
+              <html>
+                <body>
+                  <p>example content</p>
+                  #{Base64.strict_encode64(Zlib.deflate(boot_ini))}
+                  <p>more content</p>
+                </body>
+              </html>
             HTML
           end
 
