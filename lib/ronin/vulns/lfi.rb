@@ -176,7 +176,7 @@ module Ronin
           "#{@escape_path}#{path[3..]}"
         elsif @os == :windows && path =~ /\A[A-Z]:/
           # pass through absolute Windows paths to other drives
-            path
+          path
         elsif path.start_with?(@separator)
           # escape absolute paths
           "#{@escape_path}#{path[1..]}"
