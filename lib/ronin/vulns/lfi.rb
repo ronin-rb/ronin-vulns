@@ -234,10 +234,8 @@ module Ronin
           Crypto.rot(body,-13) =~ @test_file
         when :zlib
           body.scan(Text::Patterns::BASE64).any? do |string|
-            begin
-              Compression.zlib_inflate(Base64.decode64(string)) =~ @test_file
-            rescue Zlib::DataError
-            end
+            Compression.zlib_inflate(Base64.decode64(string)) =~ @test_file
+          rescue Zlib::DataError
           end
         else
           body =~ @test_file
