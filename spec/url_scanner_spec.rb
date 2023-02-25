@@ -108,7 +108,7 @@ describe Ronin::Vulns::URLScanner do
           expect(Ronin::Vulns::OpenRedirect).to receive(:scan).with(url).and_return([])
         end
 
-        it "must yield each web vulnerability instance to the given block"  do
+        it "must yield each web vulnerability instance to the given block" do
           expect { |b|
             subject.scan(url,&b)
           }.to yield_successive_args(
@@ -159,7 +159,7 @@ describe Ronin::Vulns::URLScanner do
       end
 
       context "and a block is given" do
-        it "must not yield any web vulnerability instance to the given block"  do
+        it "must not yield any web vulnerability instance to the given block" do
           expect { |b|
             subject.scan(url,&b)
           }.to_not yield_control

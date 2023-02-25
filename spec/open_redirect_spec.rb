@@ -765,7 +765,7 @@ describe Ronin::Vulns::OpenRedirect do
                                       content_type: content_type,
                                       body:         response_body)
         end
-        
+
         it "must return false" do
           expect(subject.vulnerable?).to be_falsy
         end

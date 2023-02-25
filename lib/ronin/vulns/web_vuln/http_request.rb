@@ -118,9 +118,10 @@ module Ronin
                             cookie:         nil,
                             form_data:      nil)
           @url = url
-          
+
           if query_params && !query_params.empty?
             @url = url.dup
+
             @url.query_params = query_params
           end
 

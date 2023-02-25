@@ -138,7 +138,7 @@ describe Ronin::Vulns::CLI::WebVulnCommand do
     end
 
     context "when the '--test-query-param <name>' option is parsed" do
-      let(:query_param)  { 'id' }
+      let(:query_param) { 'id' }
 
       let(:argv) { ['--test-query-param', query_param] }
 
@@ -160,7 +160,7 @@ describe Ronin::Vulns::CLI::WebVulnCommand do
     end
 
     context "when the '--test-header-name <name>' option is parsed" do
-      let(:header_name)  { 'X-Foo' }
+      let(:header_name) { 'X-Foo' }
 
       let(:argv) { ['--test-header-name', header_name] }
 
@@ -174,7 +174,7 @@ describe Ronin::Vulns::CLI::WebVulnCommand do
     end
 
     context "when the '--test-cookie-param <name>' option is parsed" do
-      let(:cookie_param)  { 'session_id' }
+      let(:cookie_param) { 'session_id' }
 
       let(:argv) { ['--test-cookie-param', cookie_param] }
 
@@ -196,7 +196,7 @@ describe Ronin::Vulns::CLI::WebVulnCommand do
     end
 
     context "when the '--test-form-param <name>' option is parsed" do
-      let(:form_param)  { 'id' }
+      let(:form_param) { 'id' }
 
       let(:argv) { ['--test-form-param', form_param] }
 
@@ -366,7 +366,7 @@ describe Ronin::Vulns::CLI::WebVulnCommand do
     end
 
     context "when #test_query_params is set" do
-      let(:query_param)  { 'id' }
+      let(:query_param) { 'id' }
 
       let(:argv) { ['--test-query-param', query_param] }
       before { subject.option_parser.parse(argv) }
@@ -386,7 +386,7 @@ describe Ronin::Vulns::CLI::WebVulnCommand do
     end
 
     context "when #test_header_names is set" do
-      let(:header_name)  { 'X-Foo' }
+      let(:header_name) { 'X-Foo' }
 
       let(:argv) { ['--test-header-name', header_name] }
       before { subject.option_parser.parse(argv) }
@@ -397,7 +397,7 @@ describe Ronin::Vulns::CLI::WebVulnCommand do
     end
 
     context "when #test_cookie_params is set" do
-      let(:cookie_param)  { 'session_id' }
+      let(:cookie_param) { 'session_id' }
 
       let(:argv) { ['--test-cookie-param', cookie_param] }
       before { subject.option_parser.parse(argv) }
@@ -417,7 +417,7 @@ describe Ronin::Vulns::CLI::WebVulnCommand do
     end
 
     context "when #test_form_params is set" do
-      let(:form_param)  { 'id' }
+      let(:form_param) { 'id' }
 
       let(:argv) { ['--test-form-param', form_param] }
       before { subject.option_parser.parse(argv) }

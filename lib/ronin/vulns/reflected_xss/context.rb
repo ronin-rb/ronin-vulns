@@ -114,33 +114,33 @@ module Ronin
         # value.
         #
         # @api private
-        IN_DOUBLE_QUOTED_ATTR_VALUE = %r{<(#{TAG_NAME})#{ATTR_LIST}\s+(#{ATTR_NAME})\s*=\s*"[^"]+\z}
+        IN_DOUBLE_QUOTED_ATTR_VALUE = /<(#{TAG_NAME})#{ATTR_LIST}\s+(#{ATTR_NAME})\s*=\s*"[^"]+\z/
 
         # Regexp matching when an XSS occurs within a single-quoted attribute
         # value.
         #
         # @api private
-        IN_SINGLE_QUOTED_ATTR_VALUE = %r{<(#{TAG_NAME})#{ATTR_LIST}\s+(#{ATTR_NAME})\s*=\s*'[^']+\z}
+        IN_SINGLE_QUOTED_ATTR_VALUE = /<(#{TAG_NAME})#{ATTR_LIST}\s+(#{ATTR_NAME})\s*=\s*'[^']+\z/
 
         # Regexp matching when an XSS occurs within an unquoted attribute value.
         #
         # @api private
-        IN_UNQUOTED_ATTR_VALUE = %r{<(#{TAG_NAME})#{ATTR_LIST}\s+(#{ATTR_NAME})=[^"'\s]+\z}
+        IN_UNQUOTED_ATTR_VALUE = /<(#{TAG_NAME})#{ATTR_LIST}\s+(#{ATTR_NAME})=[^"'\s]+\z/
 
         # Regexp matching when an XSS occurs within an attribute's name.
         #
         # @api private
-        IN_ATTR_NAME = %r{<(#{TAG_NAME})#{ATTR_LIST}\s+(#{ATTR_NAME})\z}
+        IN_ATTR_NAME = /<(#{TAG_NAME})#{ATTR_LIST}\s+(#{ATTR_NAME})\z/
 
         # Regexp matching when an XSS occurs within a tag's attribute list.
         #
         # @api private
-        IN_ATTR_LIST = %r{<(#{TAG_NAME})#{ATTR_LIST}\s+\z}
+        IN_ATTR_LIST = /<(#{TAG_NAME})#{ATTR_LIST}\s+\z/
 
         # Regexp matching when an XSS occurs within a tag's name.
         #
         # @api private
-        IN_TAG_NAME = %r{<(#{TAG_NAME})\z}
+        IN_TAG_NAME = /<(#{TAG_NAME})\z/
 
         #
         # Determine the context of the XSS by checking the characters that come
@@ -160,7 +160,7 @@ module Ronin
         def self.identify(body,index)
           prefix = body[0,index]
 
-          if (match = prefix.match(IN_TAG_BODY))
+          if    (match = prefix.match(IN_TAG_BODY))
             new(:tag_body, tag: match[1])
           elsif (match = prefix.match(IN_DOUBLE_QUOTED_ATTR_VALUE))
             new(:double_quoted_attr_value, tag: match[1], attr: match[2])

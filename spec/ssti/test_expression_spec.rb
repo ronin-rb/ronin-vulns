@@ -35,7 +35,7 @@ describe Ronin::Vulns::SSTI::TestExpression do
 
     context "when given 'X * Z'" do
       let(:string) { '7 * 7' }
-      let(:result) { '49'  }
+      let(:result) { '49' }
 
       it "must parse the string and calculate the result" do
         expr = subject.parse(string)
@@ -87,7 +87,7 @@ describe Ronin::Vulns::SSTI::TestExpression do
 
     context "when given 'X + Z'" do
       let(:string) { '7 + 7' }
-      let(:result) { '14'  }
+      let(:result) { '14' }
 
       it "must parse the string and calculate the result" do
         expr = subject.parse(string)

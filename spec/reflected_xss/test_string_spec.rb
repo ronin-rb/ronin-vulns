@@ -32,7 +32,7 @@ describe Ronin::Vulns::ReflectedXSS::TestString do
 
     it "must build a Regexp that captures the characters but ignores their HTML/URI escaped versions" do
       expect(subject.regexp).to eq(
-        /(?:(')|%27|&\#39;|\\')?(?:(")|%22|&quot;|\\")?(?:(\ )|\+|%20|&nbsp;)?(?:(\/)|%2F)?(?:(>)|%3E|&gt;)?(?:(<)|%3C|&lt;)?(?:(&)|%26|&amp;)?/
+        %r{(?:(')|%27|&\#39;|\\')?(?:(")|%22|&quot;|\\")?(?:(\ )|\+|%20|&nbsp;)?(?:(/)|%2F)?(?:(>)|%3E|&gt;)?(?:(<)|%3C|&lt;)?(?:(&)|%26|&amp;)?}
       )
     end
   end

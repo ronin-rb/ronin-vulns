@@ -78,6 +78,7 @@ module Ronin
           #
           def scan_kwargs
             kwargs = super()
+
             kwargs[:test_url] = options[:test_url] if options[:test_url]
             return kwargs
           end

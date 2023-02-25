@@ -14,7 +14,7 @@ describe Ronin::Vulns::SQLI::ErrorPattern do
       /ERROR: parser: parse error at or near/,
       /PostgreSQL query failed/,
       /org\.postgresql\.jdbc/,
-      /Pdo[.\/_\\]Pgsql/,
+      %r{Pdo[\./_\\]Pgsql},
       /PSQLException/
     ]
   end

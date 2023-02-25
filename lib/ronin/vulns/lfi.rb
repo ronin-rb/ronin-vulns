@@ -57,7 +57,7 @@ module Ronin
       attr_reader :os
 
       # Optional filter bypass technique to use.
-      # 
+      #
       # @return [:null_byte, :base64, :rot13, :zlib, nil]
       attr_reader :filter_bypass
 
@@ -236,6 +236,7 @@ module Ronin
           body.scan(Text::Patterns::BASE64).any? do |string|
             Compression.zlib_inflate(Base64.decode64(string)) =~ @test_file
           rescue Zlib::DataError
+            # not zlib compressed Base64, ignore
           end
         else
           body =~ @test_file

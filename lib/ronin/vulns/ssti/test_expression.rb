@@ -68,7 +68,7 @@ module Ronin
         #   Could not parse the test expression.
         #
         def self.parse(string)
-          unless (match = string.match(/\A(\d+)\s*([\*\/\+\-])\s*(\d+)\z/))
+          unless (match = string.match(%r{\A(\d+)\s*([\*/\+\-])\s*(\d+)\z}))
             raise(ArgumentError,"could not parse the expression: #{string.inspect}")
           end
 

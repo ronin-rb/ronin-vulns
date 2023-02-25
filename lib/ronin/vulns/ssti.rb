@@ -108,7 +108,7 @@ module Ronin
       # @option kwargs [Proc, nil] :escape
       #   The escape method to use. If `escape:` is not given, then all escapes
       #   in {ESCAPES} will be tested..
-      #   
+      #
       # @option kwargs [Array<Symbol, String>, Symbol, String, true, nil] :query_params
       #   The query param name(s) to test.
       #

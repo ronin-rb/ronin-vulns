@@ -5,7 +5,7 @@ require 'ronin/vulns/web_vuln'
 require 'webmock/rspec'
 
 describe Ronin::Vulns::WebVuln do
-  let(:query_param)  { 'id' }
+  let(:query_param) { 'id' }
   let(:url) { "https://example.com/page?#{query_param}=1" }
 
   subject { described_class.new(url, query_param: query_param) }
@@ -92,7 +92,7 @@ describe Ronin::Vulns::WebVuln do
     end
 
     context "when #query_param is set" do
-      let(:query_param)  { 'id' }
+      let(:query_param) { 'id' }
       let(:url) { "https://example.com/page?#{query_param}=1&foo=bar" }
 
       subject { described_class.new(url, query_param: query_param) }
@@ -141,7 +141,7 @@ describe Ronin::Vulns::WebVuln do
     end
 
     context "when #header_name is set" do
-      let(:header_name)  { 'X-Foo' }
+      let(:header_name) { 'X-Foo' }
 
       context "when #headers is set" do
         subject do
@@ -191,7 +191,7 @@ describe Ronin::Vulns::WebVuln do
     end
 
     context "when #cookie_param is set" do
-      let(:cookie_param)  { 'bar' }
+      let(:cookie_param) { 'bar' }
 
       context "when #cookie is set" do
         subject do
@@ -242,7 +242,7 @@ describe Ronin::Vulns::WebVuln do
     end
 
     context "when #form_param is set" do
-      let(:form_param)  { 'bar' }
+      let(:form_param) { 'bar' }
 
       context "when #form_data is set" do
         subject do
@@ -666,7 +666,7 @@ describe Ronin::Vulns::WebVuln do
     end
 
     context "when the form_params: keyword argument is given" do
-      let(:form_params)   { %w[foo bar baz] }
+      let(:form_params) { %w[foo bar baz] }
 
       it "must send requests with each Cookie param set to the payload" do
         stub_request(:get, url).with(body: "foo=#{payload}")
@@ -934,7 +934,7 @@ describe Ronin::Vulns::WebVuln do
     end
 
     context "when #header_name is set" do
-      let(:header_name)  { 'X-Foo' }
+      let(:header_name) { 'X-Foo' }
       let(:headers) do
         {'X-Foo' => 'bar', 'X-Bar' => 'baz'}
       end
@@ -961,7 +961,7 @@ describe Ronin::Vulns::WebVuln do
     end
 
     context "when #cookie_param is set" do
-      let(:cookie_param)  { 'bar' }
+      let(:cookie_param) { 'bar' }
       let(:cookie) do
         {'foo' => 'A', 'bar' => 'B', 'baz' => 'C'}
       end
@@ -993,7 +993,7 @@ describe Ronin::Vulns::WebVuln do
       let(:form_data) do
         {'foo' => 'A', 'bar' => 'B', 'baz' => 'C'}
       end
-      let(:form_param)  { 'bar' }
+      let(:form_param) { 'bar' }
 
       subject do
         described_class.new(url, form_param: form_param,
@@ -1130,7 +1130,7 @@ describe Ronin::Vulns::WebVuln do
     end
 
     context "when #header_name is set" do
-      let(:header_name)  { 'X-Foo' }
+      let(:header_name) { 'X-Foo' }
       let(:headers) do
         {'X-Foo' => 'bar', 'X-Bar' => 'baz'}
       end
@@ -1167,7 +1167,7 @@ describe Ronin::Vulns::WebVuln do
     end
 
     context "when #cookie_param is set" do
-      let(:cookie_param)  { 'bar' }
+      let(:cookie_param) { 'bar' }
       let(:cookie) do
         {'foo' => 'A', 'bar' => 'B', 'baz' => 'C'}
       end
@@ -1207,7 +1207,7 @@ describe Ronin::Vulns::WebVuln do
       let(:form_data) do
         {'foo' => 'A', 'bar' => 'B', 'baz' => 'C'}
       end
-      let(:form_param)  { 'bar' }
+      let(:form_param) { 'bar' }
 
       subject do
         described_class.new(url, form_param: form_param,

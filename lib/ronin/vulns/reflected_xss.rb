@@ -90,7 +90,7 @@ module Ronin
       #   The test string to send.
       #
       # @yield [body, match]
-      #   If a block is given, it will be passed the response body and the 
+      #   If a block is given, it will be passed the response body and the
       #   regular expression match data, if the response contains the test
       #   string.
       #
@@ -118,7 +118,7 @@ module Ronin
       # Tests which HTML characters are accepted or escaped/filtered.
       #
       # @yield [body, match]
-      #   If a block is given, it will be passed the response body and the 
+      #   If a block is given, it will be passed the response body and the
       #   regular expression match data, if the response contains the test
       #   string.
       #

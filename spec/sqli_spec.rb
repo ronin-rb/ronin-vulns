@@ -563,22 +563,22 @@ describe Ronin::Vulns::SQLI do
         allow(Time).to receive(:now).and_return(
           time,
           # request 1
-          time+1, # 1 second later
-          time+1.1,
+          time + 1, # 1 second later
+          time + 1.1,
           # request 2
-          time+6.2, # 5.1 seconds later
-          time+6.3,
+          time + 6.2, # 5.1 seconds later
+          time + 6.3,
           # request 3
-          time+7.3, # 1 second later
-          time+7.4,
+          time + 7.3, # 1 second later
+          time + 7.4,
           # request 4
-          time+8.4, # 1 second later
-          time+8.5,
+          time + 8.4, # 1 second later
+          time + 8.5,
           # request 5
-          time+9.5, # 1 second later
-          time+9.6,
+          time + 9.5, # 1 second later
+          time + 9.6,
           # request 6
-          time+10.6 # 1 second later
+          time + 10.6 # 1 second later
         )
 
         stub_request(:get,"https://example.com/page?#{query_param}=#{original_value} SLEEP(5)&baz=3&foo=1")

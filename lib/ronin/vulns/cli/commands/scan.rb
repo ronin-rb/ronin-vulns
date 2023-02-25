@@ -98,7 +98,7 @@ module Ronin
                                          'double-encode' => :double_encode,
                                          'suffix-escape' => :suffix_escape,
                                          'null-byte'     => :null_byte
-                                       },
+                                       }
                                      },
                                      desc: 'Optional filter-bypass strategy to use'
 
@@ -127,7 +127,7 @@ module Ronin
           option :sqli_terminate, desc: 'Terminates the SQL expression with a --'
 
           option :ssti_test_expr, value: {
-                                    type: /\A\d+\s*[\*\/\+\-]\s*\d+\z/,
+                                    type: %r{\A\d+\s*[\*/\+\-]\s*\d+\z},
                                     usage: '{X*Y | X/Z | X+Y | X-Y}'
                                   },
                                   desc: 'Optional numeric test to use' do |expr|
@@ -260,10 +260,10 @@ module Ronin
           def scan_kwargs
             kwargs = super()
 
-            kwargs[:lfi]  = lfi_kwargs
-            kwargs[:rfi]  = rfi_kwargs
-            kwargs[:sqli] = sqli_kwargs
-            kwargs[:ssti] = ssti_kwargs
+            kwargs[:lfi]           = lfi_kwargs
+            kwargs[:rfi]           = rfi_kwargs
+            kwargs[:sqli]          = sqli_kwargs
+            kwargs[:ssti]          = ssti_kwargs
             kwargs[:open_redirect] = open_redirect_kwargs
             kwargs[:reflected_xss] = reflected_xss_kwargs
 

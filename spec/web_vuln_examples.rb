@@ -66,7 +66,7 @@ RSpec.shared_examples_for "Ronin::Vulns::WebVuln#initialize examples" do
     end
 
     context "but it's a Symbol" do
-      let(:header_name) { :'X-Vuln' }
+      let(:header_name) { :"X-Vuln" }
 
       subject { described_class.new(url, header_name: header_name) }
 

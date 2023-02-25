@@ -749,7 +749,7 @@ describe Ronin::Vulns::ReflectedXSS do
           )
         end
 
-        it "must set #context "do
+        it "must set #context" do
           subject.vulnerable?
 
           expect(subject.context).to be_kind_of(described_class::Context)

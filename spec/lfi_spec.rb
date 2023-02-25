@@ -585,27 +585,27 @@ describe Ronin::Vulns::LFI do
       end
 
       context "and when the response does not contain the included Base64 + Zlib compressed /etc/passwd file" do
-        it "must return false" do
-          expect(subject.vulnerable?).to be_falsy
-        end
+       it "must return false" do
+         expect(subject.vulnerable?).to be_falsy
+       end
 
-        context "but when the response contains other Base64 strings" do
-          let(:response_body) do
-            <<~HTML
-              <html>
-                <body>
-                  <p>example content</p>
-                  #{Base64.strict_encode64('hello')}
-                  <p>more content</p>
-                </body>
-              </html>
-            HTML
-          end
+       context "but when the response contains other Base64 strings" do
+         let(:response_body) do
+           <<~HTML
+             <html>
+               <body>
+                 <p>example content</p>
+                 #{Base64.strict_encode64('hello')}
+                 <p>more content</p>
+               </body>
+             </html>
+           HTML
+         end
 
-          it "must return false" do
-            expect(subject.vulnerable?).to be_falsy
-          end
-        end
+         it "must return false" do
+           expect(subject.vulnerable?).to be_falsy
+         end
+       end
      end
 
       context "and when #os is :windows" do

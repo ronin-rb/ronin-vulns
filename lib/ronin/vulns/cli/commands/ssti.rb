@@ -63,7 +63,7 @@ module Ronin
 
           option :test_expr, short: '-T',
                              value: {
-                               type: /\A\d+\s*[\*\/\+\-]\s*\d+\z/,
+                               type: %r{\A\d+\s*[\*/\+\-]\s*\d+\z},
                                usage: '{X*Y | X/Z | X+Y | X-Y}'
                              },
                              desc: 'Optional numeric test to use' do |expr|
@@ -86,6 +86,7 @@ module Ronin
           #
           def scan_kwargs
             kwargs = super()
+
             kwargs[:test_expr] = @test_expr if @test_expr
             return kwargs
           end

@@ -80,7 +80,7 @@ module Ronin
         when '301', '302', '303', '307', '308'
           if (locations = response.get_fields('Location'))
             escaped_test_url = Regexp.escape(@test_url)
-            regexp = %r{\A#{escaped_test_url}(?:[\?&].+)?\z}
+            regexp           = /\A#{escaped_test_url}(?:[\?&].+)?\z/
 
             locations.last =~ regexp
           end
@@ -89,7 +89,18 @@ module Ronin
 
           if content_type && content_type.include?('text/html')
             escaped_test_url = Regexp.escape(CGI.escapeHTML(@test_url))
-            regexp = %r{<meta\s+http-equiv\s*=\s*(?:"refresh"|'refresh'|refresh)\s+content\s*=\s*(?:"\s*\d+\s*;\s*url\s*=\s*'\s*#{escaped_test_url}\s*'\s*"|'\s*\d+\s*;\s*url\s*=\s*"\s*#{escaped_test_url}\s*"\s*'|\s*\d+;url=(?:"#{escaped_test_url}"|'#{escaped_test_url}'))\s*(?:/\s*)?>}i
+
+            regexp = %r{
+              <meta\s+
+                http-equiv\s*=\s*(?: "refresh" | 'refresh' | refresh )\s+
+                content\s*=\s*
+                (?:
+                 "\s*\d+\s*;\s*url\s*=\s*'\s*#{escaped_test_url}\s*'\s*"|
+                 '\s*\d+\s*;\s*url\s*=\s*"\s*#{escaped_test_url}\s*"\s*'|
+                 \s*\d+;url=(?: "#{escaped_test_url}" | '#{escaped_test_url}' )
+                )\s*
+                (?:/\s*)?>
+            }xi
 
             response.body =~ regexp
           end

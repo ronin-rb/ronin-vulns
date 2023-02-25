@@ -69,7 +69,7 @@ module Ronin
                                      'double-encode' => :double_encode,
                                      'suffix-escape' => :suffix_escape,
                                      'null-byte'     => :null_byte
-                                   },
+                                   }
                                  },
                                  desc: 'Optional filter-bypass strategy to use'
 

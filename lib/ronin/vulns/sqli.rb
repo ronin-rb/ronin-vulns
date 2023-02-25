@@ -41,7 +41,7 @@ module Ronin
       attr_reader :escape_quote
 
       # Specifies whether to escape parenthesis.
-      # 
+      #
       # @return [Boolean]
       attr_reader :escape_parens
 
@@ -204,7 +204,7 @@ module Ronin
           /ERROR: parser: parse error at or near/,
           /PostgreSQL query failed/,
           /org\.postgresql\.jdbc/,
-          /Pdo[.\/_\\]Pgsql/,
+          %r{Pdo[\./_\\]Pgsql},
           /PSQLException/
         ],
 
@@ -218,12 +218,12 @@ module Ronin
           /MySqlClient\./,
           /com\.mysql\.jdbc/,
           /Zend_Db_(?:Adapter|Statement)_Mysqli_Exception/,
-          /Pdo[.\/_\\]Mysql/,
+          %r{Pdo[\./_\\]Mysql},
           /MySqlException/
         ],
 
         sqlite: ErrorPattern[
-          /SQLite\/JDBCDriver/,
+          %r{SQLite/JDBCDriver},
           /SQLite\.Exception/,
           /(Microsoft|System)\.Data\.SQLite\.SQLiteException/,
           /Warning.*\W(?:sqlite_|SQLite3::)/,
@@ -232,7 +232,7 @@ module Ronin
           /sqlite3\.OperationalError:/,
           /SQLite3::SQLException/,
           /org\.sqlite\.JDBC/,
-          /Pdo[.\/_\\]Sqlite/,
+          %r{Pdo[\./_\\]Sqlite},
           /SQLiteException/
         ],
 
@@ -253,7 +253,7 @@ module Ronin
           /macromedia\.jdbc\.sqlserver/,
           /Zend_Db_(?:Adapter|Statement)_Sqlsrv_Exception/,
           /com\.microsoft\.sqlserver\.jdbc/,
-          /Pdo[.\/_\\](?:Mssql|SqlSrv)/,
+          %r{Pdo[\./_\\](?:Mssql|SqlSrv)},
           /SQL(?:Srv|Server)Exception/
         ],
 
@@ -267,7 +267,7 @@ module Ronin
           /macromedia\.jdbc\.oracle/,
           /oracle\.jdbc/,
           /Zend_Db_(?:Adapter|Statement)_Oracle_Exception/,
-          /Pdo[.\/_\\](?:Oracle|OCI)/,
+          %r{Pdo[\./_\\](?:Oracle|OCI)},
           /OracleException/
         ]
       }
@@ -316,6 +316,7 @@ module Ronin
       #
       def test_or_true_and_false
         id = random_id
+
         response1 = exploit("OR #{id}=#{id}")
         response2 = exploit("AND #{random_id}=#{random_id}")
 

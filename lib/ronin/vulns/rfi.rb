@@ -65,7 +65,7 @@ module Ronin
       attr_reader :filter_bypass
 
       # URL of the Remote File Inclusion (RFI) Test script
-      # 
+      #
       # @return [URI::HTTP, String]
       attr_reader :test_script_url
 

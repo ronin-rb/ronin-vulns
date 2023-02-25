@@ -53,7 +53,9 @@ module Ronin
                         desc: 'Sets an additional header' do |header|
                           name, value = header.split(/:\s*/,2)
 
+                          # lazy initialize the headers
                           @headers ||= {}
+
                           @headers[name] = value
                         end
 
@@ -74,14 +76,16 @@ module Ronin
                               desc: 'Sets an additional cookie param' do |param|
                                 name, value = param.split('=',2)
 
+                                # lazy initialize the cookie
                                 @cookie ||= Support::Network::HTTP::Cookie.new
+
                                 @cookie[name] = value
                               end
 
         option :referer, short: '-R',
                          value: {
                            type: String,
-                           usage: 'URL',
+                           usage: 'URL'
                          },
                          desc: 'Sets the Referer header' do |referer|
                            @referer = referer
@@ -95,7 +99,9 @@ module Ronin
                             desc: 'Sets an additional form param' do |param|
                               name, value = param.split('=',2)
 
+                              # lazy initialize the form data
                               @form_data ||= {}
+
                               @form_data[name] = value
                             end
 
@@ -104,7 +110,9 @@ module Ronin
                                     usage: 'NAME'
                                   },
                                   desc: 'Tests the URL query param name' do |name|
+                                    # lazy initialize the test query params
                                     @test_query_params ||= Set.new
+
                                     @test_query_params << name
                                   end
 
@@ -117,7 +125,9 @@ module Ronin
                                     usage: 'NAME'
                                   },
                                   desc: 'Tests the HTTP Header name' do |name|
+                                    # lazy initialize the test heade rnames
                                     @test_header_names ||= Set.new
+
                                     @test_header_names << name
                                   end
 
@@ -126,7 +136,9 @@ module Ronin
                                      usage: 'NAME'
                                    },
                                    desc: 'Tests the HTTP Cookie name' do |name|
+                                     # lazy initialize the test cookie params
                                      @test_cookie_params ||= Set.new
+
                                      @test_cookie_params << name
                                    end
 
@@ -135,11 +147,13 @@ module Ronin
         end
 
         option :test_form_param, value: {
-                                     type: String,
+                                   type: String,
                                      usage: 'NAME'
-                                   },
+                                 },
                                    desc: 'Tests the form param name' do |name|
+                                     # lazy initialize the test form params
                                      @test_form_params ||= Set.new
+
                                      @test_form_params << name
                                    end
 
@@ -295,7 +309,7 @@ module Ronin
             kwargs[:query_params]  = true
           end
 
-          kwargs[:header_names]  = @test_header_names  if @test_header_names
+          kwargs[:header_names] = @test_header_names if @test_header_names
 
           if @test_cookie_params
             kwargs[:cookie_params] = @test_cookie_params
@@ -303,7 +317,7 @@ module Ronin
             kwargs[:cookie_params] = true
           end
 
-          kwargs[:form_params]   = @test_form_params   if @test_form_params
+          kwargs[:form_params] = @test_form_params if @test_form_params
 
           return kwargs
         end

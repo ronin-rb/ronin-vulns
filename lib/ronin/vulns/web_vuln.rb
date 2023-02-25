@@ -292,7 +292,7 @@ module Ronin
         url    = URI(url)
         http ||= Support::Network::HTTP.connect_uri(url)
 
-        unless cookie_params 
+        unless cookie_params
           cookie_params = Set.new
 
           http.get_cookies(url.request_uri).each do |set_cookie|
