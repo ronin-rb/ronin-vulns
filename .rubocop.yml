@@ -21,3 +21,8 @@ Lint/EmptyBlock:
   Exclude:
     - 'spec/reflected_xss_spec.rb'
     - 'spec/url_scanner_spec.rb'
+
+# Ronin::Vulns::Vuln does not define an #initialize method
+Lint/MissingSuper:
+  Exclude:
+    - 'lib/ronin/vulns/web_vuln.rb'
