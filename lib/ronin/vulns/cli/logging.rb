@@ -23,6 +23,9 @@ require 'ronin/core/cli/logging'
 module Ronin
   module Vulns
     class CLI
+      #
+      # Mixin that adds methods for logging discovered web vulnerabilities.
+      #
       module Logging
         include Core::CLI::Logging
 
