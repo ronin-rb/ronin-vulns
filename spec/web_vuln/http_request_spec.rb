@@ -173,10 +173,13 @@ describe Ronin::Vulns::WebVuln::HTTPRequest do
     context "when initialized with the `query_params:` keyword argument" do
       subject { described_class.new(url, query_params: query_params) }
 
-      it "must merge the query params into in the URL" do
-        merged_url = url.dup
-        merged_url.query_params = query_params
+      let(:merged_url) do
+        url.dup.tap do |new_url|
+          new_url.query_params = query_params
+        end
+      end
 
+      it "must merge the query params into in the URL" do
         expect(subject.to_curl).to eq("curl '#{merged_url}'")
       end
     end
