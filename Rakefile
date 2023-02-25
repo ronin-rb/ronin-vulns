@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require 'rubygems'
-
 begin
   require 'bundler'
 rescue LoadError => e
