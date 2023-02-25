@@ -726,9 +726,9 @@ describe Ronin::Vulns::WebVuln do
       end
 
       let(:url) do
-        url = URI(super())
-        url.query_params = query_params
-        url
+        URI(super()).tap do |new_url|
+          new_url.query_params = query_params
+        end
       end
 
       subject do
