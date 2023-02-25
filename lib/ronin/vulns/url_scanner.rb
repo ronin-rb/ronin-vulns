@@ -27,6 +27,9 @@ require 'ronin/vulns/open_redirect'
 
 module Ronin
   module Vulns
+    #
+    # Top-level module which scans a URL for all web vulnerabilities.
+    #
     module URLScanner
       #
       # Scans a URL for web vulnerabilities.
