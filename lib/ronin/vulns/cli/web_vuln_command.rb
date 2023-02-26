@@ -249,19 +249,27 @@ module Ronin
         #   The URL(s) to scan.
         #
         def run(*urls)
+          unless (options[:input] || !urls.empty?)
+            print_error "must specify URL(s) or --input"
+            exit(-1)
+          end
+
+          vulns_discovered = false
+
           if options[:input]
             File.open(options[:input]) do |file|
               file.each_line(chomp: true) do |url|
-                process_url(url)
+                vulns_discovered ||= process_url(url)
               end
             end
           elsif !urls.empty?
             urls.each do |url|
-              process_url(url)
+              vulns_discovered ||= process_url(url)
             end
-          else
-            print_error "must specify URL(s) or --input"
-            exit(-1)
+          end
+
+          unless vulns_discovered
+            puts colors.green("No vulnerabilities found")
           end
         end
 
@@ -271,21 +279,32 @@ module Ronin
         # @param [String] url
         #   A URL to scan.
         #
+        # @return [Boolean]
+        #   Indicates whether a vulnerability was discovered in the URL.
+        #
         def process_url(url)
           unless url.start_with?('http://') || url.start_with?('https://')
             print_error("URL must start with http:// or https://: #{url.inspect}")
             exit(-1)
           end
 
+          vuln_discovered = false
+
           if @scan_mode == :first
             if (first_vuln = test_url(url))
               log_vuln(first_vuln)
+
+              vuln_discovered = true
             end
           else
             scan_url(url) do |vuln|
               log_vuln(vuln)
+
+              vuln_discovered = true
             end
           end
+
+          return vuln_discovered
         end
 
         #

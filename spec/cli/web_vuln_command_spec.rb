@@ -225,6 +225,18 @@ describe Ronin::Vulns::CLI::WebVulnCommand do
 
         subject.run(*argv)
       end
+
+      context "and no vulnerabilities are discovered on any of the URLs" do
+        it "must print a 'No vulnerabilities found' message" do
+          expect(subject).to receive(:process_url).with(url1).and_return(false)
+          expect(subject).to receive(:process_url).with(url2).and_return(false)
+          expect(subject).to receive(:puts).with(
+            subject.colors.green('No vulnerabilities found')
+          )
+
+          subject.run(*argv)
+        end
+      end
     end
 
     context "when given the '--input FILE' option" do
@@ -244,6 +256,18 @@ describe Ronin::Vulns::CLI::WebVulnCommand do
         expect(subject).to receive(:process_url).with(url2)
 
         subject.run
+      end
+
+      context "and no vulnerabilities are discovered on any of the URLs" do
+        it "must print a 'No vulnerabilities found' message" do
+          expect(subject).to receive(:process_url).with(url1).and_return(false)
+          expect(subject).to receive(:process_url).with(url2).and_return(false)
+          expect(subject).to receive(:puts).with(
+            subject.colors.green('No vulnerabilities found')
+          )
+
+          subject.run
+        end
       end
     end
 
