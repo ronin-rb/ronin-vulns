@@ -300,6 +300,48 @@ describe Ronin::Vulns::CLI::WebVulnCommand do
         end
       end
     end
+
+    context "when the given URL is an IP address" do
+      let(:url) { "127.0.0.1" }
+
+      it do
+        expect(subject).to receive(:print_error).with(
+          "URL must start with http:// or https://: #{url.inspect}"
+        )
+
+        expect {
+          subject.process_url(url)
+        }.to raise_error(SystemExit)
+      end
+    end
+
+    context "when the given URL is a hostname" do
+      let(:url) { "example.com" }
+
+      it do
+        expect(subject).to receive(:print_error).with(
+          "URL must start with http:// or https://: #{url.inspect}"
+        )
+
+        expect {
+          subject.process_url(url)
+        }.to raise_error(SystemExit)
+      end
+    end
+
+    context "when the given URL does not start with http:// or https://" do
+      let(:url) { "foo://" }
+
+      it do
+        expect(subject).to receive(:print_error).with(
+          "URL must start with http:// or https://: #{url.inspect}"
+        )
+
+        expect {
+          subject.process_url(url)
+        }.to raise_error(SystemExit)
+      end
+    end
   end
 
   describe "#scan_kwargs" do

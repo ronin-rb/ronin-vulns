@@ -272,6 +272,11 @@ module Ronin
         #   A URL to scan.
         #
         def process_url(url)
+          unless url.start_with?('http://') || url.start_with?('https://')
+            print_error("URL must start with http:// or https://: #{url.inspect}")
+            exit(-1)
+          end
+
           if @scan_mode == :first
             if (first_vuln = test_url(url))
               log_vuln(first_vuln)
