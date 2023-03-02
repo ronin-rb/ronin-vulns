@@ -34,7 +34,7 @@ generated_files:
   - man/ronin-vulns-scan.1
 
 dependencies:
-  ronin-support: ~> 1.0
+  ronin-support: ~> 1.0, >= 1.0.1
   ronin-core: ~> 0.1
 
 development_dependencies:
