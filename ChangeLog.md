@@ -1,3 +1,14 @@
+### 0.1.2 / 2023-03-01
+
+* Require `ronin-support` ~> 1.0, >= 1.0.1
+
+#### CLI
+
+* Validate that given URLs start with either `http://` or `https://`, and print
+  an error message otherwise.
+* Print a `No vulnerabilities found` message when no vulnerabilities were
+  discovered.
+
 ### 0.1.1 / 2023-02-02
 
 * Fixed typo in {Ronin::Vulns::CLI::WebVulnCommand#process_url} which effected
