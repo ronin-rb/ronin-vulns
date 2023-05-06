@@ -115,10 +115,10 @@ module Ronin
       #   If a block is given it will be yielded each discovered SQL injection
       #   vulnerability.
       #
-      # @yieldparam [SQLi] sqli
+      # @yieldparam [SQLI] sqli
       #   A discovered SQL injection vulnerability in the URL.
       #
-      # @return [Array<SQLi>]
+      # @return [Array<SQLI>]
       #   All discovered SQL injection vulnerabilities.
       #
       def self.scan(url, http: nil, **kwargs, &block)
