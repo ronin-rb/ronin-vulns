@@ -15,6 +15,7 @@ describe Ronin::Vulns::URLScanner do
       expect(Ronin::Vulns::SSTI).to receive(:scan).with(url).and_return([])
       expect(Ronin::Vulns::ReflectedXSS).to receive(:scan).with(url).and_return([])
       expect(Ronin::Vulns::OpenRedirect).to receive(:scan).with(url).and_return([])
+      expect(Ronin::Vulns::CommandInjection).to receive(:scan).with(url).and_return([])
 
       subject.scan(url)
     end
@@ -27,6 +28,7 @@ describe Ronin::Vulns::URLScanner do
         expect(Ronin::Vulns::SSTI).to receive(:scan).with(url).and_return([])
         expect(Ronin::Vulns::ReflectedXSS).to receive(:scan).with(url).and_return([])
         expect(Ronin::Vulns::OpenRedirect).to receive(:scan).with(url).and_return([])
+        expect(Ronin::Vulns::CommandInjection).to receive(:scan).with(url).and_return([])
 
         subject.scan(url, lfi: false)
       end
@@ -40,6 +42,7 @@ describe Ronin::Vulns::URLScanner do
         expect(Ronin::Vulns::SSTI).to receive(:scan).with(url).and_return([])
         expect(Ronin::Vulns::ReflectedXSS).to receive(:scan).with(url).and_return([])
         expect(Ronin::Vulns::OpenRedirect).to receive(:scan).with(url).and_return([])
+        expect(Ronin::Vulns::CommandInjection).to receive(:scan).with(url).and_return([])
 
         subject.scan(url, rfi: false)
       end
@@ -53,6 +56,7 @@ describe Ronin::Vulns::URLScanner do
         expect(Ronin::Vulns::SSTI).to receive(:scan).with(url).and_return([])
         expect(Ronin::Vulns::ReflectedXSS).to receive(:scan).with(url).and_return([])
         expect(Ronin::Vulns::OpenRedirect).to receive(:scan).with(url).and_return([])
+        expect(Ronin::Vulns::CommandInjection).to receive(:scan).with(url).and_return([])
 
         subject.scan(url, sqli: false)
       end
@@ -66,6 +70,7 @@ describe Ronin::Vulns::URLScanner do
         expect(Ronin::Vulns::SSTI).to_not receive(:scan)
         expect(Ronin::Vulns::ReflectedXSS).to receive(:scan).with(url).and_return([])
         expect(Ronin::Vulns::OpenRedirect).to receive(:scan).with(url).and_return([])
+        expect(Ronin::Vulns::CommandInjection).to receive(:scan).with(url).and_return([])
 
         subject.scan(url, ssti: false)
       end
@@ -79,6 +84,7 @@ describe Ronin::Vulns::URLScanner do
         expect(Ronin::Vulns::SSTI).to receive(:scan).with(url).and_return([])
         expect(Ronin::Vulns::ReflectedXSS).to_not receive(:scan)
         expect(Ronin::Vulns::OpenRedirect).to receive(:scan).with(url).and_return([])
+        expect(Ronin::Vulns::CommandInjection).to receive(:scan).with(url).and_return([])
 
         subject.scan(url, reflected_xss: false)
       end
@@ -92,6 +98,7 @@ describe Ronin::Vulns::URLScanner do
         expect(Ronin::Vulns::SSTI).to receive(:scan).with(url).and_return([])
         expect(Ronin::Vulns::ReflectedXSS).to receive(:scan).with(url).and_return([])
         expect(Ronin::Vulns::OpenRedirect).to_not receive(:scan)
+        expect(Ronin::Vulns::CommandInjection).to receive(:scan).with(url).and_return([])
 
         subject.scan(url, open_redirect: false)
       end
@@ -106,6 +113,7 @@ describe Ronin::Vulns::URLScanner do
           expect(Ronin::Vulns::SSTI).to receive(:scan).with(url).and_return([])
           expect(Ronin::Vulns::ReflectedXSS).to receive(:scan).with(url).and_return([])
           expect(Ronin::Vulns::OpenRedirect).to receive(:scan).with(url).and_return([])
+          expect(Ronin::Vulns::CommandInjection).to receive(:scan).with(url).and_return([])
         end
 
         it "must yield each web vulnerability instance to the given block" do
@@ -135,6 +143,7 @@ describe Ronin::Vulns::URLScanner do
           expect(Ronin::Vulns::SSTI).to receive(:scan).with(url).and_return([])
           expect(Ronin::Vulns::ReflectedXSS).to receive(:scan).with(url).and_return([])
           expect(Ronin::Vulns::OpenRedirect).to receive(:scan).with(url).and_return([])
+          expect(Ronin::Vulns::CommandInjection).to receive(:scan).with(url).and_return([])
         end
 
         it "must return an array of the discovered web vulnerability instances" do
@@ -156,6 +165,7 @@ describe Ronin::Vulns::URLScanner do
         expect(Ronin::Vulns::SSTI).to receive(:scan).with(url).and_return([])
         expect(Ronin::Vulns::ReflectedXSS).to receive(:scan).with(url).and_return([])
         expect(Ronin::Vulns::OpenRedirect).to receive(:scan).with(url).and_return([])
+        expect(Ronin::Vulns::CommandInjection).to receive(:scan).with(url).and_return([])
       end
 
       context "and a block is given" do
