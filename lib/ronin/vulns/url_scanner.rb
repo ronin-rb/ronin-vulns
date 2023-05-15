@@ -24,6 +24,7 @@ require 'ronin/vulns/sqli'
 require 'ronin/vulns/ssti'
 require 'ronin/vulns/reflected_xss'
 require 'ronin/vulns/open_redirect'
+require 'ronin/vulns/command_injection'
 
 module Ronin
   module Vulns
@@ -158,6 +159,9 @@ module Ronin
       # @option open_redirect [String] :test_url (OpenRedirect.random_test_url)
       #   The desired redirect URL to test the URL with.
       #
+      # @param [Hash{Symbol => Object}, false] command_injection
+      #   Additional options for {CommandInjection.scan}.
+      #
       # @yield [vuln]
       #   If a block is given it will be yielded each discovered web
       #   vulnerability.
@@ -174,6 +178,7 @@ module Ronin
                          ssti: {},
                          reflected_xss: {},
                          open_redirect: {},
+                         command_injection: {},
                          **kwargs,
                          &block)
         vulns = []
@@ -200,6 +205,10 @@ module Ronin
 
         if open_redirect
           vulns.concat(OpenRedirect.scan(url,**kwargs,**open_redirect,&block))
+        end
+
+        if command_injection
+          vulns.concat(CommandInjection.scan(url,**kwargs,**command_injection,&block))
         end
 
         return vulns
