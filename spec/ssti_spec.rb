@@ -63,7 +63,8 @@ describe Ronin::Vulns::SSTI do
   describe ".scan" do
     subject { described_class }
 
-    let(:url)     { "https://example.com/page?foo=1&bar=2&baz=3" }
+    let(:url) { "https://example.com/page?foo=1&bar=2&baz=3" }
+
     context "when the escape: keyword argument is not given" do
       it "must scan the URL using every escape in #{described_class}::ESCAPES" do
         stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=#{test_string}")
