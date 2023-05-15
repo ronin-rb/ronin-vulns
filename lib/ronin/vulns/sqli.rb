@@ -111,6 +111,18 @@ module Ronin
       # @param [Hash{Symbol => Object}] kwargs
       #   Additional keyword arguments for {WebVuln.scan}.
       #
+      # @option kwargs [Boolean] :escape_quote
+      #   Controls whether to escape a quoted string value. If not specified,
+      #   with and without quoted string escaping will be tested.
+      #
+      # @option kwargs [Boolean] :escape_parens
+      #   Controls whether to escape parenthesis. If not specified, with and
+      #   without parenthesis escaping will be tested.
+      #
+      # @option kwargs [Boolean] :terminate
+      #   Controls whether to terminate the SQL statement with `--`.
+      #   If not specified, with and without `--` terminate will be tested.
+      #
       # @yield [sqli]
       #   If a block is given it will be yielded each discovered SQL injection
       #   vulnerability.
@@ -125,9 +137,15 @@ module Ronin
         url    = URI(url)
         http ||= Support::Network::HTTP.connect_uri(url)
 
-        escape_quotes = [false, true]
-        escape_parens = [false, true]
-        terminations  = [false, true]
+        enum_booleans = ->(key) {
+          if kwargs.has_key?(key) then [kwargs.delete(key)]
+          else                         [false, true]
+          end
+        }
+
+        escape_quotes = enum_booleans.call(:escape_quote)
+        escape_parens = enum_booleans.call(:escape_parens)
+        terminations  = enum_booleans.call(:terminate)
 
         vulns = []
 
