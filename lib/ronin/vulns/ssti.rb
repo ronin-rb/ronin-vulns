@@ -149,9 +149,13 @@ module Ronin
         if kwargs.has_key?(:escape)
           super(url, **kwargs, &block)
         else
+          vulns = []
+
           ESCAPES.each do |escape|
-            super(url, escape: escape, **kwargs, &block)
+            vulns.concat(super(url, escape: escape, **kwargs, &block))
           end
+
+          return vulns
         end
       end
 
