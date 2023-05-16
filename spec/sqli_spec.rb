@@ -550,6 +550,1482 @@ describe Ronin::Vulns::SQLI do
       expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3')%20WAITFOR%20DELAY%20'0:0:5'--&foo=1")
       expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3')%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'--&foo=1")
     end
+
+    context "when `escape_quote: false` is given" do
+      it "must not add a quote to the SQL escape string in any of the requests" do
+        # query_param: foo, escape_quote: false, escape_parens: false, terminate: false
+        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3&foo=1%20OR%20\d+=\d+\z})
+        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3&foo=1%20AND%20\d+=\d+\z})
+        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1%20SLEEP(5)")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1%3BSELECT%20SLEEP(5)")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1%20PG_SLEEP(5)")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1%3BSELECT%20PG_SLEEP(5)")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1%20WAITFOR%20DELAY%20'0:0:5'")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'")
+
+        # query_param: bar, escape_quote: false, escape_parens: false, terminate: false
+        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2%20OR%20\d+=\d+&baz=3&foo=1\z})
+        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2%20AND%20\d+=\d+&baz=3&foo=1\z})
+        stub_request(:get,"https://example.com/page?bar=2%20SLEEP(5)&baz=3&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2%3BSELECT%20SLEEP(5)&baz=3&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2%20PG_SLEEP(5)&baz=3&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2%3BSELECT%20PG_SLEEP(5)&baz=3&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2%20WAITFOR%20DELAY%20'0:0:5'&baz=3&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'&baz=3&foo=1")
+
+        # query_param: baz, escape_quote: false, escape_parens: false, terminate: false
+        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3%20OR%20\d+=\d+&foo=1\z})
+        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3%20AND%20\d+=\d+&foo=1\z})
+        stub_request(:get,"https://example.com/page?bar=2&baz=3%20SLEEP(5)&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3%3BSELECT%20SLEEP(5)&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3%20PG_SLEEP(5)&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3%3BSELECT%20PG_SLEEP(5)&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3%20WAITFOR%20DELAY%20'0:0:5'&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'&foo=1")
+
+        # query_param: foo, escape_quote: false, escape_parens: false, terminate: true
+        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3&foo=1%20OR%20\d+=\d+--\z})
+        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3&foo=1%20AND%20\d+=\d+--\z})
+        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1%20SLEEP(5)--")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1%3BSELECT%20SLEEP(5)--")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1%20PG_SLEEP(5)--")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1%3BSELECT%20PG_SLEEP(5)--")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1%20WAITFOR%20DELAY%20'0:0:5'--")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'--")
+
+        # query_param: bar, escape_quote: false, escape_parens: false, terminate: true
+        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2%20OR%20\d+=\d+--&baz=3&foo=1\z})
+        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2%20AND%20\d+=\d+--&baz=3&foo=1\z})
+        stub_request(:get,"https://example.com/page?bar=2%20SLEEP(5)--&baz=3&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2%3BSELECT%20SLEEP(5)--&baz=3&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2%20PG_SLEEP(5)--&baz=3&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2%3BSELECT%20PG_SLEEP(5)--&baz=3&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2%20WAITFOR%20DELAY%20'0:0:5'--&baz=3&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'--&baz=3&foo=1")
+
+        # query_param: baz, escape_quote: false, escape_parens: false, terminate: true
+        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3%20OR%20\d+=\d+--&foo=1\z})
+        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3%20AND%20\d+=\d+--&foo=1\z})
+        stub_request(:get,"https://example.com/page?bar=2&baz=3%20SLEEP(5)--&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3%3BSELECT%20SLEEP(5)--&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3%20PG_SLEEP(5)--&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3%3BSELECT%20PG_SLEEP(5)--&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3%20WAITFOR%20DELAY%20'0:0:5'--&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'--&foo=1")
+
+        # query_param: foo, escape_quote: false, escape_parens: true, terminate: false
+        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3&foo=1\)%20OR%20\d+=\d+\z})
+        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3&foo=1\)%20AND%20\d+=\d+\z})
+        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1)%20SLEEP(5")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1)%3BSELECT%20SLEEP(5")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1)%20PG_SLEEP(5")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1)%3BSELECT%20PG_SLEEP(5")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1)%20WAITFOR%20DELAY%20'0:0:5'")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1)%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'")
+
+        # query_param: bar, escape_quote: false, escape_parens: true, terminate: false
+        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2\)%20OR%20\d+=\d+&baz=3&foo=1\z})
+        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2\)%20AND%20\d+=\d+&baz=3&foo=1\z})
+        stub_request(:get,"https://example.com/page?bar=2)%20SLEEP(5&baz=3&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2)%3BSELECT%20SLEEP(5&baz=3&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2)%20PG_SLEEP(5&baz=3&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2)%3BSELECT%20PG_SLEEP(5&baz=3&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2)%20WAITFOR%20DELAY%20'0:0:5'&baz=3&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2)%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'&baz=3&foo=1")
+
+        # query_param: baz, escape_quote: false, escape_parens: true, terminate: false
+        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3\)%20OR%20\d+=\d+&foo=1\z})
+        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3\)%20AND%20\d+=\d+&foo=1\z})
+        stub_request(:get,"https://example.com/page?bar=2&baz=3)%20SLEEP(5&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3)%3BSELECT%20SLEEP(5&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3)%20PG_SLEEP(5&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3)%3BSELECT%20PG_SLEEP(5&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3)%20WAITFOR%20DELAY%20'0:0:5'&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3)%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'&foo=1")
+
+        # query_param: foo, escape_quote: false, escape_parens: true, terminate: true
+        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3&foo=1\)%20OR%20\d+=\d+--\z})
+        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3&foo=1\)%20AND%20\d+=\d+--\z})
+        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1)%20SLEEP(5)--")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1)%3BSELECT%20SLEEP(5)--")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1)%20PG_SLEEP(5)--")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1)%3BSELECT%20PG_SLEEP(5)--")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1)%20WAITFOR%20DELAY%20'0:0:5'--")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1)%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'--")
+
+        # query_param: bar, escape_quote: false, escape_parens: true, terminate: true
+        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2\)%20OR%20\d+=\d+--&baz=3&foo=1\z})
+        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2\)%20AND%20\d+=\d+--&baz=3&foo=1\z})
+        stub_request(:get,"https://example.com/page?bar=2)%20SLEEP(5)--&baz=3&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2)%3BSELECT%20SLEEP(5)--&baz=3&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2)%20PG_SLEEP(5)--&baz=3&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2)%3BSELECT%20PG_SLEEP(5)--&baz=3&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2)%20WAITFOR%20DELAY%20'0:0:5'--&baz=3&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2)%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'--&baz=3&foo=1")
+
+        # query_param: baz, escape_quote: false, escape_parens: true, terminate: true
+        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3\)%20OR%20\d+=\d+--&foo=1\z})
+        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3\)%20AND%20\d+=\d+--&foo=1\z})
+        stub_request(:get,"https://example.com/page?bar=2&baz=3)%20SLEEP(5)--&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3)%3BSELECT%20SLEEP(5)--&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3)%20PG_SLEEP(5)--&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3)%3BSELECT%20PG_SLEEP(5)--&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3)%20WAITFOR%20DELAY%20'0:0:5'--&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3)%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'--&foo=1")
+
+        subject.scan(url, escape_quote: false)
+
+        # query_param: foo, escape_quote: false, escape_parens: false, terminate: false
+        expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3&foo=1%20OR%20\d+=\d+\z})
+        expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3&foo=1%20AND%20\d+=\d+\z})
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1%20SLEEP(5)")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1%3BSELECT%20SLEEP(5)")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1%20PG_SLEEP(5)")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1%3BSELECT%20PG_SLEEP(5)")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1%20WAITFOR%20DELAY%20'0:0:5'")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'")
+
+        # query_param: bar, escape_quote: false, escape_parens: false, terminate: false
+        expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2%20OR%20\d+=\d+&baz=3&foo=1\z})
+        expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2%20AND%20\d+=\d+&baz=3&foo=1\z})
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2%20SLEEP(5)&baz=3&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2%3BSELECT%20SLEEP(5)&baz=3&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2%20PG_SLEEP(5)&baz=3&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2%3BSELECT%20PG_SLEEP(5)&baz=3&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2%20WAITFOR%20DELAY%20'0:0:5'&baz=3&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'&baz=3&foo=1")
+
+        # query_param: baz, escape_quote: false, escape_parens: false, terminate: false
+        expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3%20OR%20\d+=\d+&foo=1\z})
+        expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3%20AND%20\d+=\d+&foo=1\z})
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3%20SLEEP(5)&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3%3BSELECT%20SLEEP(5)&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3%20PG_SLEEP(5)&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3%3BSELECT%20PG_SLEEP(5)&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3%20WAITFOR%20DELAY%20'0:0:5'&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'&foo=1")
+
+        # query_param: foo, escape_quote: false, escape_parens: false, terminate: true
+        expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3&foo=1%20OR%20\d+=\d+--\z})
+        expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3&foo=1%20AND%20\d+=\d+--\z})
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1%20SLEEP(5)--")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1%3BSELECT%20SLEEP(5)--")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1%20PG_SLEEP(5)--")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1%3BSELECT%20PG_SLEEP(5)--")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1%20WAITFOR%20DELAY%20'0:0:5'--")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'--")
+
+        # query_param: bar, escape_quote: false, escape_parens: false, terminate: true
+        expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2%20OR%20\d+=\d+--&baz=3&foo=1\z})
+        expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2%20AND%20\d+=\d+--&baz=3&foo=1\z})
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2%20SLEEP(5)--&baz=3&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2%3BSELECT%20SLEEP(5)--&baz=3&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2%20PG_SLEEP(5)--&baz=3&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2%3BSELECT%20PG_SLEEP(5)--&baz=3&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2%20WAITFOR%20DELAY%20'0:0:5'--&baz=3&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'--&baz=3&foo=1")
+
+        # query_param: baz, escape_quote: false, escape_parens: false, terminate: true
+        expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3%20OR%20\d+=\d+--&foo=1\z})
+        expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3%20AND%20\d+=\d+--&foo=1\z})
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3%20SLEEP(5)--&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3%3BSELECT%20SLEEP(5)--&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3%20PG_SLEEP(5)--&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3%3BSELECT%20PG_SLEEP(5)--&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3%20WAITFOR%20DELAY%20'0:0:5'--&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'--&foo=1")
+
+        # query_param: foo, escape_quote: false, escape_parens: true, terminate: false
+        expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3&foo=1\)%20OR%20\d+=\d+\z})
+        expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3&foo=1\)%20AND%20\d+=\d+\z})
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1)%20SLEEP(5")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1)%3BSELECT%20SLEEP(5")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1)%20PG_SLEEP(5")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1)%3BSELECT%20PG_SLEEP(5")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1)%20WAITFOR%20DELAY%20'0:0:5'")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1)%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'")
+
+        # query_param: bar, escape_quote: false, escape_parens: true, terminate: false
+        expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2\)%20OR%20\d+=\d+&baz=3&foo=1\z})
+        expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2\)%20AND%20\d+=\d+&baz=3&foo=1\z})
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2)%20SLEEP(5&baz=3&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2)%3BSELECT%20SLEEP(5&baz=3&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2)%20PG_SLEEP(5&baz=3&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2)%3BSELECT%20PG_SLEEP(5&baz=3&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2)%20WAITFOR%20DELAY%20'0:0:5'&baz=3&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2)%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'&baz=3&foo=1")
+
+        # query_param: baz, escape_quote: false, escape_parens: true, terminate: false
+        expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3\)%20OR%20\d+=\d+&foo=1\z})
+        expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3\)%20AND%20\d+=\d+&foo=1\z})
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3)%20SLEEP(5&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3)%3BSELECT%20SLEEP(5&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3)%20PG_SLEEP(5&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3)%3BSELECT%20PG_SLEEP(5&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3)%20WAITFOR%20DELAY%20'0:0:5'&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3)%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'&foo=1")
+
+        # query_param: foo, escape_quote: false, escape_parens: true, terminate: true
+        expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3&foo=1\)%20OR%20\d+=\d+--\z})
+        expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3&foo=1\)%20AND%20\d+=\d+--\z})
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1)%20SLEEP(5)--")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1)%3BSELECT%20SLEEP(5)--")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1)%20PG_SLEEP(5)--")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1)%3BSELECT%20PG_SLEEP(5)--")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1)%20WAITFOR%20DELAY%20'0:0:5'--")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1)%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'--")
+
+        # query_param: bar, escape_quote: false, escape_parens: true, terminate: true
+        expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2\)%20OR%20\d+=\d+--&baz=3&foo=1\z})
+        expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2\)%20AND%20\d+=\d+--&baz=3&foo=1\z})
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2)%20SLEEP(5)--&baz=3&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2)%3BSELECT%20SLEEP(5)--&baz=3&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2)%20PG_SLEEP(5)--&baz=3&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2)%3BSELECT%20PG_SLEEP(5)--&baz=3&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2)%20WAITFOR%20DELAY%20'0:0:5'--&baz=3&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2)%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'--&baz=3&foo=1")
+
+        # query_param: baz, escape_quote: false, escape_parens: true, terminate: true
+        expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3\)%20OR%20\d+=\d+--&foo=1\z})
+        expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3\)%20AND%20\d+=\d+--&foo=1\z})
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3)%20SLEEP(5)--&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3)%3BSELECT%20SLEEP(5)--&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3)%20PG_SLEEP(5)--&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3)%3BSELECT%20PG_SLEEP(5)--&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3)%20WAITFOR%20DELAY%20'0:0:5'--&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3)%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'--&foo=1")
+      end
+    end
+
+    context "when `escape_quote: true` is given" do
+      it "must only send requests containing a quote in the SQL escape string" do
+        # query_param: foo, escape_quote: true, escape_parens: false, terminate: false
+        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3&foo=1'%20OR%20\d+=\d+\z})
+        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3&foo=1'%20AND%20\d+=\d+\z})
+        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1'%20SLEEP(5)")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1'%3BSELECT%20SLEEP(5)")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1'%20PG_SLEEP(5)")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1'%3BSELECT%20PG_SLEEP(5)")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1'%20WAITFOR%20DELAY%20'0:0:5")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1'%3BSELECT%20WAITFOR%20DELAY%20'0:0:5")
+
+        # query_param: bar, escape_quote: true, escape_parens: false, terminate: false
+        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2'%20OR%20\d+=\d+&baz=3&foo=1\z})
+        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2'%20AND%20\d+=\d+&baz=3&foo=1\z})
+        stub_request(:get,"https://example.com/page?bar=2'%20SLEEP(5)&baz=3&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2'%3BSELECT%20SLEEP(5)&baz=3&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2'%20PG_SLEEP(5)&baz=3&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2'%3BSELECT%20PG_SLEEP(5)&baz=3&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2'%20WAITFOR%20DELAY%20'0:0:5&baz=3&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2'%3BSELECT%20WAITFOR%20DELAY%20'0:0:5&baz=3&foo=1")
+
+        # query_param: baz, escape_quote: true, escape_parens: false, terminate: false
+        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3'%20OR%20\d+=\d+&foo=1\z})
+        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3'%20AND%20\d+=\d+&foo=1\z})
+        stub_request(:get,"https://example.com/page?bar=2&baz=3'%20SLEEP(5)&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3'%3BSELECT%20SLEEP(5)&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3'%20PG_SLEEP(5)&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3'%3BSELECT%20PG_SLEEP(5)&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3'%20WAITFOR%20DELAY%20'0:0:5&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3'%3BSELECT%20WAITFOR%20DELAY%20'0:0:5&foo=1")
+
+        # query_param: foo, escape_quote: true, escape_parens: false, terminate: true
+        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3&foo=1'%20OR%20\d+=\d+--\z})
+        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3&foo=1'%20AND%20\d+=\d+--\z})
+        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1'%20SLEEP(5)--")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1'%3BSELECT%20SLEEP(5)--")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1'%20PG_SLEEP(5)--")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1'%3BSELECT%20PG_SLEEP(5)--")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1'%20WAITFOR%20DELAY%20'0:0:5'--")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1'%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'--")
+
+        # query_param: bar, escape_quote: true, escape_parens: false, terminate: true
+        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2'%20OR%20\d+=\d+--&baz=3&foo=1\z})
+        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2'%20AND%20\d+=\d+--&baz=3&foo=1\z})
+        stub_request(:get,"https://example.com/page?bar=2'%20SLEEP(5)--&baz=3&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2'%3BSELECT%20SLEEP(5)--&baz=3&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2'%20PG_SLEEP(5)--&baz=3&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2'%3BSELECT%20PG_SLEEP(5)--&baz=3&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2'%20WAITFOR%20DELAY%20'0:0:5'--&baz=3&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2'%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'--&baz=3&foo=1")
+
+        # query_param: baz, escape_quote: true, escape_parens: false, terminate: true
+        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3'%20OR%20\d+=\d+--&foo=1\z})
+        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3'%20AND%20\d+=\d+--&foo=1\z})
+        stub_request(:get,"https://example.com/page?bar=2&baz=3'%20SLEEP(5)--&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3'%3BSELECT%20SLEEP(5)--&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3'%20PG_SLEEP(5)--&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3'%3BSELECT%20PG_SLEEP(5)--&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3'%20WAITFOR%20DELAY%20'0:0:5'--&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3'%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'--&foo=1")
+
+        # query_param: foo, escape_quote: true, escape_parens: true, terminate: false
+        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3&foo=1'\)%20OR%20\d+=\d+\z})
+        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3&foo=1'\)%20AND%20\d+=\d+\z})
+        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1')%20SLEEP(5")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1')%3BSELECT%20SLEEP(5")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1')%20PG_SLEEP(5")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1')%3BSELECT%20PG_SLEEP(5")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1')%20WAITFOR%20DELAY%20'0:0:5")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1')%3BSELECT%20WAITFOR%20DELAY%20'0:0:5")
+
+        # query_param: bar, escape_quote: true, escape_parens: true, terminate: false
+        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2'\)%20OR%20\d+=\d+&baz=3&foo=1\z})
+        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2'\)%20AND%20\d+=\d+&baz=3&foo=1\z})
+        stub_request(:get,"https://example.com/page?bar=2')%20SLEEP(5&baz=3&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2')%3BSELECT%20SLEEP(5&baz=3&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2')%20PG_SLEEP(5&baz=3&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2')%3BSELECT%20PG_SLEEP(5&baz=3&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2')%20WAITFOR%20DELAY%20'0:0:5&baz=3&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2')%3BSELECT%20WAITFOR%20DELAY%20'0:0:5&baz=3&foo=1")
+
+        # query_param: baz, escape_quote: true, escape_parens: true, terminate: false
+        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3'\)%20OR%20\d+=\d+&foo=1\z})
+        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3'\)%20AND%20\d+=\d+&foo=1\z})
+        stub_request(:get,"https://example.com/page?bar=2&baz=3')%20SLEEP(5&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3')%3BSELECT%20SLEEP(5&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3')%20PG_SLEEP(5&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3')%3BSELECT%20PG_SLEEP(5&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3')%20WAITFOR%20DELAY%20'0:0:5&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3')%3BSELECT%20WAITFOR%20DELAY%20'0:0:5&foo=1")
+
+        # query_param: foo, escape_quote: true, escape_parens: true, terminate: true
+        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3&foo=1'\)%20OR%20\d+=\d+--\z})
+        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3&foo=1'\)%20AND%20\d+=\d+--\z})
+        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1')%20SLEEP(5)--")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1')%3BSELECT%20SLEEP(5)--")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1')%20PG_SLEEP(5)--")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1')%3BSELECT%20PG_SLEEP(5)--")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1')%20WAITFOR%20DELAY%20'0:0:5'--")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1')%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'--")
+
+        # query_param: bar, escape_quote: true, escape_parens: true, terminate: true
+        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2'\)%20OR%20\d+=\d+--&baz=3&foo=1\z})
+        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2'\)%20AND%20\d+=\d+--&baz=3&foo=1\z})
+        stub_request(:get,"https://example.com/page?bar=2')%20SLEEP(5)--&baz=3&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2')%3BSELECT%20SLEEP(5)--&baz=3&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2')%20PG_SLEEP(5)--&baz=3&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2')%3BSELECT%20PG_SLEEP(5)--&baz=3&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2')%20WAITFOR%20DELAY%20'0:0:5'--&baz=3&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2')%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'--&baz=3&foo=1")
+
+        # query_param: baz, escape_quote: true, escape_parens: true, terminate: true
+        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3'\)%20OR%20\d+=\d+--&foo=1\z})
+        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3'\)%20AND%20\d+=\d+--&foo=1\z})
+        stub_request(:get,"https://example.com/page?bar=2&baz=3')%20SLEEP(5)--&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3')%3BSELECT%20SLEEP(5)--&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3')%20PG_SLEEP(5)--&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3')%3BSELECT%20PG_SLEEP(5)--&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3')%20WAITFOR%20DELAY%20'0:0:5'--&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3')%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'--&foo=1")
+
+        subject.scan(url, escape_quote: true)
+
+        # query_param: foo, escape_quote: true, escape_parens: false, terminate: false
+        expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3&foo=1'%20OR%20\d+=\d+\z})
+        expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3&foo=1'%20AND%20\d+=\d+\z})
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1'%20SLEEP(5)")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1'%3BSELECT%20SLEEP(5)")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1'%20PG_SLEEP(5)")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1'%3BSELECT%20PG_SLEEP(5)")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1'%20WAITFOR%20DELAY%20'0:0:5")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1'%3BSELECT%20WAITFOR%20DELAY%20'0:0:5")
+
+        # query_param: bar, escape_quote: true, escape_parens: false, terminate: false
+        expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2'%20OR%20\d+=\d+&baz=3&foo=1\z})
+        expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2'%20AND%20\d+=\d+&baz=3&foo=1\z})
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2'%20SLEEP(5)&baz=3&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2'%3BSELECT%20SLEEP(5)&baz=3&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2'%20PG_SLEEP(5)&baz=3&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2'%3BSELECT%20PG_SLEEP(5)&baz=3&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2'%20WAITFOR%20DELAY%20'0:0:5&baz=3&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2'%3BSELECT%20WAITFOR%20DELAY%20'0:0:5&baz=3&foo=1")
+
+        # query_param: baz, escape_quote: true, escape_parens: false, terminate: false
+        expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3'%20OR%20\d+=\d+&foo=1\z})
+        expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3'%20AND%20\d+=\d+&foo=1\z})
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3'%20SLEEP(5)&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3'%3BSELECT%20SLEEP(5)&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3'%20PG_SLEEP(5)&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3'%3BSELECT%20PG_SLEEP(5)&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3'%20WAITFOR%20DELAY%20'0:0:5&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3'%3BSELECT%20WAITFOR%20DELAY%20'0:0:5&foo=1")
+
+        # query_param: foo, escape_quote: true, escape_parens: false, terminate: true
+        expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3&foo=1'%20OR%20\d+=\d+--\z})
+        expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3&foo=1'%20AND%20\d+=\d+--\z})
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1'%20SLEEP(5)--")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1'%3BSELECT%20SLEEP(5)--")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1'%20PG_SLEEP(5)--")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1'%3BSELECT%20PG_SLEEP(5)--")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1'%20WAITFOR%20DELAY%20'0:0:5'--")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1'%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'--")
+
+        # query_param: bar, escape_quote: true, escape_parens: false, terminate: true
+        expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2'%20OR%20\d+=\d+--&baz=3&foo=1\z})
+        expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2'%20AND%20\d+=\d+--&baz=3&foo=1\z})
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2'%20SLEEP(5)--&baz=3&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2'%3BSELECT%20SLEEP(5)--&baz=3&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2'%20PG_SLEEP(5)--&baz=3&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2'%3BSELECT%20PG_SLEEP(5)--&baz=3&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2'%20WAITFOR%20DELAY%20'0:0:5'--&baz=3&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2'%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'--&baz=3&foo=1")
+
+        # query_param: baz, escape_quote: true, escape_parens: false, terminate: true
+        expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3'%20OR%20\d+=\d+--&foo=1\z})
+        expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3'%20AND%20\d+=\d+--&foo=1\z})
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3'%20SLEEP(5)--&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3'%3BSELECT%20SLEEP(5)--&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3'%20PG_SLEEP(5)--&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3'%3BSELECT%20PG_SLEEP(5)--&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3'%20WAITFOR%20DELAY%20'0:0:5'--&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3'%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'--&foo=1")
+
+        # query_param: foo, escape_quote: true, escape_parens: true, terminate: false
+        expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3&foo=1'\)%20OR%20\d+=\d+\z})
+        expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3&foo=1'\)%20AND%20\d+=\d+\z})
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1')%20SLEEP(5")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1')%3BSELECT%20SLEEP(5")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1')%20PG_SLEEP(5")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1')%3BSELECT%20PG_SLEEP(5")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1')%20WAITFOR%20DELAY%20'0:0:5")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1')%3BSELECT%20WAITFOR%20DELAY%20'0:0:5")
+
+        # query_param: bar, escape_quote: true, escape_parens: true, terminate: false
+        expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2'\)%20OR%20\d+=\d+&baz=3&foo=1\z})
+        expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2'\)%20AND%20\d+=\d+&baz=3&foo=1\z})
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2')%20SLEEP(5&baz=3&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2')%3BSELECT%20SLEEP(5&baz=3&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2')%20PG_SLEEP(5&baz=3&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2')%3BSELECT%20PG_SLEEP(5&baz=3&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2')%20WAITFOR%20DELAY%20'0:0:5&baz=3&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2')%3BSELECT%20WAITFOR%20DELAY%20'0:0:5&baz=3&foo=1")
+
+        # query_param: baz, escape_quote: true, escape_parens: true, terminate: false
+        expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3'\)%20OR%20\d+=\d+&foo=1\z})
+        expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3'\)%20AND%20\d+=\d+&foo=1\z})
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3')%20SLEEP(5&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3')%3BSELECT%20SLEEP(5&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3')%20PG_SLEEP(5&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3')%3BSELECT%20PG_SLEEP(5&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3')%20WAITFOR%20DELAY%20'0:0:5&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3')%3BSELECT%20WAITFOR%20DELAY%20'0:0:5&foo=1")
+
+        # query_param: foo, escape_quote: true, escape_parens: true, terminate: true
+        expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3&foo=1'\)%20OR%20\d+=\d+--\z})
+        expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3&foo=1'\)%20AND%20\d+=\d+--\z})
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1')%20SLEEP(5)--")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1')%3BSELECT%20SLEEP(5)--")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1')%20PG_SLEEP(5)--")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1')%3BSELECT%20PG_SLEEP(5)--")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1')%20WAITFOR%20DELAY%20'0:0:5'--")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1')%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'--")
+
+        # query_param: bar, escape_quote: true, escape_parens: true, terminate: true
+        expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2'\)%20OR%20\d+=\d+--&baz=3&foo=1\z})
+        expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2'\)%20AND%20\d+=\d+--&baz=3&foo=1\z})
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2')%20SLEEP(5)--&baz=3&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2')%3BSELECT%20SLEEP(5)--&baz=3&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2')%20PG_SLEEP(5)--&baz=3&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2')%3BSELECT%20PG_SLEEP(5)--&baz=3&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2')%20WAITFOR%20DELAY%20'0:0:5'--&baz=3&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2')%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'--&baz=3&foo=1")
+
+        # query_param: baz, escape_quote: true, escape_parens: true, terminate: true
+        expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3'\)%20OR%20\d+=\d+--&foo=1\z})
+        expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3'\)%20AND%20\d+=\d+--&foo=1\z})
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3')%20SLEEP(5)--&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3')%3BSELECT%20SLEEP(5)--&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3')%20PG_SLEEP(5)--&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3')%3BSELECT%20PG_SLEEP(5)--&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3')%20WAITFOR%20DELAY%20'0:0:5'--&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3')%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'--&foo=1")
+      end
+    end
+
+    context "when `escape_parens: false` is given" do
+      it "must not add a closing parenthesis character to the SQL escape string in any requests" do
+        # query_param: foo, escape_quote: false, escape_parens: false, terminate: false
+        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3&foo=1%20OR%20\d+=\d+\z})
+        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3&foo=1%20AND%20\d+=\d+\z})
+        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1%20SLEEP(5)")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1%3BSELECT%20SLEEP(5)")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1%20PG_SLEEP(5)")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1%3BSELECT%20PG_SLEEP(5)")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1%20WAITFOR%20DELAY%20'0:0:5'")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'")
+
+        # query_param: bar, escape_quote: false, escape_parens: false, terminate: false
+        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2%20OR%20\d+=\d+&baz=3&foo=1\z})
+        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2%20AND%20\d+=\d+&baz=3&foo=1\z})
+        stub_request(:get,"https://example.com/page?bar=2%20SLEEP(5)&baz=3&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2%3BSELECT%20SLEEP(5)&baz=3&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2%20PG_SLEEP(5)&baz=3&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2%3BSELECT%20PG_SLEEP(5)&baz=3&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2%20WAITFOR%20DELAY%20'0:0:5'&baz=3&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'&baz=3&foo=1")
+
+        # query_param: baz, escape_quote: false, escape_parens: false, terminate: false
+        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3%20OR%20\d+=\d+&foo=1\z})
+        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3%20AND%20\d+=\d+&foo=1\z})
+        stub_request(:get,"https://example.com/page?bar=2&baz=3%20SLEEP(5)&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3%3BSELECT%20SLEEP(5)&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3%20PG_SLEEP(5)&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3%3BSELECT%20PG_SLEEP(5)&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3%20WAITFOR%20DELAY%20'0:0:5'&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'&foo=1")
+
+        # query_param: foo, escape_quote: false, escape_parens: false, terminate: true
+        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3&foo=1%20OR%20\d+=\d+--\z})
+        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3&foo=1%20AND%20\d+=\d+--\z})
+        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1%20SLEEP(5)--")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1%3BSELECT%20SLEEP(5)--")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1%20PG_SLEEP(5)--")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1%3BSELECT%20PG_SLEEP(5)--")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1%20WAITFOR%20DELAY%20'0:0:5'--")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'--")
+
+        # query_param: bar, escape_quote: false, escape_parens: false, terminate: true
+        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2%20OR%20\d+=\d+--&baz=3&foo=1\z})
+        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2%20AND%20\d+=\d+--&baz=3&foo=1\z})
+        stub_request(:get,"https://example.com/page?bar=2%20SLEEP(5)--&baz=3&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2%3BSELECT%20SLEEP(5)--&baz=3&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2%20PG_SLEEP(5)--&baz=3&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2%3BSELECT%20PG_SLEEP(5)--&baz=3&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2%20WAITFOR%20DELAY%20'0:0:5'--&baz=3&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'--&baz=3&foo=1")
+
+        # query_param: baz, escape_quote: false, escape_parens: false, terminate: true
+        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3%20OR%20\d+=\d+--&foo=1\z})
+        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3%20AND%20\d+=\d+--&foo=1\z})
+        stub_request(:get,"https://example.com/page?bar=2&baz=3%20SLEEP(5)--&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3%3BSELECT%20SLEEP(5)--&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3%20PG_SLEEP(5)--&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3%3BSELECT%20PG_SLEEP(5)--&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3%20WAITFOR%20DELAY%20'0:0:5'--&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'--&foo=1")
+
+        # query_param: foo, escape_quote: true, escape_parens: false, terminate: false
+        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3&foo=1'%20OR%20\d+=\d+\z})
+        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3&foo=1'%20AND%20\d+=\d+\z})
+        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1'%20SLEEP(5)")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1'%3BSELECT%20SLEEP(5)")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1'%20PG_SLEEP(5)")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1'%3BSELECT%20PG_SLEEP(5)")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1'%20WAITFOR%20DELAY%20'0:0:5")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1'%3BSELECT%20WAITFOR%20DELAY%20'0:0:5")
+
+        # query_param: bar, escape_quote: true, escape_parens: false, terminate: false
+        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2'%20OR%20\d+=\d+&baz=3&foo=1\z})
+        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2'%20AND%20\d+=\d+&baz=3&foo=1\z})
+        stub_request(:get,"https://example.com/page?bar=2'%20SLEEP(5)&baz=3&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2'%3BSELECT%20SLEEP(5)&baz=3&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2'%20PG_SLEEP(5)&baz=3&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2'%3BSELECT%20PG_SLEEP(5)&baz=3&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2'%20WAITFOR%20DELAY%20'0:0:5&baz=3&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2'%3BSELECT%20WAITFOR%20DELAY%20'0:0:5&baz=3&foo=1")
+
+        # query_param: baz, escape_quote: true, escape_parens: false, terminate: false
+        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3'%20OR%20\d+=\d+&foo=1\z})
+        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3'%20AND%20\d+=\d+&foo=1\z})
+        stub_request(:get,"https://example.com/page?bar=2&baz=3'%20SLEEP(5)&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3'%3BSELECT%20SLEEP(5)&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3'%20PG_SLEEP(5)&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3'%3BSELECT%20PG_SLEEP(5)&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3'%20WAITFOR%20DELAY%20'0:0:5&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3'%3BSELECT%20WAITFOR%20DELAY%20'0:0:5&foo=1")
+
+        # query_param: foo, escape_quote: true, escape_parens: false, terminate: true
+        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3&foo=1'%20OR%20\d+=\d+--\z})
+        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3&foo=1'%20AND%20\d+=\d+--\z})
+        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1'%20SLEEP(5)--")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1'%3BSELECT%20SLEEP(5)--")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1'%20PG_SLEEP(5)--")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1'%3BSELECT%20PG_SLEEP(5)--")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1'%20WAITFOR%20DELAY%20'0:0:5'--")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1'%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'--")
+
+        # query_param: bar, escape_quote: true, escape_parens: false, terminate: true
+        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2'%20OR%20\d+=\d+--&baz=3&foo=1\z})
+        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2'%20AND%20\d+=\d+--&baz=3&foo=1\z})
+        stub_request(:get,"https://example.com/page?bar=2'%20SLEEP(5)--&baz=3&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2'%3BSELECT%20SLEEP(5)--&baz=3&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2'%20PG_SLEEP(5)--&baz=3&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2'%3BSELECT%20PG_SLEEP(5)--&baz=3&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2'%20WAITFOR%20DELAY%20'0:0:5'--&baz=3&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2'%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'--&baz=3&foo=1")
+
+        # query_param: baz, escape_quote: true, escape_parens: false, terminate: true
+        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3'%20OR%20\d+=\d+--&foo=1\z})
+        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3'%20AND%20\d+=\d+--&foo=1\z})
+        stub_request(:get,"https://example.com/page?bar=2&baz=3'%20SLEEP(5)--&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3'%3BSELECT%20SLEEP(5)--&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3'%20PG_SLEEP(5)--&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3'%3BSELECT%20PG_SLEEP(5)--&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3'%20WAITFOR%20DELAY%20'0:0:5'--&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3'%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'--&foo=1")
+
+        subject.scan(url, escape_parens: false)
+
+        # query_param: foo, escape_quote: false, escape_parens: false, terminate: false
+        expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3&foo=1%20OR%20\d+=\d+\z})
+        expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3&foo=1%20AND%20\d+=\d+\z})
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1%20SLEEP(5)")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1%3BSELECT%20SLEEP(5)")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1%20PG_SLEEP(5)")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1%3BSELECT%20PG_SLEEP(5)")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1%20WAITFOR%20DELAY%20'0:0:5'")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'")
+
+        # query_param: bar, escape_quote: false, escape_parens: false, terminate: false
+        expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2%20OR%20\d+=\d+&baz=3&foo=1\z})
+        expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2%20AND%20\d+=\d+&baz=3&foo=1\z})
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2%20SLEEP(5)&baz=3&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2%3BSELECT%20SLEEP(5)&baz=3&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2%20PG_SLEEP(5)&baz=3&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2%3BSELECT%20PG_SLEEP(5)&baz=3&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2%20WAITFOR%20DELAY%20'0:0:5'&baz=3&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'&baz=3&foo=1")
+
+        # query_param: baz, escape_quote: false, escape_parens: false, terminate: false
+        expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3%20OR%20\d+=\d+&foo=1\z})
+        expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3%20AND%20\d+=\d+&foo=1\z})
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3%20SLEEP(5)&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3%3BSELECT%20SLEEP(5)&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3%20PG_SLEEP(5)&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3%3BSELECT%20PG_SLEEP(5)&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3%20WAITFOR%20DELAY%20'0:0:5'&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'&foo=1")
+
+        # query_param: foo, escape_quote: false, escape_parens: false, terminate: true
+        expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3&foo=1%20OR%20\d+=\d+--\z})
+        expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3&foo=1%20AND%20\d+=\d+--\z})
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1%20SLEEP(5)--")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1%3BSELECT%20SLEEP(5)--")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1%20PG_SLEEP(5)--")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1%3BSELECT%20PG_SLEEP(5)--")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1%20WAITFOR%20DELAY%20'0:0:5'--")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'--")
+
+        # query_param: bar, escape_quote: false, escape_parens: false, terminate: true
+        expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2%20OR%20\d+=\d+--&baz=3&foo=1\z})
+        expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2%20AND%20\d+=\d+--&baz=3&foo=1\z})
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2%20SLEEP(5)--&baz=3&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2%3BSELECT%20SLEEP(5)--&baz=3&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2%20PG_SLEEP(5)--&baz=3&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2%3BSELECT%20PG_SLEEP(5)--&baz=3&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2%20WAITFOR%20DELAY%20'0:0:5'--&baz=3&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'--&baz=3&foo=1")
+
+        # query_param: baz, escape_quote: false, escape_parens: false, terminate: true
+        expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3%20OR%20\d+=\d+--&foo=1\z})
+        expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3%20AND%20\d+=\d+--&foo=1\z})
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3%20SLEEP(5)--&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3%3BSELECT%20SLEEP(5)--&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3%20PG_SLEEP(5)--&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3%3BSELECT%20PG_SLEEP(5)--&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3%20WAITFOR%20DELAY%20'0:0:5'--&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'--&foo=1")
+
+        # query_param: foo, escape_quote: true, escape_parens: false, terminate: false
+        expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3&foo=1'%20OR%20\d+=\d+\z})
+        expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3&foo=1'%20AND%20\d+=\d+\z})
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1'%20SLEEP(5)")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1'%3BSELECT%20SLEEP(5)")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1'%20PG_SLEEP(5)")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1'%3BSELECT%20PG_SLEEP(5)")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1'%20WAITFOR%20DELAY%20'0:0:5")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1'%3BSELECT%20WAITFOR%20DELAY%20'0:0:5")
+
+        # query_param: bar, escape_quote: true, escape_parens: false, terminate: false
+        expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2'%20OR%20\d+=\d+&baz=3&foo=1\z})
+        expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2'%20AND%20\d+=\d+&baz=3&foo=1\z})
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2'%20SLEEP(5)&baz=3&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2'%3BSELECT%20SLEEP(5)&baz=3&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2'%20PG_SLEEP(5)&baz=3&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2'%3BSELECT%20PG_SLEEP(5)&baz=3&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2'%20WAITFOR%20DELAY%20'0:0:5&baz=3&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2'%3BSELECT%20WAITFOR%20DELAY%20'0:0:5&baz=3&foo=1")
+
+        # query_param: baz, escape_quote: true, escape_parens: false, terminate: false
+        expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3'%20OR%20\d+=\d+&foo=1\z})
+        expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3'%20AND%20\d+=\d+&foo=1\z})
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3'%20SLEEP(5)&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3'%3BSELECT%20SLEEP(5)&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3'%20PG_SLEEP(5)&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3'%3BSELECT%20PG_SLEEP(5)&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3'%20WAITFOR%20DELAY%20'0:0:5&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3'%3BSELECT%20WAITFOR%20DELAY%20'0:0:5&foo=1")
+
+        # query_param: foo, escape_quote: true, escape_parens: false, terminate: true
+        expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3&foo=1'%20OR%20\d+=\d+--\z})
+        expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3&foo=1'%20AND%20\d+=\d+--\z})
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1'%20SLEEP(5)--")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1'%3BSELECT%20SLEEP(5)--")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1'%20PG_SLEEP(5)--")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1'%3BSELECT%20PG_SLEEP(5)--")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1'%20WAITFOR%20DELAY%20'0:0:5'--")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1'%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'--")
+
+        # query_param: bar, escape_quote: true, escape_parens: false, terminate: true
+        expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2'%20OR%20\d+=\d+--&baz=3&foo=1\z})
+        expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2'%20AND%20\d+=\d+--&baz=3&foo=1\z})
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2'%20SLEEP(5)--&baz=3&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2'%3BSELECT%20SLEEP(5)--&baz=3&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2'%20PG_SLEEP(5)--&baz=3&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2'%3BSELECT%20PG_SLEEP(5)--&baz=3&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2'%20WAITFOR%20DELAY%20'0:0:5'--&baz=3&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2'%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'--&baz=3&foo=1")
+
+        # query_param: baz, escape_quote: true, escape_parens: false, terminate: true
+        expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3'%20OR%20\d+=\d+--&foo=1\z})
+        expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3'%20AND%20\d+=\d+--&foo=1\z})
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3'%20SLEEP(5)--&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3'%3BSELECT%20SLEEP(5)--&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3'%20PG_SLEEP(5)--&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3'%3BSELECT%20PG_SLEEP(5)--&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3'%20WAITFOR%20DELAY%20'0:0:5'--&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3'%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'--&foo=1")
+      end
+    end
+
+    context "when `escape_parens: true` is given" do
+      it "must only send requests containing a closing parenthesis in the SQL escape string" do
+        # query_param: foo, escape_quote: false, escape_parens: true, terminate: false
+        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3&foo=1\)%20OR%20\d+=\d+\z})
+        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3&foo=1\)%20AND%20\d+=\d+\z})
+        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1)%20SLEEP(5")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1)%3BSELECT%20SLEEP(5")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1)%20PG_SLEEP(5")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1)%3BSELECT%20PG_SLEEP(5")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1)%20WAITFOR%20DELAY%20'0:0:5'")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1)%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'")
+
+        # query_param: bar, escape_quote: false, escape_parens: true, terminate: false
+        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2\)%20OR%20\d+=\d+&baz=3&foo=1\z})
+        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2\)%20AND%20\d+=\d+&baz=3&foo=1\z})
+        stub_request(:get,"https://example.com/page?bar=2)%20SLEEP(5&baz=3&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2)%3BSELECT%20SLEEP(5&baz=3&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2)%20PG_SLEEP(5&baz=3&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2)%3BSELECT%20PG_SLEEP(5&baz=3&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2)%20WAITFOR%20DELAY%20'0:0:5'&baz=3&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2)%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'&baz=3&foo=1")
+
+        # query_param: baz, escape_quote: false, escape_parens: true, terminate: false
+        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3\)%20OR%20\d+=\d+&foo=1\z})
+        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3\)%20AND%20\d+=\d+&foo=1\z})
+        stub_request(:get,"https://example.com/page?bar=2&baz=3)%20SLEEP(5&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3)%3BSELECT%20SLEEP(5&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3)%20PG_SLEEP(5&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3)%3BSELECT%20PG_SLEEP(5&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3)%20WAITFOR%20DELAY%20'0:0:5'&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3)%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'&foo=1")
+
+        # query_param: foo, escape_quote: false, escape_parens: true, terminate: true
+        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3&foo=1\)%20OR%20\d+=\d+--\z})
+        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3&foo=1\)%20AND%20\d+=\d+--\z})
+        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1)%20SLEEP(5)--")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1)%3BSELECT%20SLEEP(5)--")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1)%20PG_SLEEP(5)--")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1)%3BSELECT%20PG_SLEEP(5)--")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1)%20WAITFOR%20DELAY%20'0:0:5'--")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1)%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'--")
+
+        # query_param: bar, escape_quote: false, escape_parens: true, terminate: true
+        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2\)%20OR%20\d+=\d+--&baz=3&foo=1\z})
+        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2\)%20AND%20\d+=\d+--&baz=3&foo=1\z})
+        stub_request(:get,"https://example.com/page?bar=2)%20SLEEP(5)--&baz=3&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2)%3BSELECT%20SLEEP(5)--&baz=3&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2)%20PG_SLEEP(5)--&baz=3&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2)%3BSELECT%20PG_SLEEP(5)--&baz=3&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2)%20WAITFOR%20DELAY%20'0:0:5'--&baz=3&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2)%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'--&baz=3&foo=1")
+
+        # query_param: baz, escape_quote: false, escape_parens: true, terminate: true
+        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3\)%20OR%20\d+=\d+--&foo=1\z})
+        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3\)%20AND%20\d+=\d+--&foo=1\z})
+        stub_request(:get,"https://example.com/page?bar=2&baz=3)%20SLEEP(5)--&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3)%3BSELECT%20SLEEP(5)--&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3)%20PG_SLEEP(5)--&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3)%3BSELECT%20PG_SLEEP(5)--&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3)%20WAITFOR%20DELAY%20'0:0:5'--&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3)%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'--&foo=1")
+
+        # query_param: foo, escape_quote: true, escape_parens: true, terminate: false
+        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3&foo=1'\)%20OR%20\d+=\d+\z})
+        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3&foo=1'\)%20AND%20\d+=\d+\z})
+        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1')%20SLEEP(5")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1')%3BSELECT%20SLEEP(5")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1')%20PG_SLEEP(5")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1')%3BSELECT%20PG_SLEEP(5")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1')%20WAITFOR%20DELAY%20'0:0:5")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1')%3BSELECT%20WAITFOR%20DELAY%20'0:0:5")
+
+        # query_param: bar, escape_quote: true, escape_parens: true, terminate: false
+        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2'\)%20OR%20\d+=\d+&baz=3&foo=1\z})
+        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2'\)%20AND%20\d+=\d+&baz=3&foo=1\z})
+        stub_request(:get,"https://example.com/page?bar=2')%20SLEEP(5&baz=3&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2')%3BSELECT%20SLEEP(5&baz=3&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2')%20PG_SLEEP(5&baz=3&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2')%3BSELECT%20PG_SLEEP(5&baz=3&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2')%20WAITFOR%20DELAY%20'0:0:5&baz=3&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2')%3BSELECT%20WAITFOR%20DELAY%20'0:0:5&baz=3&foo=1")
+
+        # query_param: baz, escape_quote: true, escape_parens: true, terminate: false
+        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3'\)%20OR%20\d+=\d+&foo=1\z})
+        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3'\)%20AND%20\d+=\d+&foo=1\z})
+        stub_request(:get,"https://example.com/page?bar=2&baz=3')%20SLEEP(5&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3')%3BSELECT%20SLEEP(5&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3')%20PG_SLEEP(5&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3')%3BSELECT%20PG_SLEEP(5&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3')%20WAITFOR%20DELAY%20'0:0:5&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3')%3BSELECT%20WAITFOR%20DELAY%20'0:0:5&foo=1")
+
+        # query_param: foo, escape_quote: true, escape_parens: true, terminate: true
+        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3&foo=1'\)%20OR%20\d+=\d+--\z})
+        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3&foo=1'\)%20AND%20\d+=\d+--\z})
+        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1')%20SLEEP(5)--")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1')%3BSELECT%20SLEEP(5)--")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1')%20PG_SLEEP(5)--")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1')%3BSELECT%20PG_SLEEP(5)--")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1')%20WAITFOR%20DELAY%20'0:0:5'--")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1')%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'--")
+
+        # query_param: bar, escape_quote: true, escape_parens: true, terminate: true
+        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2'\)%20OR%20\d+=\d+--&baz=3&foo=1\z})
+        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2'\)%20AND%20\d+=\d+--&baz=3&foo=1\z})
+        stub_request(:get,"https://example.com/page?bar=2')%20SLEEP(5)--&baz=3&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2')%3BSELECT%20SLEEP(5)--&baz=3&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2')%20PG_SLEEP(5)--&baz=3&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2')%3BSELECT%20PG_SLEEP(5)--&baz=3&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2')%20WAITFOR%20DELAY%20'0:0:5'--&baz=3&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2')%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'--&baz=3&foo=1")
+
+        # query_param: baz, escape_quote: true, escape_parens: true, terminate: true
+        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3'\)%20OR%20\d+=\d+--&foo=1\z})
+        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3'\)%20AND%20\d+=\d+--&foo=1\z})
+        stub_request(:get,"https://example.com/page?bar=2&baz=3')%20SLEEP(5)--&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3')%3BSELECT%20SLEEP(5)--&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3')%20PG_SLEEP(5)--&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3')%3BSELECT%20PG_SLEEP(5)--&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3')%20WAITFOR%20DELAY%20'0:0:5'--&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3')%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'--&foo=1")
+
+        subject.scan(url, escape_parens: true)
+
+        # query_param: foo, escape_quote: false, escape_parens: true, terminate: false
+        expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3&foo=1\)%20OR%20\d+=\d+\z})
+        expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3&foo=1\)%20AND%20\d+=\d+\z})
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1)%20SLEEP(5")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1)%3BSELECT%20SLEEP(5")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1)%20PG_SLEEP(5")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1)%3BSELECT%20PG_SLEEP(5")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1)%20WAITFOR%20DELAY%20'0:0:5'")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1)%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'")
+
+        # query_param: bar, escape_quote: false, escape_parens: true, terminate: false
+        expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2\)%20OR%20\d+=\d+&baz=3&foo=1\z})
+        expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2\)%20AND%20\d+=\d+&baz=3&foo=1\z})
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2)%20SLEEP(5&baz=3&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2)%3BSELECT%20SLEEP(5&baz=3&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2)%20PG_SLEEP(5&baz=3&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2)%3BSELECT%20PG_SLEEP(5&baz=3&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2)%20WAITFOR%20DELAY%20'0:0:5'&baz=3&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2)%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'&baz=3&foo=1")
+
+        # query_param: baz, escape_quote: false, escape_parens: true, terminate: false
+        expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3\)%20OR%20\d+=\d+&foo=1\z})
+        expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3\)%20AND%20\d+=\d+&foo=1\z})
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3)%20SLEEP(5&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3)%3BSELECT%20SLEEP(5&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3)%20PG_SLEEP(5&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3)%3BSELECT%20PG_SLEEP(5&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3)%20WAITFOR%20DELAY%20'0:0:5'&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3)%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'&foo=1")
+
+        # query_param: foo, escape_quote: false, escape_parens: true, terminate: true
+        expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3&foo=1\)%20OR%20\d+=\d+--\z})
+        expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3&foo=1\)%20AND%20\d+=\d+--\z})
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1)%20SLEEP(5)--")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1)%3BSELECT%20SLEEP(5)--")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1)%20PG_SLEEP(5)--")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1)%3BSELECT%20PG_SLEEP(5)--")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1)%20WAITFOR%20DELAY%20'0:0:5'--")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1)%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'--")
+
+        # query_param: bar, escape_quote: false, escape_parens: true, terminate: true
+        expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2\)%20OR%20\d+=\d+--&baz=3&foo=1\z})
+        expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2\)%20AND%20\d+=\d+--&baz=3&foo=1\z})
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2)%20SLEEP(5)--&baz=3&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2)%3BSELECT%20SLEEP(5)--&baz=3&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2)%20PG_SLEEP(5)--&baz=3&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2)%3BSELECT%20PG_SLEEP(5)--&baz=3&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2)%20WAITFOR%20DELAY%20'0:0:5'--&baz=3&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2)%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'--&baz=3&foo=1")
+
+        # query_param: baz, escape_quote: false, escape_parens: true, terminate: true
+        expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3\)%20OR%20\d+=\d+--&foo=1\z})
+        expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3\)%20AND%20\d+=\d+--&foo=1\z})
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3)%20SLEEP(5)--&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3)%3BSELECT%20SLEEP(5)--&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3)%20PG_SLEEP(5)--&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3)%3BSELECT%20PG_SLEEP(5)--&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3)%20WAITFOR%20DELAY%20'0:0:5'--&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3)%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'--&foo=1")
+
+        # query_param: foo, escape_quote: true, escape_parens: true, terminate: false
+        expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3&foo=1'\)%20OR%20\d+=\d+\z})
+        expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3&foo=1'\)%20AND%20\d+=\d+\z})
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1')%20SLEEP(5")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1')%3BSELECT%20SLEEP(5")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1')%20PG_SLEEP(5")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1')%3BSELECT%20PG_SLEEP(5")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1')%20WAITFOR%20DELAY%20'0:0:5")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1')%3BSELECT%20WAITFOR%20DELAY%20'0:0:5")
+
+        # query_param: bar, escape_quote: true, escape_parens: true, terminate: false
+        expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2'\)%20OR%20\d+=\d+&baz=3&foo=1\z})
+        expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2'\)%20AND%20\d+=\d+&baz=3&foo=1\z})
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2')%20SLEEP(5&baz=3&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2')%3BSELECT%20SLEEP(5&baz=3&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2')%20PG_SLEEP(5&baz=3&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2')%3BSELECT%20PG_SLEEP(5&baz=3&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2')%20WAITFOR%20DELAY%20'0:0:5&baz=3&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2')%3BSELECT%20WAITFOR%20DELAY%20'0:0:5&baz=3&foo=1")
+
+        # query_param: baz, escape_quote: true, escape_parens: true, terminate: false
+        expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3'\)%20OR%20\d+=\d+&foo=1\z})
+        expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3'\)%20AND%20\d+=\d+&foo=1\z})
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3')%20SLEEP(5&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3')%3BSELECT%20SLEEP(5&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3')%20PG_SLEEP(5&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3')%3BSELECT%20PG_SLEEP(5&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3')%20WAITFOR%20DELAY%20'0:0:5&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3')%3BSELECT%20WAITFOR%20DELAY%20'0:0:5&foo=1")
+
+        # query_param: foo, escape_quote: true, escape_parens: true, terminate: true
+        expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3&foo=1'\)%20OR%20\d+=\d+--\z})
+        expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3&foo=1'\)%20AND%20\d+=\d+--\z})
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1')%20SLEEP(5)--")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1')%3BSELECT%20SLEEP(5)--")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1')%20PG_SLEEP(5)--")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1')%3BSELECT%20PG_SLEEP(5)--")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1')%20WAITFOR%20DELAY%20'0:0:5'--")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1')%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'--")
+
+        # query_param: bar, escape_quote: true, escape_parens: true, terminate: true
+        expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2'\)%20OR%20\d+=\d+--&baz=3&foo=1\z})
+        expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2'\)%20AND%20\d+=\d+--&baz=3&foo=1\z})
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2')%20SLEEP(5)--&baz=3&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2')%3BSELECT%20SLEEP(5)--&baz=3&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2')%20PG_SLEEP(5)--&baz=3&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2')%3BSELECT%20PG_SLEEP(5)--&baz=3&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2')%20WAITFOR%20DELAY%20'0:0:5'--&baz=3&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2')%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'--&baz=3&foo=1")
+
+        # query_param: baz, escape_quote: true, escape_parens: true, terminate: true
+        expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3'\)%20OR%20\d+=\d+--&foo=1\z})
+        expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3'\)%20AND%20\d+=\d+--&foo=1\z})
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3')%20SLEEP(5)--&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3')%3BSELECT%20SLEEP(5)--&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3')%20PG_SLEEP(5)--&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3')%3BSELECT%20PG_SLEEP(5)--&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3')%20WAITFOR%20DELAY%20'0:0:5'--&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3')%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'--&foo=1")
+      end
+    end
+
+    context "when given `terminate: false`" do
+      it "must not terminate the SQL statement in any of the requests" do
+        # query_param: foo, escape_quote: false, escape_parens: false, terminate: false
+        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3&foo=1%20OR%20\d+=\d+\z})
+        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3&foo=1%20AND%20\d+=\d+\z})
+        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1%20SLEEP(5)")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1%3BSELECT%20SLEEP(5)")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1%20PG_SLEEP(5)")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1%3BSELECT%20PG_SLEEP(5)")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1%20WAITFOR%20DELAY%20'0:0:5'")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'")
+
+        # query_param: bar, escape_quote: false, escape_parens: false, terminate: false
+        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2%20OR%20\d+=\d+&baz=3&foo=1\z})
+        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2%20AND%20\d+=\d+&baz=3&foo=1\z})
+        stub_request(:get,"https://example.com/page?bar=2%20SLEEP(5)&baz=3&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2%3BSELECT%20SLEEP(5)&baz=3&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2%20PG_SLEEP(5)&baz=3&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2%3BSELECT%20PG_SLEEP(5)&baz=3&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2%20WAITFOR%20DELAY%20'0:0:5'&baz=3&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'&baz=3&foo=1")
+
+        # query_param: baz, escape_quote: false, escape_parens: false, terminate: false
+        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3%20OR%20\d+=\d+&foo=1\z})
+        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3%20AND%20\d+=\d+&foo=1\z})
+        stub_request(:get,"https://example.com/page?bar=2&baz=3%20SLEEP(5)&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3%3BSELECT%20SLEEP(5)&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3%20PG_SLEEP(5)&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3%3BSELECT%20PG_SLEEP(5)&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3%20WAITFOR%20DELAY%20'0:0:5'&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'&foo=1")
+
+        # query_param: foo, escape_quote: false, escape_parens: true, terminate: false
+        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3&foo=1\)%20OR%20\d+=\d+\z})
+        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3&foo=1\)%20AND%20\d+=\d+\z})
+        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1)%20SLEEP(5")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1)%3BSELECT%20SLEEP(5")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1)%20PG_SLEEP(5")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1)%3BSELECT%20PG_SLEEP(5")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1)%20WAITFOR%20DELAY%20'0:0:5'")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1)%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'")
+
+        # query_param: bar, escape_quote: false, escape_parens: true, terminate: false
+        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2\)%20OR%20\d+=\d+&baz=3&foo=1\z})
+        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2\)%20AND%20\d+=\d+&baz=3&foo=1\z})
+        stub_request(:get,"https://example.com/page?bar=2)%20SLEEP(5&baz=3&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2)%3BSELECT%20SLEEP(5&baz=3&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2)%20PG_SLEEP(5&baz=3&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2)%3BSELECT%20PG_SLEEP(5&baz=3&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2)%20WAITFOR%20DELAY%20'0:0:5'&baz=3&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2)%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'&baz=3&foo=1")
+
+        # query_param: baz, escape_quote: false, escape_parens: true, terminate: false
+        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3\)%20OR%20\d+=\d+&foo=1\z})
+        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3\)%20AND%20\d+=\d+&foo=1\z})
+        stub_request(:get,"https://example.com/page?bar=2&baz=3)%20SLEEP(5&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3)%3BSELECT%20SLEEP(5&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3)%20PG_SLEEP(5&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3)%3BSELECT%20PG_SLEEP(5&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3)%20WAITFOR%20DELAY%20'0:0:5'&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3)%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'&foo=1")
+
+        # query_param: foo, escape_quote: true, escape_parens: false, terminate: false
+        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3&foo=1'%20OR%20\d+=\d+\z})
+        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3&foo=1'%20AND%20\d+=\d+\z})
+        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1'%20SLEEP(5)")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1'%3BSELECT%20SLEEP(5)")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1'%20PG_SLEEP(5)")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1'%3BSELECT%20PG_SLEEP(5)")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1'%20WAITFOR%20DELAY%20'0:0:5")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1'%3BSELECT%20WAITFOR%20DELAY%20'0:0:5")
+
+        # query_param: bar, escape_quote: true, escape_parens: false, terminate: false
+        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2'%20OR%20\d+=\d+&baz=3&foo=1\z})
+        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2'%20AND%20\d+=\d+&baz=3&foo=1\z})
+        stub_request(:get,"https://example.com/page?bar=2'%20SLEEP(5)&baz=3&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2'%3BSELECT%20SLEEP(5)&baz=3&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2'%20PG_SLEEP(5)&baz=3&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2'%3BSELECT%20PG_SLEEP(5)&baz=3&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2'%20WAITFOR%20DELAY%20'0:0:5&baz=3&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2'%3BSELECT%20WAITFOR%20DELAY%20'0:0:5&baz=3&foo=1")
+
+        # query_param: baz, escape_quote: true, escape_parens: false, terminate: false
+        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3'%20OR%20\d+=\d+&foo=1\z})
+        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3'%20AND%20\d+=\d+&foo=1\z})
+        stub_request(:get,"https://example.com/page?bar=2&baz=3'%20SLEEP(5)&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3'%3BSELECT%20SLEEP(5)&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3'%20PG_SLEEP(5)&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3'%3BSELECT%20PG_SLEEP(5)&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3'%20WAITFOR%20DELAY%20'0:0:5&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3'%3BSELECT%20WAITFOR%20DELAY%20'0:0:5&foo=1")
+
+        # query_param: foo, escape_quote: true, escape_parens: true, terminate: false
+        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3&foo=1'\)%20OR%20\d+=\d+\z})
+        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3&foo=1'\)%20AND%20\d+=\d+\z})
+        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1')%20SLEEP(5")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1')%3BSELECT%20SLEEP(5")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1')%20PG_SLEEP(5")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1')%3BSELECT%20PG_SLEEP(5")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1')%20WAITFOR%20DELAY%20'0:0:5")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1')%3BSELECT%20WAITFOR%20DELAY%20'0:0:5")
+
+        # query_param: bar, escape_quote: true, escape_parens: true, terminate: false
+        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2'\)%20OR%20\d+=\d+&baz=3&foo=1\z})
+        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2'\)%20AND%20\d+=\d+&baz=3&foo=1\z})
+        stub_request(:get,"https://example.com/page?bar=2')%20SLEEP(5&baz=3&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2')%3BSELECT%20SLEEP(5&baz=3&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2')%20PG_SLEEP(5&baz=3&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2')%3BSELECT%20PG_SLEEP(5&baz=3&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2')%20WAITFOR%20DELAY%20'0:0:5&baz=3&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2')%3BSELECT%20WAITFOR%20DELAY%20'0:0:5&baz=3&foo=1")
+
+        # query_param: baz, escape_quote: true, escape_parens: true, terminate: false
+        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3'\)%20OR%20\d+=\d+&foo=1\z})
+        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3'\)%20AND%20\d+=\d+&foo=1\z})
+        stub_request(:get,"https://example.com/page?bar=2&baz=3')%20SLEEP(5&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3')%3BSELECT%20SLEEP(5&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3')%20PG_SLEEP(5&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3')%3BSELECT%20PG_SLEEP(5&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3')%20WAITFOR%20DELAY%20'0:0:5&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3')%3BSELECT%20WAITFOR%20DELAY%20'0:0:5&foo=1")
+
+        subject.scan(url, terminate: false)
+
+        # query_param: foo, escape_quote: false, escape_parens: false, terminate: false
+        expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3&foo=1%20OR%20\d+=\d+\z})
+        expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3&foo=1%20AND%20\d+=\d+\z})
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1%20SLEEP(5)")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1%3BSELECT%20SLEEP(5)")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1%20PG_SLEEP(5)")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1%3BSELECT%20PG_SLEEP(5)")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1%20WAITFOR%20DELAY%20'0:0:5'")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'")
+
+        # query_param: bar, escape_quote: false, escape_parens: false, terminate: false
+        expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2%20OR%20\d+=\d+&baz=3&foo=1\z})
+        expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2%20AND%20\d+=\d+&baz=3&foo=1\z})
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2%20SLEEP(5)&baz=3&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2%3BSELECT%20SLEEP(5)&baz=3&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2%20PG_SLEEP(5)&baz=3&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2%3BSELECT%20PG_SLEEP(5)&baz=3&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2%20WAITFOR%20DELAY%20'0:0:5'&baz=3&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'&baz=3&foo=1")
+
+        # query_param: baz, escape_quote: false, escape_parens: false, terminate: false
+        expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3%20OR%20\d+=\d+&foo=1\z})
+        expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3%20AND%20\d+=\d+&foo=1\z})
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3%20SLEEP(5)&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3%3BSELECT%20SLEEP(5)&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3%20PG_SLEEP(5)&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3%3BSELECT%20PG_SLEEP(5)&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3%20WAITFOR%20DELAY%20'0:0:5'&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'&foo=1")
+
+        # query_param: foo, escape_quote: false, escape_parens: true, terminate: false
+        expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3&foo=1\)%20OR%20\d+=\d+\z})
+        expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3&foo=1\)%20AND%20\d+=\d+\z})
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1)%20SLEEP(5")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1)%3BSELECT%20SLEEP(5")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1)%20PG_SLEEP(5")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1)%3BSELECT%20PG_SLEEP(5")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1)%20WAITFOR%20DELAY%20'0:0:5'")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1)%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'")
+
+        # query_param: bar, escape_quote: false, escape_parens: true, terminate: false
+        expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2\)%20OR%20\d+=\d+&baz=3&foo=1\z})
+        expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2\)%20AND%20\d+=\d+&baz=3&foo=1\z})
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2)%20SLEEP(5&baz=3&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2)%3BSELECT%20SLEEP(5&baz=3&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2)%20PG_SLEEP(5&baz=3&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2)%3BSELECT%20PG_SLEEP(5&baz=3&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2)%20WAITFOR%20DELAY%20'0:0:5'&baz=3&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2)%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'&baz=3&foo=1")
+
+        # query_param: baz, escape_quote: false, escape_parens: true, terminate: false
+        expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3\)%20OR%20\d+=\d+&foo=1\z})
+        expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3\)%20AND%20\d+=\d+&foo=1\z})
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3)%20SLEEP(5&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3)%3BSELECT%20SLEEP(5&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3)%20PG_SLEEP(5&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3)%3BSELECT%20PG_SLEEP(5&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3)%20WAITFOR%20DELAY%20'0:0:5'&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3)%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'&foo=1")
+
+        # query_param: foo, escape_quote: true, escape_parens: false, terminate: false
+        expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3&foo=1'%20OR%20\d+=\d+\z})
+        expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3&foo=1'%20AND%20\d+=\d+\z})
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1'%20SLEEP(5)")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1'%3BSELECT%20SLEEP(5)")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1'%20PG_SLEEP(5)")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1'%3BSELECT%20PG_SLEEP(5)")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1'%20WAITFOR%20DELAY%20'0:0:5")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1'%3BSELECT%20WAITFOR%20DELAY%20'0:0:5")
+
+        # query_param: bar, escape_quote: true, escape_parens: false, terminate: false
+        expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2'%20OR%20\d+=\d+&baz=3&foo=1\z})
+        expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2'%20AND%20\d+=\d+&baz=3&foo=1\z})
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2'%20SLEEP(5)&baz=3&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2'%3BSELECT%20SLEEP(5)&baz=3&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2'%20PG_SLEEP(5)&baz=3&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2'%3BSELECT%20PG_SLEEP(5)&baz=3&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2'%20WAITFOR%20DELAY%20'0:0:5&baz=3&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2'%3BSELECT%20WAITFOR%20DELAY%20'0:0:5&baz=3&foo=1")
+
+        # query_param: baz, escape_quote: true, escape_parens: false, terminate: false
+        expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3'%20OR%20\d+=\d+&foo=1\z})
+        expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3'%20AND%20\d+=\d+&foo=1\z})
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3'%20SLEEP(5)&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3'%3BSELECT%20SLEEP(5)&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3'%20PG_SLEEP(5)&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3'%3BSELECT%20PG_SLEEP(5)&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3'%20WAITFOR%20DELAY%20'0:0:5&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3'%3BSELECT%20WAITFOR%20DELAY%20'0:0:5&foo=1")
+
+        # query_param: foo, escape_quote: true, escape_parens: true, terminate: false
+        expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3&foo=1'\)%20OR%20\d+=\d+\z})
+        expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3&foo=1'\)%20AND%20\d+=\d+\z})
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1')%20SLEEP(5")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1')%3BSELECT%20SLEEP(5")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1')%20PG_SLEEP(5")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1')%3BSELECT%20PG_SLEEP(5")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1')%20WAITFOR%20DELAY%20'0:0:5")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1')%3BSELECT%20WAITFOR%20DELAY%20'0:0:5")
+
+        # query_param: bar, escape_quote: true, escape_parens: true, terminate: false
+        expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2'\)%20OR%20\d+=\d+&baz=3&foo=1\z})
+        expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2'\)%20AND%20\d+=\d+&baz=3&foo=1\z})
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2')%20SLEEP(5&baz=3&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2')%3BSELECT%20SLEEP(5&baz=3&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2')%20PG_SLEEP(5&baz=3&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2')%3BSELECT%20PG_SLEEP(5&baz=3&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2')%20WAITFOR%20DELAY%20'0:0:5&baz=3&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2')%3BSELECT%20WAITFOR%20DELAY%20'0:0:5&baz=3&foo=1")
+
+        # query_param: baz, escape_quote: true, escape_parens: true, terminate: false
+        expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3'\)%20OR%20\d+=\d+&foo=1\z})
+        expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3'\)%20AND%20\d+=\d+&foo=1\z})
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3')%20SLEEP(5&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3')%3BSELECT%20SLEEP(5&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3')%20PG_SLEEP(5&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3')%3BSELECT%20PG_SLEEP(5&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3')%20WAITFOR%20DELAY%20'0:0:5&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3')%3BSELECT%20WAITFOR%20DELAY%20'0:0:5&foo=1")
+      end
+    end
+
+    context "when given `terminate: true`" do
+      it "must only send requests with terminated SQL statements" do
+        # query_param: foo, escape_quote: false, escape_parens: false, terminate: true
+        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3&foo=1%20OR%20\d+=\d+--\z})
+        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3&foo=1%20AND%20\d+=\d+--\z})
+        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1%20SLEEP(5)--")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1%3BSELECT%20SLEEP(5)--")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1%20PG_SLEEP(5)--")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1%3BSELECT%20PG_SLEEP(5)--")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1%20WAITFOR%20DELAY%20'0:0:5'--")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'--")
+
+        # query_param: bar, escape_quote: false, escape_parens: false, terminate: true
+        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2%20OR%20\d+=\d+--&baz=3&foo=1\z})
+        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2%20AND%20\d+=\d+--&baz=3&foo=1\z})
+        stub_request(:get,"https://example.com/page?bar=2%20SLEEP(5)--&baz=3&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2%3BSELECT%20SLEEP(5)--&baz=3&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2%20PG_SLEEP(5)--&baz=3&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2%3BSELECT%20PG_SLEEP(5)--&baz=3&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2%20WAITFOR%20DELAY%20'0:0:5'--&baz=3&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'--&baz=3&foo=1")
+
+        # query_param: baz, escape_quote: false, escape_parens: false, terminate: true
+        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3%20OR%20\d+=\d+--&foo=1\z})
+        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3%20AND%20\d+=\d+--&foo=1\z})
+        stub_request(:get,"https://example.com/page?bar=2&baz=3%20SLEEP(5)--&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3%3BSELECT%20SLEEP(5)--&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3%20PG_SLEEP(5)--&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3%3BSELECT%20PG_SLEEP(5)--&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3%20WAITFOR%20DELAY%20'0:0:5'--&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'--&foo=1")
+
+        # query_param: foo, escape_quote: false, escape_parens: true, terminate: true
+        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3&foo=1\)%20OR%20\d+=\d+--\z})
+        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3&foo=1\)%20AND%20\d+=\d+--\z})
+        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1)%20SLEEP(5)--")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1)%3BSELECT%20SLEEP(5)--")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1)%20PG_SLEEP(5)--")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1)%3BSELECT%20PG_SLEEP(5)--")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1)%20WAITFOR%20DELAY%20'0:0:5'--")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1)%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'--")
+
+        # query_param: bar, escape_quote: false, escape_parens: true, terminate: true
+        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2\)%20OR%20\d+=\d+--&baz=3&foo=1\z})
+        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2\)%20AND%20\d+=\d+--&baz=3&foo=1\z})
+        stub_request(:get,"https://example.com/page?bar=2)%20SLEEP(5)--&baz=3&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2)%3BSELECT%20SLEEP(5)--&baz=3&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2)%20PG_SLEEP(5)--&baz=3&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2)%3BSELECT%20PG_SLEEP(5)--&baz=3&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2)%20WAITFOR%20DELAY%20'0:0:5'--&baz=3&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2)%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'--&baz=3&foo=1")
+
+        # query_param: baz, escape_quote: false, escape_parens: true, terminate: true
+        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3\)%20OR%20\d+=\d+--&foo=1\z})
+        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3\)%20AND%20\d+=\d+--&foo=1\z})
+        stub_request(:get,"https://example.com/page?bar=2&baz=3)%20SLEEP(5)--&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3)%3BSELECT%20SLEEP(5)--&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3)%20PG_SLEEP(5)--&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3)%3BSELECT%20PG_SLEEP(5)--&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3)%20WAITFOR%20DELAY%20'0:0:5'--&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3)%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'--&foo=1")
+
+        # query_param: foo, escape_quote: true, escape_parens: false, terminate: true
+        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3&foo=1'%20OR%20\d+=\d+--\z})
+        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3&foo=1'%20AND%20\d+=\d+--\z})
+        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1'%20SLEEP(5)--")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1'%3BSELECT%20SLEEP(5)--")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1'%20PG_SLEEP(5)--")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1'%3BSELECT%20PG_SLEEP(5)--")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1'%20WAITFOR%20DELAY%20'0:0:5'--")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1'%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'--")
+
+        # query_param: bar, escape_quote: true, escape_parens: false, terminate: true
+        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2'%20OR%20\d+=\d+--&baz=3&foo=1\z})
+        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2'%20AND%20\d+=\d+--&baz=3&foo=1\z})
+        stub_request(:get,"https://example.com/page?bar=2'%20SLEEP(5)--&baz=3&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2'%3BSELECT%20SLEEP(5)--&baz=3&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2'%20PG_SLEEP(5)--&baz=3&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2'%3BSELECT%20PG_SLEEP(5)--&baz=3&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2'%20WAITFOR%20DELAY%20'0:0:5'--&baz=3&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2'%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'--&baz=3&foo=1")
+
+        # query_param: baz, escape_quote: true, escape_parens: false, terminate: true
+        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3'%20OR%20\d+=\d+--&foo=1\z})
+        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3'%20AND%20\d+=\d+--&foo=1\z})
+        stub_request(:get,"https://example.com/page?bar=2&baz=3'%20SLEEP(5)--&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3'%3BSELECT%20SLEEP(5)--&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3'%20PG_SLEEP(5)--&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3'%3BSELECT%20PG_SLEEP(5)--&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3'%20WAITFOR%20DELAY%20'0:0:5'--&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3'%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'--&foo=1")
+
+        # query_param: foo, escape_quote: true, escape_parens: true, terminate: true
+        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3&foo=1'\)%20OR%20\d+=\d+--\z})
+        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3&foo=1'\)%20AND%20\d+=\d+--\z})
+        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1')%20SLEEP(5)--")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1')%3BSELECT%20SLEEP(5)--")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1')%20PG_SLEEP(5)--")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1')%3BSELECT%20PG_SLEEP(5)--")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1')%20WAITFOR%20DELAY%20'0:0:5'--")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1')%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'--")
+
+        # query_param: bar, escape_quote: true, escape_parens: true, terminate: true
+        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2'\)%20OR%20\d+=\d+--&baz=3&foo=1\z})
+        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2'\)%20AND%20\d+=\d+--&baz=3&foo=1\z})
+        stub_request(:get,"https://example.com/page?bar=2')%20SLEEP(5)--&baz=3&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2')%3BSELECT%20SLEEP(5)--&baz=3&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2')%20PG_SLEEP(5)--&baz=3&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2')%3BSELECT%20PG_SLEEP(5)--&baz=3&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2')%20WAITFOR%20DELAY%20'0:0:5'--&baz=3&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2')%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'--&baz=3&foo=1")
+
+        # query_param: baz, escape_quote: true, escape_parens: true, terminate: true
+        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3'\)%20OR%20\d+=\d+--&foo=1\z})
+        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3'\)%20AND%20\d+=\d+--&foo=1\z})
+        stub_request(:get,"https://example.com/page?bar=2&baz=3')%20SLEEP(5)--&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3')%3BSELECT%20SLEEP(5)--&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3')%20PG_SLEEP(5)--&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3')%3BSELECT%20PG_SLEEP(5)--&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3')%20WAITFOR%20DELAY%20'0:0:5'--&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2&baz=3')%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'--&foo=1")
+
+        subject.scan(url, terminate: true)
+
+        # query_param: foo, escape_quote: false, escape_parens: false, terminate: true
+        expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3&foo=1%20OR%20\d+=\d+--\z})
+        expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3&foo=1%20AND%20\d+=\d+--\z})
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1%20SLEEP(5)--")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1%3BSELECT%20SLEEP(5)--")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1%20PG_SLEEP(5)--")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1%3BSELECT%20PG_SLEEP(5)--")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1%20WAITFOR%20DELAY%20'0:0:5'--")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'--")
+
+        # query_param: bar, escape_quote: false, escape_parens: false, terminate: true
+        expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2%20OR%20\d+=\d+--&baz=3&foo=1\z})
+        expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2%20AND%20\d+=\d+--&baz=3&foo=1\z})
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2%20SLEEP(5)--&baz=3&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2%3BSELECT%20SLEEP(5)--&baz=3&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2%20PG_SLEEP(5)--&baz=3&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2%3BSELECT%20PG_SLEEP(5)--&baz=3&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2%20WAITFOR%20DELAY%20'0:0:5'--&baz=3&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'--&baz=3&foo=1")
+
+        # query_param: baz, escape_quote: false, escape_parens: false, terminate: true
+        expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3%20OR%20\d+=\d+--&foo=1\z})
+        expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3%20AND%20\d+=\d+--&foo=1\z})
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3%20SLEEP(5)--&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3%3BSELECT%20SLEEP(5)--&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3%20PG_SLEEP(5)--&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3%3BSELECT%20PG_SLEEP(5)--&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3%20WAITFOR%20DELAY%20'0:0:5'--&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'--&foo=1")
+
+        # query_param: foo, escape_quote: false, escape_parens: true, terminate: true
+        expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3&foo=1\)%20OR%20\d+=\d+--\z})
+        expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3&foo=1\)%20AND%20\d+=\d+--\z})
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1)%20SLEEP(5)--")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1)%3BSELECT%20SLEEP(5)--")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1)%20PG_SLEEP(5)--")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1)%3BSELECT%20PG_SLEEP(5)--")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1)%20WAITFOR%20DELAY%20'0:0:5'--")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1)%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'--")
+
+        # query_param: bar, escape_quote: false, escape_parens: true, terminate: true
+        expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2\)%20OR%20\d+=\d+--&baz=3&foo=1\z})
+        expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2\)%20AND%20\d+=\d+--&baz=3&foo=1\z})
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2)%20SLEEP(5)--&baz=3&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2)%3BSELECT%20SLEEP(5)--&baz=3&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2)%20PG_SLEEP(5)--&baz=3&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2)%3BSELECT%20PG_SLEEP(5)--&baz=3&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2)%20WAITFOR%20DELAY%20'0:0:5'--&baz=3&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2)%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'--&baz=3&foo=1")
+
+        # query_param: baz, escape_quote: false, escape_parens: true, terminate: true
+        expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3\)%20OR%20\d+=\d+--&foo=1\z})
+        expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3\)%20AND%20\d+=\d+--&foo=1\z})
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3)%20SLEEP(5)--&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3)%3BSELECT%20SLEEP(5)--&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3)%20PG_SLEEP(5)--&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3)%3BSELECT%20PG_SLEEP(5)--&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3)%20WAITFOR%20DELAY%20'0:0:5'--&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3)%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'--&foo=1")
+
+        # query_param: foo, escape_quote: true, escape_parens: false, terminate: true
+        expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3&foo=1'%20OR%20\d+=\d+--\z})
+        expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3&foo=1'%20AND%20\d+=\d+--\z})
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1'%20SLEEP(5)--")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1'%3BSELECT%20SLEEP(5)--")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1'%20PG_SLEEP(5)--")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1'%3BSELECT%20PG_SLEEP(5)--")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1'%20WAITFOR%20DELAY%20'0:0:5'--")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1'%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'--")
+
+        # query_param: bar, escape_quote: true, escape_parens: false, terminate: true
+        expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2'%20OR%20\d+=\d+--&baz=3&foo=1\z})
+        expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2'%20AND%20\d+=\d+--&baz=3&foo=1\z})
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2'%20SLEEP(5)--&baz=3&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2'%3BSELECT%20SLEEP(5)--&baz=3&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2'%20PG_SLEEP(5)--&baz=3&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2'%3BSELECT%20PG_SLEEP(5)--&baz=3&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2'%20WAITFOR%20DELAY%20'0:0:5'--&baz=3&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2'%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'--&baz=3&foo=1")
+
+        # query_param: baz, escape_quote: true, escape_parens: false, terminate: true
+        expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3'%20OR%20\d+=\d+--&foo=1\z})
+        expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3'%20AND%20\d+=\d+--&foo=1\z})
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3'%20SLEEP(5)--&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3'%3BSELECT%20SLEEP(5)--&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3'%20PG_SLEEP(5)--&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3'%3BSELECT%20PG_SLEEP(5)--&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3'%20WAITFOR%20DELAY%20'0:0:5'--&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3'%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'--&foo=1")
+
+        # query_param: foo, escape_quote: true, escape_parens: true, terminate: true
+        expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3&foo=1'\)%20OR%20\d+=\d+--\z})
+        expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3&foo=1'\)%20AND%20\d+=\d+--\z})
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1')%20SLEEP(5)--")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1')%3BSELECT%20SLEEP(5)--")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1')%20PG_SLEEP(5)--")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1')%3BSELECT%20PG_SLEEP(5)--")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1')%20WAITFOR%20DELAY%20'0:0:5'--")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1')%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'--")
+
+        # query_param: bar, escape_quote: true, escape_parens: true, terminate: true
+        expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2'\)%20OR%20\d+=\d+--&baz=3&foo=1\z})
+        expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2'\)%20AND%20\d+=\d+--&baz=3&foo=1\z})
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2')%20SLEEP(5)--&baz=3&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2')%3BSELECT%20SLEEP(5)--&baz=3&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2')%20PG_SLEEP(5)--&baz=3&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2')%3BSELECT%20PG_SLEEP(5)--&baz=3&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2')%20WAITFOR%20DELAY%20'0:0:5'--&baz=3&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2')%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'--&baz=3&foo=1")
+
+        # query_param: baz, escape_quote: true, escape_parens: true, terminate: true
+        expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3'\)%20OR%20\d+=\d+--&foo=1\z})
+        expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3'\)%20AND%20\d+=\d+--&foo=1\z})
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3')%20SLEEP(5)--&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3')%3BSELECT%20SLEEP(5)--&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3')%20PG_SLEEP(5)--&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3')%3BSELECT%20PG_SLEEP(5)--&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3')%20WAITFOR%20DELAY%20'0:0:5'--&foo=1")
+        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3')%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'--&foo=1")
+      end
+    end
   end
 
   let(:query_param)    { 'bar' }
