@@ -29,6 +29,7 @@ generated_files:
   - man/ronin-vulns-rfi.1
   - man/ronin-vulns-sqli.1
   - man/ronin-vulns-ssti.1
+  - man/ronin-vulns-command-injection.1
   - man/ronin-vulns-open-redirect.1
   - man/ronin-vulns-reflected-xss.1
   - man/ronin-vulns-scan.1
