@@ -104,6 +104,15 @@ module Ronin
       # @param [URI::HTTP, String] url
       #   The URL to test or exploit.
       #
+      # @param [Array<String, nil>, String, nil] escape_quote
+      #   The optional escape quote character(s) to test.
+      #
+      # @param [Array<String, nil>, String, nil] escape_operator
+      #   The optional escape operator character(s) to test.
+      #
+      # @param [Array<String, nil>, Stirng, nil] terminate
+      #   The optional command termination character(s) to test.
+      #
       # @param [Ronin::Support::Network::HTTP, nil] http
       #   An HTTP session to use for testing the URL.
       #
@@ -120,22 +129,22 @@ module Ronin
       # @return [Array<CommandInjection>]
       #   All discovered SQL injection vulnerabilities.
       #
-      def self.scan(url, http: nil, **kwargs, &block)
+      def self.scan(url, escape_quote:    [nil, "'", '"', '`'],
+                         escape_operator: [';', '|', '&', "\n"],
+                         terminate:       [nil, ';', '#', "\n"],
+                         # WebVuln.scan keyword arguments
+                         http: nil, **kwargs, &block)
         url    = URI(url)
         http ||= Support::Network::HTTP.connect_uri(url)
 
-        escape_quotes    = [nil, "'", '"', '`']
-        escape_operators = [';', '|', '&', "\n"]
-        terminations     = [nil, ';', '#', "\n"]
-
         vulns = []
 
-        escape_quotes.each do |escape_quote|
-          escape_operators.each do |escape_operator|
-            terminations.each do |terminate|
-              vulns.concat(super(url, escape_quote:    escape_quote,
-                                      escape_operator: escape_operator,
-                                      terminate:       terminate,
+        Array(escape_quote).each do |escape_quote_char|
+          Array(escape_operator).each do |escape_operator_char|
+            Array(terminate).each do |terminate_char|
+              vulns.concat(super(url, escape_quote:    escape_quote_char,
+                                      escape_operator: escape_operator_char,
+                                      terminate:       terminate_char,
                                       http:            http,
                                       **kwargs,
                                       &block))
