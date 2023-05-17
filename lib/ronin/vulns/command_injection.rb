@@ -51,7 +51,7 @@ module Ronin
       # The terminator charactor to terminate the injected command with.
       #
       # @return [String, nil]
-      attr_reader :terminate
+      attr_reader :terminator
 
       #
       # Initializes the command injection vulnerability.
@@ -66,19 +66,19 @@ module Ronin
       #   The escape character or string to use to escape the command
       #   and execute another.
       #
-      # @param [String, nil] terminate
+      # @param [String, nil] terminator
       #   The optional terminator character to terminate the injected command
       #   with.
       #
       def initialize(url, escape_quote:    nil,
                           escape_operator: nil,
-                          terminate:       nil,
+                          terminator:      nil,
                           **kwargs)
         super(url,**kwargs)
 
         @escape_quote    = escape_quote
         @escape_operator = escape_operator
-        @terminate       = terminate
+        @terminator      = terminator
 
         @escape_string = build_escape_string
       end
@@ -110,7 +110,7 @@ module Ronin
       # @param [Array<String, nil>, String, nil] escape_operator
       #   The optional escape operator character(s) to test.
       #
-      # @param [Array<String, nil>, Stirng, nil] terminate
+      # @param [Array<String, nil>, Stirng, nil] terminator
       #   The optional command termination character(s) to test.
       #
       # @param [Ronin::Support::Network::HTTP, nil] http
@@ -131,7 +131,7 @@ module Ronin
       #
       def self.scan(url, escape_quote:    [nil, "'", '"', '`'],
                          escape_operator: [';', '|', '&', "\n"],
-                         terminate:       [nil, ';', '#', "\n"],
+                         terminator:      [nil, ';', '#', "\n"],
                          # WebVuln.scan keyword arguments
                          http: nil, **kwargs, &block)
         url    = URI(url)
@@ -141,10 +141,10 @@ module Ronin
 
         Array(escape_quote).each do |escape_quote_char|
           Array(escape_operator).each do |escape_operator_char|
-            Array(terminate).each do |terminate_char|
+            Array(terminator).each do |terminator_char|
               vulns.concat(super(url, escape_quote:    escape_quote_char,
                                       escape_operator: escape_operator_char,
-                                      terminate:       terminate_char,
+                                      terminator:      terminator_char,
                                       http:            http,
                                       **kwargs,
                                       &block))
@@ -167,8 +167,8 @@ module Ronin
       def escape(command)
         cmdi = "#{@escape_string}#{command}"
 
-        if @terminate
-          cmdi << @terminate
+        if @terminator
+          cmdi << @terminator
         elsif (@escape_quote && cmdi.end_with?(@escape_quote))
           cmdi.chop!
         end
