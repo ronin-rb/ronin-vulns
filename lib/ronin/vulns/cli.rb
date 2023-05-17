@@ -43,7 +43,8 @@ module Ronin
       command_name 'ronin-vulns'
       version Ronin::Vulns::VERSION
 
-      command_aliases['xss'] = 'reflected-xss'
+      command_aliases['xss']  = 'reflected-xss'
+      command_aliases['cmdi'] = 'command-injection'
 
     end
   end
