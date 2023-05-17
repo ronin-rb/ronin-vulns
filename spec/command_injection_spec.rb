@@ -24,8 +24,8 @@ describe Ronin::Vulns::CommandInjection do
       expect(subject.escape_operator).to be(nil)
     end
 
-    it "must default #terminate to nil" do
-      expect(subject.terminate).to be(nil)
+    it "must default #terminator to nil" do
+      expect(subject.terminator).to be(nil)
     end
 
     context "when given the escape_quote: keyword is given" do
@@ -54,16 +54,16 @@ describe Ronin::Vulns::CommandInjection do
       end
     end
 
-    context "when given the terminate: keyword is given" do
-      let(:terminate) { '#' }
+    context "when given the terminator: keyword is given" do
+      let(:terminator) { '#' }
 
       subject do
         described_class.new(url, query_param: query_param,
-                                 terminate:   terminate)
+                                 terminator:  terminator)
       end
 
-      it "must set #terminate to the given String" do
-        expect(subject.terminate).to eq(terminate)
+      it "must set #terminator to the given String" do
+        expect(subject.terminator).to eq(terminator)
       end
     end
   end
@@ -312,13 +312,13 @@ describe Ronin::Vulns::CommandInjection do
 
     let(:escape_quote)    { nil }
     let(:escape_operator) { nil }
-    let(:terminate)       { nil }
+    let(:terminator)      { nil }
 
     subject do
       described_class.new(url, query_param:     query_param,
                                escape_quote:    escape_quote,
                                escape_operator: escape_operator,
-                               terminate:       terminate)
+                               terminator:      terminator)
     end
 
     context "when #escape_quote is nil" do
@@ -327,24 +327,24 @@ describe Ronin::Vulns::CommandInjection do
           expect(subject.escape(command)).to eq(command)
         end
 
-        context "and when #terminate is ';'" do
-          let(:terminate) { ';' }
+        context "and when #terminator is ';'" do
+          let(:terminator) { ';' }
 
           it "must append a ';' to the end of the escaped command string" do
             expect(subject.escape(command)).to eq("#{command};")
           end
         end
 
-        context "and when #terminate is '#'" do
-          let(:terminate) { '#' }
+        context "and when #terminator is '#'" do
+          let(:terminator) { '#' }
 
           it "must append a '#' to the end of the escaped command string" do
             expect(subject.escape(command)).to eq("#{command}#")
           end
         end
 
-        context "and when #terminate is '\\n'" do
-          let(:terminate) { "\n" }
+        context "and when #terminator is '\\n'" do
+          let(:terminator) { "\n" }
 
           it "must append a '\\n' to the end of the escaped command string" do
             expect(subject.escape(command)).to eq("#{command}\n")
@@ -359,24 +359,24 @@ describe Ronin::Vulns::CommandInjection do
           expect(subject.escape(command)).to eq("#{subject.original_value};#{command}")
         end
 
-        context "and when #terminate is ';'" do
-          let(:terminate) { ';' }
+        context "and when #terminator is ';'" do
+          let(:terminator) { ';' }
 
           it "must append a ';' to the end of the escaped command string" do
             expect(subject.escape(command)).to eq("#{subject.original_value};#{command};")
           end
         end
 
-        context "and when #terminate is '#'" do
-          let(:terminate) { '#' }
+        context "and when #terminator is '#'" do
+          let(:terminator) { '#' }
 
           it "must append a '#' to the end of the escaped command string" do
             expect(subject.escape(command)).to eq("#{subject.original_value};#{command}#")
           end
         end
 
-        context "and when #terminate is '\\n'" do
-          let(:terminate) { "\n" }
+        context "and when #terminator is '\\n'" do
+          let(:terminator) { "\n" }
 
           it "must append a '\\n' to the end of the escaped command string" do
             expect(subject.escape(command)).to eq("#{subject.original_value};#{command}\n")
@@ -391,24 +391,24 @@ describe Ronin::Vulns::CommandInjection do
           expect(subject.escape(command)).to eq("#{subject.original_value}|#{command}")
         end
 
-        context "and when #terminate is ';'" do
-          let(:terminate) { ';' }
+        context "and when #terminator is ';'" do
+          let(:terminator) { ';' }
 
           it "must append a ';' to the end of the escaped command string" do
             expect(subject.escape(command)).to eq("#{subject.original_value}|#{command};")
           end
         end
 
-        context "and when #terminate is '#'" do
-          let(:terminate) { '#' }
+        context "and when #terminator is '#'" do
+          let(:terminator) { '#' }
 
           it "must append a '#' to the end of the escaped command string" do
             expect(subject.escape(command)).to eq("#{subject.original_value}|#{command}#")
           end
         end
 
-        context "and when #terminate is '\\n'" do
-          let(:terminate) { "\n" }
+        context "and when #terminator is '\\n'" do
+          let(:terminator) { "\n" }
 
           it "must append a '\\n' to the end of the escaped command string" do
             expect(subject.escape(command)).to eq("#{subject.original_value}|#{command}\n")
@@ -423,24 +423,24 @@ describe Ronin::Vulns::CommandInjection do
           expect(subject.escape(command)).to eq("#{subject.original_value}&#{command}")
         end
 
-        context "and when #terminate is ';'" do
-          let(:terminate) { ';' }
+        context "and when #terminator is ';'" do
+          let(:terminator) { ';' }
 
           it "must append a ';' to the end of the escaped command string" do
             expect(subject.escape(command)).to eq("#{subject.original_value}&#{command};")
           end
         end
 
-        context "and when #terminate is '#'" do
-          let(:terminate) { '#' }
+        context "and when #terminator is '#'" do
+          let(:terminator) { '#' }
 
           it "must append a '#' to the end of the escaped command string" do
             expect(subject.escape(command)).to eq("#{subject.original_value}&#{command}#")
           end
         end
 
-        context "and when #terminate is '\\n'" do
-          let(:terminate) { "\n" }
+        context "and when #terminator is '\\n'" do
+          let(:terminator) { "\n" }
 
           it "must append a '\\n' to the end of the escaped command string" do
             expect(subject.escape(command)).to eq("#{subject.original_value}&#{command}\n")
@@ -455,24 +455,24 @@ describe Ronin::Vulns::CommandInjection do
           expect(subject.escape(command)).to eq("#{subject.original_value}\n#{command}")
         end
 
-        context "and when #terminate is ';'" do
-          let(:terminate) { ';' }
+        context "and when #terminator is ';'" do
+          let(:terminator) { ';' }
 
           it "must append a ';' to the end of the escaped command string" do
             expect(subject.escape(command)).to eq("#{subject.original_value}\n#{command};")
           end
         end
 
-        context "and when #terminate is '#'" do
-          let(:terminate) { '#' }
+        context "and when #terminator is '#'" do
+          let(:terminator) { '#' }
 
           it "must append a '#' to the end of the escaped command string" do
             expect(subject.escape(command)).to eq("#{subject.original_value}\n#{command}#")
           end
         end
 
-        context "and when #terminate is '\\n'" do
-          let(:terminate) { "\n" }
+        context "and when #terminator is '\\n'" do
+          let(:terminator) { "\n" }
 
           it "must append a '\\n' to the end of the escaped command string" do
             expect(subject.escape(command)).to eq("#{subject.original_value}\n#{command}\n")
@@ -499,24 +499,24 @@ describe Ronin::Vulns::CommandInjection do
           end
         end
 
-        context "and when #terminate is ';'" do
-          let(:terminate) { ';' }
+        context "and when #terminator is ';'" do
+          let(:terminator) { ';' }
 
           it "must append a ';' to the end of the escaped command string" do
             expect(subject.escape(command)).to eq("#{subject.original_value}';#{command};")
           end
         end
 
-        context "and when #terminate is '#'" do
-          let(:terminate) { '#' }
+        context "and when #terminator is '#'" do
+          let(:terminator) { '#' }
 
           it "must append a '#' to the end of the escaped command string" do
             expect(subject.escape(command)).to eq("#{subject.original_value}';#{command}#")
           end
         end
 
-        context "and when #terminate is '\\n'" do
-          let(:terminate) { "\n" }
+        context "and when #terminator is '\\n'" do
+          let(:terminator) { "\n" }
 
           it "must append a '\\n' to the end of the escaped command string" do
             expect(subject.escape(command)).to eq("#{subject.original_value}';#{command}\n")
@@ -539,24 +539,24 @@ describe Ronin::Vulns::CommandInjection do
           end
         end
 
-        context "and when #terminate is ';'" do
-          let(:terminate) { ';' }
+        context "and when #terminator is ';'" do
+          let(:terminator) { ';' }
 
           it "must append a ';' to the end of the escaped command string" do
             expect(subject.escape(command)).to eq("#{subject.original_value}'|#{command};")
           end
         end
 
-        context "and when #terminate is '#'" do
-          let(:terminate) { '#' }
+        context "and when #terminator is '#'" do
+          let(:terminator) { '#' }
 
           it "must append a '#' to the end of the escaped command string" do
             expect(subject.escape(command)).to eq("#{subject.original_value}'|#{command}#")
           end
         end
 
-        context "and when #terminate is '\\n'" do
-          let(:terminate) { "\n" }
+        context "and when #terminator is '\\n'" do
+          let(:terminator) { "\n" }
 
           it "must append a '\\n' to the end of the escaped command string" do
             expect(subject.escape(command)).to eq("#{subject.original_value}'|#{command}\n")
@@ -579,24 +579,24 @@ describe Ronin::Vulns::CommandInjection do
           end
         end
 
-        context "and when #terminate is ';'" do
-          let(:terminate) { ';' }
+        context "and when #terminator is ';'" do
+          let(:terminator) { ';' }
 
           it "must append a ';' to the end of the escaped command string" do
             expect(subject.escape(command)).to eq("#{subject.original_value}'&#{command};")
           end
         end
 
-        context "and when #terminate is '#'" do
-          let(:terminate) { '#' }
+        context "and when #terminator is '#'" do
+          let(:terminator) { '#' }
 
           it "must append a '#' to the end of the escaped command string" do
             expect(subject.escape(command)).to eq("#{subject.original_value}'&#{command}#")
           end
         end
 
-        context "and when #terminate is '\\n'" do
-          let(:terminate) { "\n" }
+        context "and when #terminator is '\\n'" do
+          let(:terminator) { "\n" }
 
           it "must append a '\\n' to the end of the escaped command string" do
             expect(subject.escape(command)).to eq("#{subject.original_value}'&#{command}\n")
@@ -619,24 +619,24 @@ describe Ronin::Vulns::CommandInjection do
           end
         end
 
-        context "and when #terminate is ';'" do
-          let(:terminate) { ';' }
+        context "and when #terminator is ';'" do
+          let(:terminator) { ';' }
 
           it "must append a ';' to the end of the escaped command string" do
             expect(subject.escape(command)).to eq("#{subject.original_value}'\n#{command};")
           end
         end
 
-        context "and when #terminate is '#'" do
-          let(:terminate) { '#' }
+        context "and when #terminator is '#'" do
+          let(:terminator) { '#' }
 
           it "must append a '#' to the end of the escaped command string" do
             expect(subject.escape(command)).to eq("#{subject.original_value}'\n#{command}#")
           end
         end
 
-        context "and when #terminate is '\\n'" do
-          let(:terminate) { "\n" }
+        context "and when #terminator is '\\n'" do
+          let(:terminator) { "\n" }
 
           it "must append a '\\n' to the end of the escaped command string" do
             expect(subject.escape(command)).to eq("#{subject.original_value}'\n#{command}\n")
@@ -663,24 +663,24 @@ describe Ronin::Vulns::CommandInjection do
           end
         end
 
-        context "and when #terminate is ';'" do
-          let(:terminate) { ';' }
+        context "and when #terminator is ';'" do
+          let(:terminator) { ';' }
 
           it "must append a ';' to the end of the escaped command string" do
             expect(subject.escape(command)).to eq("#{subject.original_value}\";#{command};")
           end
         end
 
-        context "and when #terminate is '#'" do
-          let(:terminate) { '#' }
+        context "and when #terminator is '#'" do
+          let(:terminator) { '#' }
 
           it "must append a '#' to the end of the escaped command string" do
             expect(subject.escape(command)).to eq("#{subject.original_value}\";#{command}#")
           end
         end
 
-        context "and when #terminate is '\\n'" do
-          let(:terminate) { "\n" }
+        context "and when #terminator is '\\n'" do
+          let(:terminator) { "\n" }
 
           it "must append a '\\n' to the end of the escaped command string" do
             expect(subject.escape(command)).to eq("#{subject.original_value}\";#{command}\n")
@@ -703,24 +703,24 @@ describe Ronin::Vulns::CommandInjection do
           end
         end
 
-        context "and when #terminate is ';'" do
-          let(:terminate) { ';' }
+        context "and when #terminator is ';'" do
+          let(:terminator) { ';' }
 
           it "must append a ';' to the end of the escaped command string" do
             expect(subject.escape(command)).to eq("#{subject.original_value}\"|#{command};")
           end
         end
 
-        context "and when #terminate is '#'" do
-          let(:terminate) { '#' }
+        context "and when #terminator is '#'" do
+          let(:terminator) { '#' }
 
           it "must append a '#' to the end of the escaped command string" do
             expect(subject.escape(command)).to eq("#{subject.original_value}\"|#{command}#")
           end
         end
 
-        context "and when #terminate is '\\n'" do
-          let(:terminate) { "\n" }
+        context "and when #terminator is '\\n'" do
+          let(:terminator) { "\n" }
 
           it "must append a '\\n' to the end of the escaped command string" do
             expect(subject.escape(command)).to eq("#{subject.original_value}\"|#{command}\n")
@@ -743,24 +743,24 @@ describe Ronin::Vulns::CommandInjection do
           end
         end
 
-        context "and when #terminate is ';'" do
-          let(:terminate) { ';' }
+        context "and when #terminator is ';'" do
+          let(:terminator) { ';' }
 
           it "must append a ';' to the end of the escaped command string" do
             expect(subject.escape(command)).to eq("#{subject.original_value}\"&#{command};")
           end
         end
 
-        context "and when #terminate is '#'" do
-          let(:terminate) { '#' }
+        context "and when #terminator is '#'" do
+          let(:terminator) { '#' }
 
           it "must append a '#' to the end of the escaped command string" do
             expect(subject.escape(command)).to eq("#{subject.original_value}\"&#{command}#")
           end
         end
 
-        context "and when #terminate is '\\n'" do
-          let(:terminate) { "\n" }
+        context "and when #terminator is '\\n'" do
+          let(:terminator) { "\n" }
 
           it "must append a '\\n' to the end of the escaped command string" do
             expect(subject.escape(command)).to eq("#{subject.original_value}\"&#{command}\n")
@@ -783,24 +783,24 @@ describe Ronin::Vulns::CommandInjection do
           end
         end
 
-        context "and when #terminate is ';'" do
-          let(:terminate) { ';' }
+        context "and when #terminator is ';'" do
+          let(:terminator) { ';' }
 
           it "must append a ';' to the end of the escaped command string" do
             expect(subject.escape(command)).to eq("#{subject.original_value}\"\n#{command};")
           end
         end
 
-        context "and when #terminate is '#'" do
-          let(:terminate) { '#' }
+        context "and when #terminator is '#'" do
+          let(:terminator) { '#' }
 
           it "must append a '#' to the end of the escaped command string" do
             expect(subject.escape(command)).to eq("#{subject.original_value}\"\n#{command}#")
           end
         end
 
-        context "and when #terminate is '\\n'" do
-          let(:terminate) { "\n" }
+        context "and when #terminator is '\\n'" do
+          let(:terminator) { "\n" }
 
           it "must append a '\\n' to the end of the escaped command string" do
             expect(subject.escape(command)).to eq("#{subject.original_value}\"\n#{command}\n")
@@ -827,24 +827,24 @@ describe Ronin::Vulns::CommandInjection do
           end
         end
 
-        context "and when #terminate is ';'" do
-          let(:terminate) { ';' }
+        context "and when #terminator is ';'" do
+          let(:terminator) { ';' }
 
           it "must append a ';' to the end of the escaped command string" do
             expect(subject.escape(command)).to eq("#{subject.original_value}`;#{command};")
           end
         end
 
-        context "and when #terminate is '#'" do
-          let(:terminate) { '#' }
+        context "and when #terminator is '#'" do
+          let(:terminator) { '#' }
 
           it "must append a '#' to the end of the escaped command string" do
             expect(subject.escape(command)).to eq("#{subject.original_value}`;#{command}#")
           end
         end
 
-        context "and when #terminate is '\\n'" do
-          let(:terminate) { "\n" }
+        context "and when #terminator is '\\n'" do
+          let(:terminator) { "\n" }
 
           it "must append a '\\n' to the end of the escaped command string" do
             expect(subject.escape(command)).to eq("#{subject.original_value}`;#{command}\n")
@@ -867,24 +867,24 @@ describe Ronin::Vulns::CommandInjection do
           end
         end
 
-        context "and when #terminate is ';'" do
-          let(:terminate) { ';' }
+        context "and when #terminator is ';'" do
+          let(:terminator) { ';' }
 
           it "must append a ';' to the end of the escaped command string" do
             expect(subject.escape(command)).to eq("#{subject.original_value}`|#{command};")
           end
         end
 
-        context "and when #terminate is '#'" do
-          let(:terminate) { '#' }
+        context "and when #terminator is '#'" do
+          let(:terminator) { '#' }
 
           it "must append a '#' to the end of the escaped command string" do
             expect(subject.escape(command)).to eq("#{subject.original_value}`|#{command}#")
           end
         end
 
-        context "and when #terminate is '\\n'" do
-          let(:terminate) { "\n" }
+        context "and when #terminator is '\\n'" do
+          let(:terminator) { "\n" }
 
           it "must append a '\\n' to the end of the escaped command string" do
             expect(subject.escape(command)).to eq("#{subject.original_value}`|#{command}\n")
@@ -907,24 +907,24 @@ describe Ronin::Vulns::CommandInjection do
           end
         end
 
-        context "and when #terminate is ';'" do
-          let(:terminate) { ';' }
+        context "and when #terminator is ';'" do
+          let(:terminator) { ';' }
 
           it "must append a ';' to the end of the escaped command string" do
             expect(subject.escape(command)).to eq("#{subject.original_value}`&#{command};")
           end
         end
 
-        context "and when #terminate is '#'" do
-          let(:terminate) { '#' }
+        context "and when #terminator is '#'" do
+          let(:terminator) { '#' }
 
           it "must append a '#' to the end of the escaped command string" do
             expect(subject.escape(command)).to eq("#{subject.original_value}`&#{command}#")
           end
         end
 
-        context "and when #terminate is '\\n'" do
-          let(:terminate) { "\n" }
+        context "and when #terminator is '\\n'" do
+          let(:terminator) { "\n" }
 
           it "must append a '\\n' to the end of the escaped command string" do
             expect(subject.escape(command)).to eq("#{subject.original_value}`&#{command}\n")
@@ -947,24 +947,24 @@ describe Ronin::Vulns::CommandInjection do
           end
         end
 
-        context "and when #terminate is ';'" do
-          let(:terminate) { ';' }
+        context "and when #terminator is ';'" do
+          let(:terminator) { ';' }
 
           it "must append a ';' to the end of the escaped command string" do
             expect(subject.escape(command)).to eq("#{subject.original_value}`\n#{command};")
           end
         end
 
-        context "and when #terminate is '#'" do
-          let(:terminate) { '#' }
+        context "and when #terminator is '#'" do
+          let(:terminator) { '#' }
 
           it "must append a '#' to the end of the escaped command string" do
             expect(subject.escape(command)).to eq("#{subject.original_value}`\n#{command}#")
           end
         end
 
-        context "and when #terminate is '\\n'" do
-          let(:terminate) { "\n" }
+        context "and when #terminator is '\\n'" do
+          let(:terminator) { "\n" }
 
           it "must append a '\\n' to the end of the escaped command string" do
             expect(subject.escape(command)).to eq("#{subject.original_value}`\n#{command}\n")
