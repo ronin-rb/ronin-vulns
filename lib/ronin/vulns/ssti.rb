@@ -102,12 +102,12 @@ module Ronin
       # @param [URI::HTTP, String] url
       #   The URL to scan.
       #
-      # @param [Hash{Symbol => Object}] kwargs
-      #   Additional keyword arguments for {#initialize}.
-      #
-      # @option kwargs [Proc, nil] :escape
+      # @param [Array<Proc>, Proc, nil] escape
       #   The escape method to use. If `escape:` is not given, then all escapes
       #   in {ESCAPES} will be tested..
+      #
+      # @param [Hash{Symbol => Object}] kwargs
+      #   Additional keyword arguments for {#initialize}.
       #
       # @option kwargs [Array<Symbol, String>, Symbol, String, true, nil] :query_params
       #   The query param name(s) to test.
@@ -145,18 +145,14 @@ module Ronin
       # @return [Array<SSTI>]
       #   All discovered SSTI vulnerabilities.
       #
-      def self.scan(url, **kwargs,&block)
-        if kwargs.has_key?(:escape)
-          super(url, **kwargs, &block)
-        else
-          vulns = []
+      def self.scan(url, escape: ESCAPES, **kwargs,&block)
+        vulns = []
 
-          ESCAPES.each do |escape|
-            vulns.concat(super(url, escape: escape, **kwargs, &block))
-          end
-
-          return vulns
+        Array(escape).each do |escape_char|
+          vulns.concat(super(url, escape: escape_char, **kwargs, &block))
         end
+
+        return vulns
       end
 
       #
