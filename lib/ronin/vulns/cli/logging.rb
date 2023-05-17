@@ -31,8 +31,9 @@ module Ronin
 
         # Known vulnerability types and their printable names.
         VULN_TYPES = {
-          open_redirect: 'Open Redirect',
-          reflected_xss: 'reflected XSS',
+          command_injection: 'Command Injection',
+          open_redirect:     'Open Redirect',
+          reflected_xss:     'reflected XSS',
 
           lfi:  'LFI',
           rfi:  'RFI',
