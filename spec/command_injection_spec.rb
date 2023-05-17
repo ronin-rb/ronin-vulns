@@ -73,41 +73,219 @@ describe Ronin::Vulns::CommandInjection do
 
     let(:url) { "https://example.com/page?foo=1&bar=2&baz=3" }
 
-    let(:escape_quotes)    { [nil, "'", '"', '`'] }
-    let(:escape_operators) { ['%3B', '%7C', '%26', "%0A"] }
-    let(:terminations)     { [nil, '%3B', '%23', "%0A"] }
+    let(:quotes)      { [nil, "'", '"', '`'] }
+    let(:operators)   { [';', '|', '&', "\n"] }
+    let(:terminators) { [nil, ';', '#', "\n"] }
+
+    let(:uri_escaped_quotes) do
+      quotes.map(&URI::QueryParams.method(:escape))
+    end
+    let(:uri_escaped_operators) do
+      operators.map(&URI::QueryParams.method(:escape))
+    end
+    let(:uri_escaped_terminators) do
+      terminators.map(&URI::QueryParams.method(:escape))
+    end
 
     it "must scan the URL using every combination of escape quote characters, escape operator characters, and terminator characters, with the `id` and `sleep` commands" do
-      escape_quotes.each do |escape_quote|
-        escape_operators.each do |escape_operator|
-          terminations.each do |terminate|
+      uri_escaped_quotes.each do |quote|
+        uri_escaped_operators.each do |operator|
+          uri_escaped_terminators.each do |terminator|
             # query_param: foo
-            stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1#{escape_quote}#{escape_operator}id#{terminate}")
-            stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1#{escape_quote}#{escape_operator}sleep 5#{terminate}")
+            stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1#{quote}#{operator}id#{terminator}")
+            stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1#{quote}#{operator}sleep 5#{terminator}")
             # query_param: bar
-            stub_request(:get,"https://example.com/page?bar=2#{escape_quote}#{escape_operator}id#{terminate}&baz=3&foo=1")
-            stub_request(:get,"https://example.com/page?bar=2#{escape_quote}#{escape_operator}sleep 5#{terminate}&baz=3&foo=1")
+            stub_request(:get,"https://example.com/page?bar=2#{quote}#{operator}id#{terminator}&baz=3&foo=1")
+            stub_request(:get,"https://example.com/page?bar=2#{quote}#{operator}sleep 5#{terminator}&baz=3&foo=1")
             # query_param: baz
-            stub_request(:get,"https://example.com/page?bar=2&baz=3#{escape_quote}#{escape_operator}id#{terminate}&foo=1")
-            stub_request(:get,"https://example.com/page?bar=2&baz=3#{escape_quote}#{escape_operator}sleep 5#{terminate}&foo=1")
+            stub_request(:get,"https://example.com/page?bar=2&baz=3#{quote}#{operator}id#{terminator}&foo=1")
+            stub_request(:get,"https://example.com/page?bar=2&baz=3#{quote}#{operator}sleep 5#{terminator}&foo=1")
           end
         end
       end
 
       subject.scan(url)
 
-      escape_quotes.each do |escape_quote|
-        escape_operators.each do |escape_operator|
-          terminations.each do |terminate|
+      uri_escaped_quotes.each do |quote|
+        uri_escaped_operators.each do |operator|
+          uri_escaped_terminators.each do |terminator|
             # query_param: foo
-            expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1#{escape_quote}#{escape_operator}id#{terminate}")
-            expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1#{escape_quote}#{escape_operator}sleep 5#{terminate}")
+            expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1#{quote}#{operator}id#{terminator}")
+            expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1#{quote}#{operator}sleep 5#{terminator}")
             # query_param: bar
-            expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2#{escape_quote}#{escape_operator}id#{terminate}&baz=3&foo=1")
-            expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2#{escape_quote}#{escape_operator}sleep 5#{terminate}&baz=3&foo=1")
+            expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2#{quote}#{operator}id#{terminator}&baz=3&foo=1")
+            expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2#{quote}#{operator}sleep 5#{terminator}&baz=3&foo=1")
             # query_param: baz
-            expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3#{escape_quote}#{escape_operator}id#{terminate}&foo=1")
-            expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3#{escape_quote}#{escape_operator}sleep 5#{terminate}&foo=1")
+            expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3#{quote}#{operator}id#{terminator}&foo=1")
+            expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3#{quote}#{operator}sleep 5#{terminator}&foo=1")
+          end
+        end
+      end
+    end
+
+    context "when given the escape_quote: keyword argument" do
+      context "and it's a String" do
+        let(:escape_quote)  { "'" }
+        let(:quotes)        { [escape_quote] }
+
+        it "must only use that escape quote character" do
+          uri_escaped_quotes.each do |quote|
+            uri_escaped_operators.each do |operator|
+              uri_escaped_terminators.each do |terminator|
+                # query_param: foo
+                stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1#{quote}#{operator}id#{terminator}")
+                stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1#{quote}#{operator}sleep 5#{terminator}")
+                # query_param: bar
+                stub_request(:get,"https://example.com/page?bar=2#{quote}#{operator}id#{terminator}&baz=3&foo=1")
+                stub_request(:get,"https://example.com/page?bar=2#{quote}#{operator}sleep 5#{terminator}&baz=3&foo=1")
+                # query_param: baz
+                stub_request(:get,"https://example.com/page?bar=2&baz=3#{quote}#{operator}id#{terminator}&foo=1")
+                stub_request(:get,"https://example.com/page?bar=2&baz=3#{quote}#{operator}sleep 5#{terminator}&foo=1")
+              end
+            end
+          end
+
+          subject.scan(url, escape_quote: escape_quote)
+
+          uri_escaped_quotes.each do |quote|
+            uri_escaped_operators.each do |operator|
+              uri_escaped_terminators.each do |terminator|
+                # query_param: foo
+                expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1#{quote}#{operator}id#{terminator}")
+                expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1#{quote}#{operator}sleep 5#{terminator}")
+                # query_param: bar
+                expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2#{quote}#{operator}id#{terminator}&baz=3&foo=1")
+                expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2#{quote}#{operator}sleep 5#{terminator}&baz=3&foo=1")
+                # query_param: baz
+                expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3#{quote}#{operator}id#{terminator}&foo=1")
+                expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3#{quote}#{operator}sleep 5#{terminator}&foo=1")
+              end
+            end
+          end
+        end
+      end
+
+      context "and it's an Array" do
+        let(:escape_quotes) { ["'", '`'] }
+        let(:quotes)        { escape_quotes }
+
+        it "must only test those escape quote characters" do
+          uri_escaped_quotes.each do |quote|
+            uri_escaped_operators.each do |operator|
+              uri_escaped_terminators.each do |terminator|
+                # query_param: foo
+                stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1#{quote}#{operator}id#{terminator}")
+                stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1#{quote}#{operator}sleep 5#{terminator}")
+                # query_param: bar
+                stub_request(:get,"https://example.com/page?bar=2#{quote}#{operator}id#{terminator}&baz=3&foo=1")
+                stub_request(:get,"https://example.com/page?bar=2#{quote}#{operator}sleep 5#{terminator}&baz=3&foo=1")
+                # query_param: baz
+                stub_request(:get,"https://example.com/page?bar=2&baz=3#{quote}#{operator}id#{terminator}&foo=1")
+                stub_request(:get,"https://example.com/page?bar=2&baz=3#{quote}#{operator}sleep 5#{terminator}&foo=1")
+              end
+            end
+          end
+
+          subject.scan(url, escape_quote: escape_quotes)
+
+          uri_escaped_quotes.each do |quote|
+            uri_escaped_operators.each do |operator|
+              uri_escaped_terminators.each do |terminator|
+                # query_param: foo
+                expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1#{quote}#{operator}id#{terminator}")
+                expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1#{quote}#{operator}sleep 5#{terminator}")
+                # query_param: bar
+                expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2#{quote}#{operator}id#{terminator}&baz=3&foo=1")
+                expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2#{quote}#{operator}sleep 5#{terminator}&baz=3&foo=1")
+                # query_param: baz
+                expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3#{quote}#{operator}id#{terminator}&foo=1")
+                expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3#{quote}#{operator}sleep 5#{terminator}&foo=1")
+              end
+            end
+          end
+        end
+      end
+    end
+
+    context "when given the escape_operator: keyword argument" do
+      context "and it's a String" do
+        let(:escape_operator)  { ";" }
+        let(:operators)        { [escape_operator] }
+
+        it "must only use that escape operator character" do
+          uri_escaped_quotes.each do |quote|
+            uri_escaped_operators.each do |operator|
+              uri_escaped_terminators.each do |terminator|
+                # query_param: foo
+                stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1#{quote}#{operator}id#{terminator}")
+                stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1#{quote}#{operator}sleep 5#{terminator}")
+                # query_param: bar
+                stub_request(:get,"https://example.com/page?bar=2#{quote}#{operator}id#{terminator}&baz=3&foo=1")
+                stub_request(:get,"https://example.com/page?bar=2#{quote}#{operator}sleep 5#{terminator}&baz=3&foo=1")
+                # query_param: baz
+                stub_request(:get,"https://example.com/page?bar=2&baz=3#{quote}#{operator}id#{terminator}&foo=1")
+                stub_request(:get,"https://example.com/page?bar=2&baz=3#{quote}#{operator}sleep 5#{terminator}&foo=1")
+              end
+            end
+          end
+
+          subject.scan(url, escape_operator: escape_operator)
+
+          uri_escaped_quotes.each do |quote|
+            uri_escaped_operators.each do |operator|
+              uri_escaped_terminators.each do |terminator|
+                # query_param: foo
+                expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1#{quote}#{operator}id#{terminator}")
+                expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1#{quote}#{operator}sleep 5#{terminator}")
+                # query_param: bar
+                expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2#{quote}#{operator}id#{terminator}&baz=3&foo=1")
+                expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2#{quote}#{operator}sleep 5#{terminator}&baz=3&foo=1")
+                # query_param: baz
+                expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3#{quote}#{operator}id#{terminator}&foo=1")
+                expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3#{quote}#{operator}sleep 5#{terminator}&foo=1")
+              end
+            end
+          end
+        end
+      end
+
+      context "and it's an Array" do
+        let(:escape_operators) { [";", '&'] }
+        let(:operators)        { escape_operators }
+
+        it "must only test those escape operators characters" do
+          uri_escaped_quotes.each do |quote|
+            uri_escaped_operators.each do |operator|
+              uri_escaped_terminators.each do |terminator|
+                # query_param: foo
+                stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1#{quote}#{operator}id#{terminator}")
+                stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1#{quote}#{operator}sleep 5#{terminator}")
+                # query_param: bar
+                stub_request(:get,"https://example.com/page?bar=2#{quote}#{operator}id#{terminator}&baz=3&foo=1")
+                stub_request(:get,"https://example.com/page?bar=2#{quote}#{operator}sleep 5#{terminator}&baz=3&foo=1")
+                # query_param: baz
+                stub_request(:get,"https://example.com/page?bar=2&baz=3#{quote}#{operator}id#{terminator}&foo=1")
+                stub_request(:get,"https://example.com/page?bar=2&baz=3#{quote}#{operator}sleep 5#{terminator}&foo=1")
+              end
+            end
+          end
+
+          subject.scan(url, escape_operator: escape_operators)
+
+          uri_escaped_quotes.each do |quote|
+            uri_escaped_operators.each do |operator|
+              uri_escaped_terminators.each do |terminator|
+                # query_param: foo
+                expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1#{quote}#{operator}id#{terminator}")
+                expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1#{quote}#{operator}sleep 5#{terminator}")
+                # query_param: bar
+                expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2#{quote}#{operator}id#{terminator}&baz=3&foo=1")
+                expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2#{quote}#{operator}sleep 5#{terminator}&baz=3&foo=1")
+                # query_param: baz
+                expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3#{quote}#{operator}id#{terminator}&foo=1")
+                expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3#{quote}#{operator}sleep 5#{terminator}&foo=1")
+              end
+            end
           end
         end
       end
