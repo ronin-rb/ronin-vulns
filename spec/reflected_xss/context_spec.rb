@@ -232,6 +232,54 @@ describe Ronin::Vulns::ReflectedXSS::Context do
         expect(subject.tag).to eq('div')
       end
     end
+
+    context "when the index is after a comment" do
+      let(:body) do
+        <<~HTML
+          <html>
+            <body>
+              <p>foo bar baz</p>
+              <div><!-- test --> foo XSS bar</div>
+              <p>foo bar baz</p>
+            </body>
+          </html>
+        HTML
+      end
+
+      it "must return a #{described_class}" do
+        expect(subject).to be_kind_of(described_class)
+      end
+
+      it "must set #location to :tag_body" do
+        expect(subject.location).to eq(:tag_body)
+      end
+
+      it "must set #tag" do
+        expect(subject.tag).to eq('div')
+      end
+    end
+
+    context "when the index is within a comment" do
+      let(:body) do
+        <<~HTML
+          <html>
+            <body>
+              <p>foo bar baz</p>
+              <div>foo <!-- XSS --> bar</div>
+              <p>foo bar baz</p>
+            </body>
+          </html>
+        HTML
+      end
+
+      it "must return a #{described_class}" do
+        expect(subject).to be_kind_of(described_class)
+      end
+
+      it "must set #location to :comment" do
+        expect(subject.location).to eq(:comment)
+      end
+    end
   end
 
   describe "#viable?" do
@@ -426,6 +474,18 @@ describe Ronin::Vulns::ReflectedXSS::Context do
 
     context "when #location is :tag_body" do
       let(:location) { :tag_body }
+
+      context "and allowed characters contains '>', ' ', '/', and '<''" do
+        let(:allowed_chars) { Set['>', ' ', '/', '<'] }
+
+        it "must return true" do
+          expect(subject.viable?(allowed_chars)).to be(true)
+        end
+      end
+    end
+
+    context "when #location is :comment" do
+      let(:location) { :comment }
 
       context "and allowed characters contains '>', ' ', '/', and '<''" do
         let(:allowed_chars) { Set['>', ' ', '/', '<'] }
