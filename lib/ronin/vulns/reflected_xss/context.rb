@@ -30,7 +30,7 @@ module Ronin
 
         # Where in the HTML the XSS occurs.
         #
-        # @return [:double_quoted_attr_value, :single_quoted_attr_value, :unquoted_attr_value, :attr_name, :attr_list, :tag_name, :tag_body]
+        # @return [:double_quoted_attr_value, :single_quoted_attr_value, :unquoted_attr_value, :attr_name, :attr_list, :tag_name, :tag_body, :comment]
         #   The context which the XSS occurs in.
         #   * `:tag_body` occurred within a tag's body (ex: `<tag>XSS...</tag>`)
         #   * `:double_quoted_attr_value` - occurred in a double quoted
@@ -44,13 +44,14 @@ module Ronin
         #   * `:attr_list` - occurred in the attribute list
         #     (ex: `<tag XSS>...</tag>`)
         #   * `:tag_name` - occurred in the tag name (ex: `<tagXSS>...</tag>`)
+        #   * `:comment` - occurred in a comment (ex: `<!-- XSS -->`)
         #
         # @api public
         attr_reader :location
 
         # The name of the parent tag which the XSS occurs in.
         #
-        # @return [String]
+        # @return [String, nil]
         #
         # @api public
         attr_reader :tag
@@ -65,9 +66,9 @@ module Ronin
         #
         # Initializes the context.
         #
-        # @param [:double_quoted_attr_value, :single_quoted_attr_value, :unquoted_attr_value, :attr_name, :attr_list, :tag_name, :tag_body] location
+        # @param [:double_quoted_attr_value, :single_quoted_attr_value, :unquoted_attr_value, :attr_name, :attr_list, :tag_name, :tag_body, :comment] location
         #
-        # @param [String] tag
+        # @param [String, nil] tag
         #
         # @param [String, nil] attr
         #
@@ -100,6 +101,11 @@ module Ronin
         # @api private
         ATTR_LIST = /(?:\s+#{ATTR})*/
 
+        # HTML comment regexp.
+        #
+        # @api private
+        COMMENT = /<![^>]*>/
+
         # HTML tag name regexp.
         #
         # @api private
@@ -108,7 +114,7 @@ module Ronin
         # Regexp matching when an XSS occurs within a tag's inner HTML.
         #
         # @api private
-        IN_TAG_BODY = %r{<(#{TAG_NAME})#{ATTR_LIST}\s*(?:>|/>)[^<>]*\z}
+        IN_TAG_BODY = %r{<(#{TAG_NAME})#{ATTR_LIST}\s*(?:>|/>)([^<>]|#{COMMENT})*\z}
 
         # Regexp matching when an XSS occurs within a double-quoted attribute
         # value.
@@ -142,6 +148,11 @@ module Ronin
         # @api private
         IN_TAG_NAME = /<(#{TAG_NAME})\z/
 
+        # Regexp matching when an XSS occurs within a comment.
+        #
+        # @api private
+        IN_COMMENT = /<![^>]*\z/
+
         #
         # Determine the context of the XSS by checking the characters that come
         # before the given index.
@@ -174,6 +185,8 @@ module Ronin
             new(:attr_list, tag: match[1])
           elsif (match = prefix.match(IN_TAG_NAME))
             new(:tag_name, tag: match[1])
+          elsif prefix.match?(IN_COMMENT)
+            new(:comment)
           end
         end
 
@@ -193,7 +206,8 @@ module Ronin
           attr_name: MINIMAL_REQUIRED_CHARS,
           attr_list: MINIMAL_REQUIRED_CHARS,
           tag_name:  MINIMAL_REQUIRED_CHARS,
-          tag_body:  MINIMAL_REQUIRED_CHARS
+          tag_body:  MINIMAL_REQUIRED_CHARS,
+          comment:   MINIMAL_REQUIRED_CHARS
         }
 
         #
