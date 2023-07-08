@@ -1,3 +1,13 @@
+### 0.1.3 / 2023-07-07
+
+* Fixed a bug in {Ronin::Vulns::SSTI.scan} where when called without `escape:`
+  it would not return all found vulnerabilities.
+* Fixed a bug in {Ronin::Vulns::SQLI.scan} where repeat requests would be sent
+  even if `escape_quote:`, `escape_parens:`, or `terminate:` keyword arguments
+  are given.
+* Improved {Ronin::Vulns::ReflectedXSS::Context} to detect when the XSS occurs
+  after or *inside of* an HTML comment.
+
 ### 0.1.2 / 2023-03-01
 
 * Require `ronin-support` ~> 1.0, >= 1.0.1
