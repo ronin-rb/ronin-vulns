@@ -9,7 +9,6 @@
 * [Issues](https://github.com/ronin-rb/ronin-vulns/issues)
 * [Documentation](https://ronin-rb.dev/docs/ronin-vulns/frames)
 * [Discord](https://discord.gg/6WAb3PsVX9) |
-  [Twitter](https://twitter.com/ronin_rb) |
   [Mastodon](https://infosec.exchange/@ronin_rb)
 
 ## Description
