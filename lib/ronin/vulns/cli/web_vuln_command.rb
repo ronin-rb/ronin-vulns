@@ -82,10 +82,13 @@ module Ronin
                               desc: 'Sets an additional cookie param' do |param|
                                 name, value = param.split('=',2)
 
-                                # lazy initialize the cookie
-                                @cookie ||= Support::Network::HTTP::Cookie.new
-
-                                @cookie[name] = value
+                                if @cookie
+                                  @cookie[name] = value
+                                else
+                                  @cookie = Support::Network::HTTP::Cookie.new(
+                                    name => value
+                                  )
+                                end
                               end
 
         option :referer, short: '-R',
