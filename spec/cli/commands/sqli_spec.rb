@@ -7,8 +7,8 @@ describe Ronin::Vulns::CLI::Commands::Sqli do
 
   let(:url) { 'https://example.com/page.php?id=1' }
 
-  describe "#scan_kwargs" do
-    context "when #options[:escape_quote] is set" do
+  describe "#option_parser" do
+    context "when the '--escape-quote' option is parsed" do
       let(:argv) { %w[--escape-quote] }
 
       before { subject.option_parser.parse(argv) }
@@ -18,7 +18,7 @@ describe Ronin::Vulns::CLI::Commands::Sqli do
       end
     end
 
-    context "when #options[:escape_parens] is set" do
+    context "when the '--escape-parens' option is parsed" do
       let(:argv) { %w[--escape-parens] }
 
       before { subject.option_parser.parse(argv) }
@@ -28,7 +28,7 @@ describe Ronin::Vulns::CLI::Commands::Sqli do
       end
     end
 
-    context "when #options[:terminate] is set" do
+    context "when the '--terminate' option is parsed" do
       let(:argv) { %w[--terminate] }
 
       before { subject.option_parser.parse(argv) }

@@ -7,8 +7,8 @@ describe Ronin::Vulns::CLI::Commands::OpenRedirect do
 
   let(:url) { 'https://example.com/page.php?id=1' }
 
-  describe "#scan_kwargs" do
-    context "when #options[:test_url] is set" do
+  describe "#option_parser" do
+    context "when the '--test_url' option is parsed" do
       let(:test_url) { 'https://example.com/test' }
       let(:argv)     { ['--test-url', test_url]   }
 

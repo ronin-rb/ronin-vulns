@@ -7,8 +7,8 @@ describe Ronin::Vulns::CLI::Commands::Rfi do
 
   let(:url) { 'https://example.com/page.php?id=1' }
 
-  describe "#scan_kwargs" do
-    context "when #options[:filter_bypass] is set" do
+  describe "#option_parser" do
+    context "when the '--filter-bypass' option is parsed" do
       let(:filter_bypass) { :suffix_escape }
       let(:argv) { ['--filter-bypass', 'suffix-escape'] }
 
@@ -19,7 +19,7 @@ describe Ronin::Vulns::CLI::Commands::Rfi do
       end
     end
 
-    context "when #options[:script_lang] is set" do
+    context "when the '--script-lang' option is parsed" do
       let(:script_lang) { :asp_net }
       let(:argv) { ['--script-lang', 'asp.net'] }
 
@@ -30,7 +30,7 @@ describe Ronin::Vulns::CLI::Commands::Rfi do
       end
     end
 
-    context "when #options[:test_script_url] is set" do
+    context "when the '--test-script-url' option is parsed" do
       let(:test_script_url) { 'https://other-website.com/path/to/rfi_test.php' }
       let(:argv) { ['--test-script-url', test_script_url] }
 

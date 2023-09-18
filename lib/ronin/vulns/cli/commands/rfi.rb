@@ -71,7 +71,9 @@ module Ronin
                                      'null-byte'     => :null_byte
                                    }
                                  },
-                                 desc: 'Optional filter-bypass strategy to use'
+                                 desc: 'Optional filter-bypass strategy to use' do |filter_bypass|
+                                   scan_kwargs[:filter_bypass] = filter_bypass
+                                 end
 
           option :script_lang, short: '-S',
                                value: {
@@ -84,41 +86,22 @@ module Ronin
                                    'perl'       => :perl
                                  }
                                },
-                               desc: 'Explicitly specify the scripting language to test for'
+                               desc: 'Explicitly specify the scripting language to test for' do |script_lang|
+                                 scan_kwargs[:script_lang] = script_lang
+                               end
 
           option :test_script_url, short: '-T',
                                    value: {
                                      type:  String,
                                      usage: 'URL'
                                    },
-                                   desc: 'Use an alternative test script URL'
+                                   desc: 'Use an alternative test script URL' do |test_script_url|
+                                     scan_kwargs[:test_script_url] = test_script_url
+                                   end
 
           description 'Scans URL(s) for Remote File Inclusion (RFI) vulnerabilities'
 
           man_page 'ronin-vulns-rfi.1'
-
-          #
-          # Keyword arguments for `Vulns::RFI.scan` and `Vulns::RFI.test`.
-          #
-          # @return [Hash{Symbol => Object}]
-          #
-          def scan_kwargs
-            kwargs = super()
-
-            if options[:filter_bypass]
-              kwargs[:filter_bypass] = options[:filter_bypass]
-            end
-
-            if options[:script_lang]
-              kwargs[:script_lang] = options[:script_lang]
-            end
-
-            if options[:test_script_url]
-              kwargs[:test_script_url] = options[:test_script_url]
-            end
-
-            return kwargs
-          end
 
           #
           # Scans a URL for RFI vulnerabilities.

@@ -9,44 +9,147 @@ describe Ronin::Vulns::CLI::WebVulnCommand do
       expect(subject.scan_mode).to eq(:first)
     end
 
-    it "must default #headers to nil" do
-      expect(subject.headers).to be(nil)
+    it "must default #scan_kwargs to {}" do
+      expect(subject.scan_kwargs).to eq({})
+    end
+  end
+
+  describe "#scan_kwargs" do
+    it "must default to an empty Hash" do
+      expect(subject.scan_kwargs).to eq({})
+    end
+  end
+
+  describe "#headers" do
+    it "must default to an empty Hash" do
+      expect(subject.headers).to eq({})
     end
 
-    it "must default #cookie to nil" do
-      expect(subject.cookie).to be(nil)
+    it "must set :headers in #scan_kwargs" do
+      subject.headers
+
+      expect(subject.scan_kwargs[:headers]).to be(subject.headers)
+    end
+  end
+
+  describe "#cookie" do
+    it "must default to an empty Ronin::Support::Network::HTTP::Cookie" do
+      expect(subject.cookie).to be_kind_of(Ronin::Support::Network::HTTP::Cookie)
+      expect(subject.cookie).to be_empty
     end
 
-    it "must default #referer to nil" do
+    it "must set :cookie in #scan_kwargs" do
+      subject.cookie
+
+      expect(subject.scan_kwargs[:cookie]).to be(subject.cookie)
+    end
+  end
+
+  describe "#referer" do
+    it "must default to nil" do
       expect(subject.referer).to be(nil)
     end
+  end
 
-    it "must default #form_data to nil" do
-      expect(subject.form_data).to be(nil)
+  describe "#referer=" do
+    let(:new_referer)  { 'https://example.com/' }
+
+    before { subject.referer = new_referer }
+
+    it "must set #referer" do
+      expect(subject.referer).to eq(new_referer)
     end
 
-    it "must default #test_query_params to nil" do
-      expect(subject.test_query_params).to be(nil)
+    it "must set :referer in #scan_kwargs" do
+      expect(subject.scan_kwargs[:referer]).to eq(new_referer)
+    end
+  end
+
+  describe "#form_data" do
+    it "must default to an empty Hash" do
+      expect(subject.form_data).to eq({})
     end
 
-    it "must default #test_all_query_params to nil" do
-      expect(subject.test_all_query_params).to be(nil)
+    it "must set :form_data in #scan_kwargs" do
+      subject.form_data
+
+      expect(subject.scan_kwargs[:form_data]).to be(subject.form_data)
+    end
+  end
+
+  describe "#test_query_params" do
+    it "must default to an empty Set" do
+      expect(subject.test_query_params).to eq(Set.new)
     end
 
-    it "must default #test_header_names to nil" do
-      expect(subject.test_header_names).to be(nil)
+    it "must set :query_params in #scan_kwargs" do
+      subject.test_query_params
+
+      expect(subject.scan_kwargs[:query_params]).to be(subject.test_query_params)
+    end
+  end
+
+  describe "#test_query_params=" do
+    context "when given true" do
+      before { subject.test_query_params = true }
+
+      it "must set #test_query_params to true" do
+        expect(subject.test_query_params).to be(true)
+      end
+
+      it "must set :query_params in #scan_kwargs to true" do
+        expect(subject.scan_kwargs[:query_params]).to be(true)
+      end
+    end
+  end
+
+  describe "#test_header_names" do
+    it "must default to an empty Hash" do
+      expect(subject.test_header_names).to eq(Set.new)
     end
 
-    it "must default #test_cookie_params to nil" do
-      expect(subject.test_cookie_params).to be(nil)
+    it "must set :header_names in #scan_kwargs" do
+      subject.test_header_names
+
+      expect(subject.scan_kwargs[:header_names]).to be(subject.test_header_names)
+    end
+  end
+
+  describe "#test_cookie_params" do
+    it "must default to an empty Set" do
+      expect(subject.test_cookie_params).to eq(Set.new)
     end
 
-    it "must default #test_all_cookie_params to nil" do
-      expect(subject.test_all_cookie_params).to be(nil)
+    it "must set :cookie_params in #scan_kwargs" do
+      subject.test_cookie_params
+
+      expect(subject.scan_kwargs[:cookie_params]).to be(subject.test_cookie_params)
+    end
+  end
+
+  describe "#test_cookie_params=" do
+    context "when given true" do
+      before { subject.test_cookie_params = true }
+
+      it "must set #test_cookie_params to true" do
+        expect(subject.test_cookie_params).to be(true)
+      end
+
+      it "must set :cookie_params in #scan_kwargs to true" do
+        expect(subject.scan_kwargs[:cookie_params]).to be(true)
+      end
+    end
+  end
+
+  describe "#test_form_params" do
+    it "must default to an empty Set" do
+      expect(subject.test_form_params).to eq(Set.new)
     end
 
-    it "must default #test_form_params to nil" do
-      expect(subject.test_form_params).to be(nil)
+    it "must set :form_params in #scan_kwargs" do
+      subject.test_form_params
+
+      expect(subject.scan_kwargs[:form_params]).to be(subject.test_form_params)
     end
   end
 
@@ -211,8 +314,8 @@ describe Ronin::Vulns::CLI::WebVulnCommand do
     context "when the '--test-all-query-param' option is parsed" do
       let(:argv) { %w[--test-all-query-param] }
 
-      it "must set #test_all_query_params to true" do
-        expect(subject.test_all_query_params).to be(true)
+      it "must set #test_query_params to true" do
+        expect(subject.test_query_params).to be(true)
       end
     end
 
@@ -247,8 +350,8 @@ describe Ronin::Vulns::CLI::WebVulnCommand do
     context "when the '--test-all-cookie-param' option is parsed" do
       let(:argv) { %w[--test-all-cookie-param] }
 
-      it "must set #test_all_cookie_params to true" do
-        expect(subject.test_all_cookie_params).to be(true)
+      it "must set #test_cookie_params to true" do
+        expect(subject.test_cookie_params).to be(true)
       end
     end
 

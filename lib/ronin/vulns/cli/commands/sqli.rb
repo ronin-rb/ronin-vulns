@@ -61,41 +61,21 @@ module Ronin
 
           usage '[options] {URL ... | --input FILE}'
 
-          option :escape_quote, short: '-Q',
-                                desc: 'Escapes quotation marks'
+          option :escape_quote, short: '-Q', desc: 'Escapes quotation marks' do
+            scan_kwargs[:escape_quote] = true
+          end
 
-          option :escape_parens, short: '-P',
-                                 desc: 'Escapes parenthesis'
+          option :escape_parens, short: '-P', desc: 'Escapes parenthesis' do
+            scan_kwargs[:escape_parens] = true
+          end
 
-          option :terminate, short: '-T',
-                             desc: 'Terminates the SQL expression with a --'
+          option :terminate, short: '-T', desc: 'Terminates the SQL expression with a --' do
+            scan_kwargs[:terminate] = true
+          end
 
           description 'Scans URL(s) for SQL injection (SQLi) vulnerabilities'
 
           man_page 'ronin-vulns-sqli.1'
-
-          #
-          # Keyword arguments for `Vulns::SQLI.scan` and `Vulns::SQLI.test`.
-          #
-          # @return [Hash{Symbol => Object}]
-          #
-          def scan_kwargs
-            kwargs = super()
-
-            if options[:escape_quote]
-              kwargs[:escape_quote] = options[:escape_quote]
-            end
-
-            if options[:escape_parens]
-              kwargs[:escape_parens] = options[:escape_parens]
-            end
-
-            if options[:terminate]
-              kwargs[:terminate] = options[:terminate]
-            end
-
-            return kwargs
-          end
 
           #
           # Scans a URL for SQLi vulnerabilities.

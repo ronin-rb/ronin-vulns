@@ -74,13 +74,17 @@ module Ronin
           option :lfi_os, value: {
                             type: [:unix, :windows]
                           },
-                          desc: 'Sets the OS to test for'
+                          desc: 'Sets the OS to test for' do |os|
+                            lfi_kwargs[:os] = os
+                          end
 
           option :lfi_depth, value: {
                                type:  Integer,
                                usage: 'COUNT'
                              },
-                             desc: 'Sets the directory depth to escape up'
+                             desc: 'Sets the directory depth to escape up' do |depth|
+                               lfi_kwargs[:depth] = depth
+                             end
 
           option :lfi_filter_bypass, value: {
                                        type: [
@@ -91,7 +95,9 @@ module Ronin
                                          :zlib
                                        ]
                                      },
-                                     desc: 'Sets the filter bypass strategy to use'
+                                     desc: 'Sets the filter bypass strategy to use' do |filter_bypass|
+                                       lfi_kwargs[:filter_bypass] = filter_bypass
+                                     end
 
           option :rfi_filter_bypass, value: {
                                        type: {
@@ -100,7 +106,9 @@ module Ronin
                                          'null-byte'     => :null_byte
                                        }
                                      },
-                                     desc: 'Optional filter-bypass strategy to use'
+                                     desc: 'Optional filter-bypass strategy to use' do |filter_bypass|
+                                       rfi_kwargs[:filter_bypass] = filter_bypass
+                                     end
 
           option :rfi_script_lang, value: {
                                      type:  {
@@ -112,33 +120,45 @@ module Ronin
                                        'perl'       => :perl
                                      }
                                    },
-                                   desc: 'Explicitly specify the scripting language to test for'
+                                   desc: 'Explicitly specify the scripting language to test for' do |script_lang|
+                                     rfi_kwargs[:script_lang] = script_lang
+                                   end
 
           option :rfi_test_script_url, value: {
                                          type:  String,
                                          usage: 'URL'
                                        },
-                                       desc: 'Use an alternative test script URL'
+                                       desc: 'Use an alternative test script URL' do |test_script_url|
+                                         rfi_kwargs[:test_script_url] = test_script_url
+                                       end
 
-          option :sqli_escape_quote, desc: 'Escapes quotation marks'
+          option :sqli_escape_quote, desc: 'Escapes quotation marks' do
+            sqli_kwargs[:escape_quote] = true
+          end
 
-          option :sqli_escape_parens, desc: 'Escapes parenthesis'
+          option :sqli_escape_parens, desc: 'Escapes parenthesis' do
+            sqli_kwargs[:escape_parens] = true
+          end
 
-          option :sqli_terminate, desc: 'Terminates the SQL expression with a --'
+          option :sqli_terminate, desc: 'Terminates the SQL expression with a --' do
+            sqli_kwargs[:terminate] = true
+          end
 
           option :ssti_test_expr, value: {
                                     type: %r{\A\d+\s*[\*/\+\-]\s*\d+\z},
                                     usage: '{X*Y | X/Z | X+Y | X-Y}'
                                   },
                                   desc: 'Optional numeric test to use' do |expr|
-                                    @ssti_test_expr = Vulns::SSTI::TestExpression.parse(expr)
+                                    ssti_kwargs[:test_expr] = Vulns::SSTI::TestExpression.parse(expr)
                                   end
 
           option :open_redirect_url, value: {
                                        type:  String,
                                        usage: 'URL'
                                      },
-                                     desc: 'Optional test URL to try to redirect to'
+                                     desc: 'Optional test URL to try to redirect to' do |test_url|
+                                       open_redirect_kwargs[:test_url] = test_url
+                                     end
 
           description 'Scans URL(s) for web vulnerabilities'
 
@@ -151,16 +171,7 @@ module Ronin
           # @return [Hash{Symbol => Object}]
           #
           def lfi_kwargs
-            kwargs = {}
-
-            kwargs[:os]    = options[:lfi_os]    if options[:lfi_os]
-            kwargs[:depth] = options[:lfi_depth] if options[:lfi_depth]
-
-            if options[:lfi_filter_bypass]
-              kwargs[:filter_bypass] = options[:lfi_filter_bypass]
-            end
-
-            return kwargs
+            scan_kwargs[:lfi] ||= {}
           end
 
           #
@@ -170,21 +181,7 @@ module Ronin
           # @return [Hash{Symbol => Object}]
           #
           def rfi_kwargs
-            kwargs = {}
-
-            if options[:rfi_filter_bypass]
-              kwargs[:filter_bypass] = options[:rfi_filter_bypass]
-            end
-
-            if options[:rfi_script_lang]
-              kwargs[:script_lang] = options[:rfi_script_lang]
-            end
-
-            if options[:rfi_test_script_url]
-              kwargs[:test_script_url] = options[:rfi_test_script_url]
-            end
-
-            return kwargs
+            scan_kwargs[:rfi] ||= {}
           end
 
           #
@@ -194,21 +191,7 @@ module Ronin
           # @return [Hash{Symbol => Object}]
           #
           def sqli_kwargs
-            kwargs = {}
-
-            if options[:sqli_escape_quote]
-              kwargs[:escape_quote] = options[:sqli_escape_quote]
-            end
-
-            if options[:sqli_escape_parens]
-              kwargs[:escape_parens] = options[:sqli_escape_parens]
-            end
-
-            if options[:sqli_terminate]
-              kwargs[:terminate] = options[:sqli_terminate]
-            end
-
-            return kwargs
+            scan_kwargs[:sqli] ||= {}
           end
 
           #
@@ -218,11 +201,7 @@ module Ronin
           # @return [Hash{Symbol => Object}]
           #
           def ssti_kwargs
-            kwargs = {}
-
-            kwargs[:test_expr] = @ssti_test_expr if @ssti_test_expr
-
-            return kwargs
+            scan_kwargs[:ssti] ||= {}
           end
 
           #
@@ -232,13 +211,7 @@ module Ronin
           # @return [Hash{Symbol => Object}]
           #
           def open_redirect_kwargs
-            kwargs = {}
-
-            if options[:open_redirect_url]
-              kwargs[:test_url] = options[:open_redirect_url]
-            end
-
-            return kwargs
+            scan_kwargs[:open_redirect] ||= {}
           end
 
           #
@@ -248,26 +221,7 @@ module Ronin
           # @return [Hash{Symbol => Object}]
           #
           def reflected_xss_kwargs
-            {}
-          end
-
-          #
-          # Keyword arguments for `Vulns::URLScanner.scan` and
-          # `Vulns::URLScanner.test`.
-          #
-          # @return [Hash{Symbol => Object}]
-          #
-          def scan_kwargs
-            kwargs = super()
-
-            kwargs[:lfi]           = lfi_kwargs
-            kwargs[:rfi]           = rfi_kwargs
-            kwargs[:sqli]          = sqli_kwargs
-            kwargs[:ssti]          = ssti_kwargs
-            kwargs[:open_redirect] = open_redirect_kwargs
-            kwargs[:reflected_xss] = reflected_xss_kwargs
-
-            return kwargs
+            scan_kwargs[:reflected_xss] ||= {}
           end
 
           #

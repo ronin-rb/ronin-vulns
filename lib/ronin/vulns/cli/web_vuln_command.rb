@@ -53,10 +53,7 @@ module Ronin
                         desc: 'Sets an additional header' do |header|
                           name, value = header.split(/:\s*/,2)
 
-                          # lazy initialize the headers
-                          @headers ||= {}
-
-                          @headers[name] = value
+                          self.headers[name] = value
                         end
 
         option :cookie, short: '-C',
@@ -67,11 +64,7 @@ module Ronin
                         desc: 'Sets the raw Cookie header' do |cookie|
                           cookie = Support::Network::HTTP::Cookie.parse(cookie)
 
-                          if @cookie
-                            @cookie.merge!(cookie)
-                          else
-                            @cookie = cookie
-                          end
+                          self.cookie.merge!(cookie)
                         end
 
         option :cookie_param, short: '-c',
@@ -82,13 +75,7 @@ module Ronin
                               desc: 'Sets an additional cookie param' do |param|
                                 name, value = param.split('=',2)
 
-                                if @cookie
-                                  @cookie[name] = value
-                                else
-                                  @cookie = Support::Network::HTTP::Cookie.new(
-                                    name => value
-                                  )
-                                end
+                                self.cookie[name] = value
                               end
 
         option :referer, short: '-R',
@@ -97,7 +84,7 @@ module Ronin
                            usage: 'URL'
                          },
                          desc: 'Sets the Referer header' do |referer|
-                           @referer = referer
+                           self.referer = referer
                          end
 
         option :form_param, short: '-F',
@@ -108,10 +95,7 @@ module Ronin
                             desc: 'Sets an additional form param' do |param|
                               name, value = param.split('=',2)
 
-                              # lazy initialize the form data
-                              @form_data ||= {}
-
-                              @form_data[name] = value
+                              self.form_data[name] = value
                             end
 
         option :test_query_param, value: {
@@ -119,14 +103,16 @@ module Ronin
                                     usage: 'NAME'
                                   },
                                   desc: 'Tests the URL query param name' do |name|
-                                    # lazy initialize the test query params
-                                    @test_query_params ||= Set.new
-
-                                    @test_query_params << name
+                                    case (test_query_params = self.test_query_params)
+                                    when true
+                                      # no-op, test all query params
+                                    when Set
+                                      test_query_params << name
+                                    end
                                   end
 
         option :test_all_query_params, desc: 'Test all URL query param names' do
-          @test_all_query_params = true
+          self.test_query_params = true
         end
 
         option :test_header_name, value: {
@@ -134,10 +120,7 @@ module Ronin
                                     usage: 'NAME'
                                   },
                                   desc: 'Tests the HTTP Header name' do |name|
-                                    # lazy initialize the test heade rnames
-                                    @test_header_names ||= Set.new
-
-                                    @test_header_names << name
+                                    self.test_header_names << name
                                   end
 
         option :test_cookie_param, value: {
@@ -145,26 +128,25 @@ module Ronin
                                      usage: 'NAME'
                                    },
                                    desc: 'Tests the HTTP Cookie name' do |name|
-                                     # lazy initialize the test cookie params
-                                     @test_cookie_params ||= Set.new
-
-                                     @test_cookie_params << name
+                                     case (test_cookie_params = self.test_cookie_params)
+                                     when true
+                                       # no-op, test all query params
+                                     when Set
+                                       test_cookie_params << name
+                                     end
                                    end
 
         option :test_all_cookie_params, desc: 'Test all Cookie param names' do
-          @test_all_cookie_params = true
+          self.test_cookie_params = true
         end
 
         option :test_form_param, value: {
                                    type: String,
-                                     usage: 'NAME'
+                                   usage: 'NAME'
                                  },
-                                   desc: 'Tests the form param name' do |name|
-                                     # lazy initialize the test form params
-                                     @test_form_params ||= Set.new
-
-                                     @test_form_params << name
-                                   end
+                                 desc: 'Tests the form param name' do |name|
+                                   self.test_form_params << name
+                                 end
 
         option :input, short: '-i',
                        value: {
@@ -184,55 +166,11 @@ module Ronin
         #   * `:all` - Find all vulnerabilities for each URL.
         attr_reader :scan_mode
 
-        # Additional headers.
+        # Keywrod arguments that will be used in {scan} and {test} to call
+        # {WebVuln.scan} or {WebVuln.test}.
         #
-        # @return [Hash{String => String}, nil]
-        attr_reader :headers
-
-        # The optional `Cookie` header to send.
-        #
-        # @return [Ronin::Support::Network::HTTP::Cookie, nil]
-        attr_reader :cookie
-
-        # The optional `Referer` header to send.
-        #
-        # @return [String, nil]
-        attr_reader :referer
-
-        # Additional form params.
-        #
-        # @return [Hash{String => String}, nil]
-        attr_reader :form_data
-
-        # The URL query params to test.
-        #
-        # @return [Set<String>, nil]
-        attr_reader :test_query_params
-
-        # Indicates whether to test all of the query params of the URL.
-        #
-        # @return [Boolean, nil]
-        attr_reader :test_all_query_params
-
-        # The HTTP Header names to test.
-        #
-        # @return [Set<String>, nil]
-        attr_reader :test_header_names
-
-        # The HTTP Cookie to test.
-        #
-        # @return [Set<String>, nil]
-        attr_reader :test_cookie_params
-
-        # Indicates whether to test all `Cookie` params for the URL.
-        #
-        # @return [Boolean, nil]
-        attr_reader :test_all_cookie_params
-
-        # The form params to test.
-        #
-        # @return [Set<String>, nil]
-        attr_reader :test_form_params
+        # @return [Hash{Symbol => Object}]
+        attr_reader :scan_kwargs
 
         #
         # Initializes the command.
@@ -243,7 +181,8 @@ module Ronin
         def initialize(**kwargs)
           super(**kwargs)
 
-          @scan_mode = :first
+          @scan_mode   = :first
+          @scan_kwargs = {}
         end
 
         #
@@ -312,36 +251,111 @@ module Ronin
         end
 
         #
-        # The keyword arguments for {WebVuln.scan}.
+        # Additional headers.
         #
         # @return [Hash{String => String}]
-        #   The keyword arguments.
         #
-        def scan_kwargs
-          kwargs = {}
+        def headers
+          @scan_kwargs[:headers] ||= {}
+        end
 
-          kwargs[:headers]   = @headers   if @headers
-          kwargs[:cookie]    = @cookie    if @cookie
-          kwargs[:referer]   = @referer   if @referer
-          kwargs[:form_data] = @form_data if @form_data
+        #
+        # The optional `Cookie` header to send.
+        #
+        # @return [Ronin::Support::Network::HTTP::Cookie]
+        #
+        def cookie
+          @scan_kwargs[:cookie] ||= Support::Network::HTTP::Cookie.new
+        end
 
-          if @test_query_params
-            kwargs[:query_params]  = @test_query_params
-          elsif @test_all_query_params
-            kwargs[:query_params]  = true
-          end
+        #
+        # The optional HTTP `Referer` header to send.
+        #
+        # @return [String, nil]
+        #
+        def referer
+          @scan_kwargs[:referer]
+        end
 
-          kwargs[:header_names] = @test_header_names if @test_header_names
+        #
+        # Sets the HTTP `Referer` header to send.
+        #
+        # @param [String, nil] new_referer
+        #   The new `Referer` header to send.
+        #
+        # @return [String, nil]
+        #
+        def referer=(new_referer)
+          @scan_kwargs[:referer] = new_referer
+        end
 
-          if @test_cookie_params
-            kwargs[:cookie_params] = @test_cookie_params
-          elsif @test_all_cookie_params
-            kwargs[:cookie_params] = true
-          end
+        #
+        # Additional form params.
+        #
+        # @return [Hash{String => String}, nil]
+        #
+        def form_data
+          @scan_kwargs[:form_data] ||= {}
+        end
 
-          kwargs[:form_params] = @test_form_params if @test_form_params
+        #
+        # The URL query params to test.
+        #
+        # @return [Set<String>, true]
+        #
+        def test_query_params
+          @scan_kwargs[:query_params] ||= Set.new
+        end
 
-          return kwargs
+        #
+        # Sets the URL query params to test.
+        #
+        # @param [Set<String>, true] new_query_params
+        #   The query params to test.
+        #
+        # @return [Set<String>, true]
+        #
+        def test_query_params=(new_query_params)
+          @scan_kwargs[:query_params] = new_query_params
+        end
+
+        #
+        # The HTTP Header names to test.
+        #
+        # @return [Set<String>]
+        #
+        def test_header_names
+          @scan_kwargs[:header_names] ||= Set.new
+        end
+
+        #
+        # The HTTP Cookie to test.
+        #
+        # @return [Set<String>, true]
+        #
+        def test_cookie_params
+          @scan_kwargs[:cookie_params] ||= Set.new
+        end
+
+        #
+        # Sets the HTTP Cookie to test.
+        #
+        # @param [Set<String>, true] new_cookie_params
+        #   The new cookie param names to test.
+        #
+        # @return [Set<String>, true]
+        #
+        def test_cookie_params=(new_cookie_params)
+          @scan_kwargs[:cookie_params] = new_cookie_params
+        end
+
+        #
+        # The form params to test.
+        #
+        # @return [Set<String>, nil]
+        #
+        def test_form_params
+          @scan_kwargs[:form_params] ||= Set.new
         end
 
         #

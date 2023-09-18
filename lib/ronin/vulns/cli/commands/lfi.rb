@@ -66,14 +66,18 @@ module Ronin
                       value: {
                         type: [:unix, :windows]
                       },
-                      desc: 'Sets the OS to test for'
+                      desc: 'Sets the OS to test for' do |os|
+                        scan_kwargs[:os] = os
+                      end
 
           option :depth, short: '-D',
                          value: {
                            type:  Integer,
                            usage: 'COUNT'
                          },
-                         desc: 'Sets the directory depth to escape up'
+                         desc: 'Sets the directory depth to escape up' do |depth|
+                           scan_kwargs[:depth] = depth
+                         end
 
           option :filter_bypass, short: '-B',
                                  value: {
@@ -85,29 +89,13 @@ module Ronin
                                      :zlib
                                    ]
                                  },
-                                 desc: 'Sets the filter bypass strategy to use'
+                                 desc: 'Sets the filter bypass strategy to use' do |filter_bypass|
+                                   scan_kwargs[:filter_bypass] = filter_bypass
+                                 end
 
           description 'Scans URL(s) for Local File Inclusion (LFI) vulnerabilities'
 
           man_page 'ronin-vulns-lfi.1'
-
-          #
-          # Keyword arguments for `Vulns::LFI.scan` and `Vulns::LFI.test`.
-          #
-          # @return [Hash{Symbol => Object}]
-          #
-          def scan_kwargs
-            kwargs = super()
-
-            kwargs[:os]    = options[:os]    if options[:os]
-            kwargs[:depth] = options[:depth] if options[:depth]
-
-            if options[:filter_bypass]
-              kwargs[:filter_bypass] = options[:filter_bypass]
-            end
-
-            return kwargs
-          end
 
           #
           # Scans a URL for LFI vulnerabilities.

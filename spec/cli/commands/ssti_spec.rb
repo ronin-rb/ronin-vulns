@@ -7,8 +7,8 @@ describe Ronin::Vulns::CLI::Commands::Ssti do
 
   let(:url) { 'https://example.com/page.php?id=1' }
 
-  describe "#scan_kwargs" do
-    context "when #test_expr is set" do
+  describe "#option_parser" do
+    context "when the '--test-expr' option is parsed" do
       let(:test) { '7*7' }
       let(:argv) { ['--test-expr', test] }
 

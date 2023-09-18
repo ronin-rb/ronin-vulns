@@ -7,9 +7,9 @@ describe Ronin::Vulns::CLI::Commands::Lfi do
 
   let(:url) { 'https://example.com/page.php?id=1' }
 
-  describe "#scan_kwargs" do
-    context "when #options[:os] is set" do
-      let(:os)   { :windows     }
+  describe "#option_parser" do
+    context "when the '--os' option is parsed" do
+      let(:os)   { :windows }
       let(:argv) { ['--os', os.to_s] }
 
       before { subject.option_parser.parse(argv) }
@@ -19,7 +19,7 @@ describe Ronin::Vulns::CLI::Commands::Lfi do
       end
     end
 
-    context "when #options[:depth] is set" do
+    context "when the '--depth' option is parsed" do
       let(:depth) { 9 }
       let(:argv)  { ['--depth', depth.to_s] }
 
@@ -30,7 +30,7 @@ describe Ronin::Vulns::CLI::Commands::Lfi do
       end
     end
 
-    context "when #options[:filter_bypass] is set" do
+    context "when the '--filter-bypass' option is parsed" do
       let(:filter_bypass) { :base64 }
       let(:argv) { ['--filter-bypass', filter_bypass.to_s] }
 

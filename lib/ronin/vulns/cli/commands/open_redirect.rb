@@ -64,24 +64,13 @@ module Ronin
                               type:  String,
                               usage: 'URL'
                             },
-                            desc: 'Optional test URL to try to redirect to'
+                            desc: 'Optional test URL to try to redirect to' do |test_url|
+                              scan_kwargs[:test_url] = test_url
+                            end
 
           description 'Scans URL(s) for Open Redirect vulnerabilities'
 
           man_page 'ronin-vulns-open-redirect.1'
-
-          #
-          # Keyword arguments for `Vulns::OpenRedirect.scan` and
-          # `Vulns::OpenRedirect.test`.
-          #
-          # @return [Hash{Symbol => Object}]
-          #
-          def scan_kwargs
-            kwargs = super()
-
-            kwargs[:test_url] = options[:test_url] if options[:test_url]
-            return kwargs
-          end
 
           #
           # Scans a URL for Open Redirect vulnerabilities.

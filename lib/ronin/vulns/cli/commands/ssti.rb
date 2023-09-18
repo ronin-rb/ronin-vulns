@@ -67,29 +67,12 @@ module Ronin
                                usage: '{X*Y | X/Z | X+Y | X-Y}'
                              },
                              desc: 'Optional numeric test to use' do |expr|
-                               @test_expr = Vulns::SSTI::TestExpression.parse(expr)
+                               scan_kwargs[:test_expr] = Vulns::SSTI::TestExpression.parse(expr)
                              end
 
           description 'Scans URL(s) for Server Side Template Injection (SSTI) vulnerabilities'
 
           man_page 'ronin-vulns-ssti.1'
-
-          # The expression to use to test for SSTI.
-          #
-          # @return [Vulns::SSTI::TestExpression, nil]
-          attr_reader :test_expr
-
-          #
-          # Keyword arguments for `Vulns::SSTI.scan` and `Vulns::SSTI.test`.
-          #
-          # @return [Hash{Symbol => Object}]
-          #
-          def scan_kwargs
-            kwargs = super()
-
-            kwargs[:test_expr] = @test_expr if @test_expr
-            return kwargs
-          end
 
           #
           # Scans a URL for SSTI vulnerabilities.
