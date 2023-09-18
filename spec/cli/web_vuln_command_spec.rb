@@ -13,10 +13,6 @@ describe Ronin::Vulns::CLI::WebVulnCommand do
       expect(subject.headers).to be(nil)
     end
 
-    it "must default #raw_cookie to nil" do
-      expect(subject.raw_cookie).to be(nil)
-    end
-
     it "must default #cookie to nil" do
       expect(subject.cookie).to be(nil)
     end
@@ -89,27 +85,88 @@ describe Ronin::Vulns::CLI::WebVulnCommand do
     end
 
     context "when the '--cookie \"...\"' option is parsed" do
-      let(:cookie) { 'foo=bar; baz=qux' }
+      let(:cookie_name1) { 'a' }
+      let(:cookie_value1) { '1' }
+      let(:cookie_name2) { 'b' }
+      let(:cookie_value2) { '2' }
+      let(:cookie) do
+        "#{cookie_name1}=#{cookie_value1}; #{cookie_name2}=#{cookie_value2}"
+      end
 
       let(:argv) { ['--cookie', cookie] }
 
-      it "must set #raw_cookie" do
-        expect(subject.raw_cookie).to eq(cookie)
+      it "must set #cookie to the parsed Ronin::Support::Network::HTTP::Cookie" do
+        expect(subject.cookie).to be_kind_of(Ronin::Support::Network::HTTP::Cookie)
+        expect(subject.cookie.to_h).to eq(
+          {
+            cookie_name1 => cookie_value1,
+            cookie_name2 => cookie_value2
+          }
+        )
+      end
+
+      context "when #cookie is already set" do
+        let(:cookie_name3) { 'c' }
+        let(:cookie_value3) { '3' }
+        let(:cookie_name4) { 'a' }
+        let(:cookie_value4) { 'x' }
+        let(:cookie2) do
+          "#{cookie_name3}=#{cookie_value3}; #{cookie_name4}=#{cookie_value4}"
+        end
+
+        let(:argv) { ['--cookie', cookie, '--cookie', cookie2] }
+
+        it "must merged the parsed cookie params into #cookie" do
+          expect(subject.cookie).to be_kind_of(Ronin::Support::Network::HTTP::Cookie)
+          expect(subject.cookie.to_h).to eq(
+            {
+              cookie_name2 => cookie_value2,
+              cookie_name3 => cookie_value3,
+              cookie_name4 => cookie_value4
+            }
+          )
+        end
       end
     end
 
     context "when the '--cookie-param name=value' option is parsed" do
-      let(:param_name)  { 'foo' }
-      let(:param_value) { 'bar' }
+      let(:cookie_name)  { 'a' }
+      let(:cookie_value) { '1' }
 
-      let(:argv) { ['--cookie-param', "#{param_name}=#{param_value}"] }
+      let(:argv) { ['--cookie-param', "#{cookie_name}=#{cookie_value}"] }
 
-      it "must set #cookie to a Ronin::Support::Network::HTTP::Cookie" do
+      it "must set #cookie to a Ronin::Support::Network::HTTP::Cookie containing the parsed name and param" do
         expect(subject.cookie).to be_kind_of(Ronin::Support::Network::HTTP::Cookie)
+        expect(subject.cookie.to_h).to eq(
+          {
+            cookie_name => cookie_value
+          }
+        )
       end
 
-      it "must add the param name and value to #cookie" do
-        expect(subject.cookie[param_name]).to eq(param_value)
+      context "when #cookie is already set" do
+        let(:cookie_name2)  { 'b' }
+        let(:cookie_value2) { '2' }
+        let(:cookie_name3)  { 'a' }
+        let(:cookie_value3) { 'x' }
+
+        let(:argv) do
+          [
+            '--cookie-param', "#{cookie_name}=#{cookie_value}",
+            '--cookie-param', "#{cookie_name2}=#{cookie_value2}",
+            '--cookie-param', "#{cookie_name3}=#{cookie_value3}"
+          ]
+        end
+
+        it "must merged the parsed cookie params into #cookie" do
+          expect(subject.cookie).to be_kind_of(Ronin::Support::Network::HTTP::Cookie)
+          expect(subject.cookie.to_h).to eq(
+            {
+              cookie_name2 => cookie_value2,
+              cookie_name3 => cookie_value3
+            }
+          )
+        end
       end
     end
 
@@ -382,17 +439,6 @@ describe Ronin::Vulns::CLI::WebVulnCommand do
 
       it "must set the :headers key in the Hash" do
         expect(subject.scan_kwargs[:headers]).to eq(subject.headers)
-      end
-    end
-
-    context "when #raw_cookie is set" do
-      let(:cookie) { 'foo=bar; baz=qux' }
-
-      let(:argv) { ['--cookie', cookie] }
-      before { subject.option_parser.parse(argv) }
-
-      it "must set the :cookie key in the Hash" do
-        expect(subject.scan_kwargs[:cookie]).to eq(subject.raw_cookie)
       end
     end
 

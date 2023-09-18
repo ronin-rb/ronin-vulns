@@ -65,7 +65,13 @@ module Ronin
                           usage: 'COOKIE'
                         },
                         desc: 'Sets the raw Cookie header' do |cookie|
-                          @raw_cookie = cookie
+                          cookie = Support::Network::HTTP::Cookie.parse(cookie)
+
+                          if @cookie
+                            @cookie.merge!(cookie)
+                          else
+                            @cookie = cookie
+                          end
                         end
 
         option :cookie_param, short: '-c',
@@ -179,11 +185,6 @@ module Ronin
         #
         # @return [Hash{String => String}, nil]
         attr_reader :headers
-
-        # The raw `Cookie` header to send.
-        #
-        # @return [String, nil]
-        attr_reader :raw_cookie
 
         # The optional `Cookie` header to send.
         #
@@ -316,14 +317,8 @@ module Ronin
         def scan_kwargs
           kwargs = {}
 
-          kwargs[:headers] = @headers if @headers
-
-          if @raw_cookie
-            kwargs[:cookie] = @raw_cookie
-          elsif @cookie
-            kwargs[:cookie] = @cookie
-          end
-
+          kwargs[:headers]   = @headers   if @headers
+          kwargs[:cookie]    = @cookie    if @cookie
           kwargs[:referer]   = @referer   if @referer
           kwargs[:form_data] = @form_data if @form_data
 
