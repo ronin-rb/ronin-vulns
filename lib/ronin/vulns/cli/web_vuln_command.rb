@@ -166,8 +166,8 @@ module Ronin
         #   * `:all` - Find all vulnerabilities for each URL.
         attr_reader :scan_mode
 
-        # Keywrod arguments that will be used in {scan} and {test} to call
-        # {WebVuln.scan} or {WebVuln.test}.
+        # Keywrod arguments that will be used in {#scan_url} and {#test_url} to
+        # call {WebVuln.scan} or {WebVuln.test}.
         #
         # @return [Hash{Symbol => Object}]
         attr_reader :scan_kwargs
