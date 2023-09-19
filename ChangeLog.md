@@ -1,3 +1,16 @@
+### 0.1.4 / 2023-09-19
+
+#### CLI
+
+* Improved the performance of `ronin-vulns` commands when scanning multiple URLs
+  or a file of URLs by not rebuilding an identical
+  {Ronin::Vulns::CLI::WebVulnCommand#scan_kwargs} for each URL.
+* Allow the `--cookie "..."` option to be repeated multiple times and merge the
+  cookie strings together.
+* Allow the `--cookie-param NAME=VALUE` option to be used with the
+  `--cookie "..."` option and merge the cookie values together.
+* Print vulnerable param names in single quotes.
+
 ### 0.1.3 / 2023-07-07
 
 * Fixed a bug in {Ronin::Vulns::SSTI.scan} where when called without `escape:`
