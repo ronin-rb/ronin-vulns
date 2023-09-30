@@ -23,6 +23,12 @@ to scan can be given as additional arguments or read from a file using the
 `-A`, `--all`
   Find all vulnerabilities for each URL.
 
+`--print-curl`
+  Also prints an example `curl` command for each vulnerability.
+
+`--print-http`
+  Also prints an example HTTP request for each vulnerability.
+
 `-H`, `--header` "*Name*: *value*"
   Sets an additional header using the given *Name* and *value*.
 
