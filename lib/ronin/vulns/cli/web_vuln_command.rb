@@ -46,6 +46,8 @@ module Ronin
                        @scan_mode = :all
                      end
 
+        option :print_curl, desc: 'Also prints an example curl command for each vulnerability'
+
         option :header, short: '-H',
                         value: {
                           type:  /[A-Za-z0-9-]+:\s*\w+/,
@@ -268,6 +270,24 @@ module Ronin
           end
 
           return vuln_discovered
+        end
+
+        #
+        # Logs a discovered web vulnerability.
+        #
+        # @param [WebVuln] vuln
+        #   The discovered web vulnerability.
+        #
+        # @since 0.2.0
+        #
+        def log_vuln(vuln)
+          super(vuln)
+
+          if options[:print_curl]
+            puts
+            puts "    #{vuln.to_curl}"
+            puts
+          end
         end
 
         #
