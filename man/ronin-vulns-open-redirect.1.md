@@ -25,6 +25,12 @@ as additional arguments or read from a file using the `--input` option.
 `-H`, `--header` "*Name*: *value*"
   Sets an additional header using the given *Name* and *value*.
 
+`-U`, `--user-agent-string` *STRING*
+  Sets the `User-Agent` header string.
+
+`-u`, `--user-agent` `chrome-linux`\|`chrome-macos`\|`chrome-windows`\|`chrome-iphone`\|`chrome-ipad`\|`chrome-android`\|`firefox-linux`\|`firefox-macos`\|`firefox-windows`\|`firefox-iphone`\|`firefox-ipad`\|`firefox-android`\|`safari-macos`\|`safari-iphone`\|`safari-ipad`\|`edge`
+  Sets the `User-Agent` header.
+
 `-C`, `--cookie` *COOKIE*
   Sets the raw `Cookie` header.
 
