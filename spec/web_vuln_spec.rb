@@ -903,6 +903,31 @@ describe Ronin::Vulns::WebVuln do
       end
     end
 
+    context "when #user_agent is set" do
+      context "and it's a String" do
+        let(:user_agent) { 'Mozilla/5.0 Foo Bar' }
+
+        subject { described_class.new(url, user_agent: user_agent) }
+
+        it "must include \"--user-agent '...'\" in the command" do
+          expect(subject.to_curl).to eq("curl --user-agent '#{user_agent}' '#{url}'")
+        end
+      end
+
+      context "and it's a Symbol" do
+        let(:user_agent) { :chrome_linux }
+        let(:user_agent_string) do
+          Ronin::Support::Network::HTTP::UserAgents[user_agent]
+        end
+
+        subject { described_class.new(url, user_agent: user_agent) }
+
+        it "must resolve the #user_agent Symbol and include \"--user-agent '...'\" in the command" do
+          expect(subject.to_curl).to eq("curl --user-agent '#{user_agent_string}' '#{url}'")
+        end
+      end
+    end
+
     context "when #referer is set" do
       let(:referer ) { 'https://example..com/' }
 
@@ -1092,6 +1117,43 @@ describe Ronin::Vulns::WebVuln do
             ''
           ].join("\r\n")
         )
+      end
+    end
+
+    context "when #user_agent is set" do
+      context "and it's a String" do
+        let(:user_agent) { 'Mozilla/5.0 Foo Bar' }
+
+        subject { described_class.new(url, user_agent: user_agent) }
+
+        it "must include the 'User-Agent: ...' header" do
+          expect(subject.to_http).to eq(
+            [
+              "GET #{subject.url.request_uri} HTTP/1.1",
+              "User-Agent: #{user_agent}",
+              ''
+            ].join("\r\n")
+          )
+        end
+      end
+
+      context "and it's a Symbol" do
+        let(:user_agent) { :chrome_linux }
+        let(:user_agent_string) do
+          Ronin::Support::Network::HTTP::UserAgents[user_agent]
+        end
+
+        subject { described_class.new(url, user_agent: user_agent) }
+
+        it "must resolve the #user_agent Symbol and include the 'User-Agent: ...' header" do
+          expect(subject.to_http).to eq(
+            [
+              "GET #{subject.url.request_uri} HTTP/1.1",
+              "User-Agent: #{user_agent_string}",
+              ''
+            ].join("\r\n")
+          )
+        end
       end
     end
 
