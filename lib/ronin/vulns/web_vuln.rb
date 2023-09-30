@@ -88,6 +88,19 @@ module Ronin
       # @return [Hash{Symbol,String => String}, nil]
       attr_reader :headers
 
+      # The optional HTTP `User-Agent` header to send with each request.
+      #
+      # @return [String, :random, :chrome, :chrome_linux, :chrome_macos,
+      #          :chrome_windows, :chrome_iphone, :chrome_ipad,
+      #          :chrome_android, :firefox, :firefox_linux, :firefox_macos,
+      #          :firefox_windows, :firefox_iphone, :firefox_ipad,
+      #          :firefox_android, :safari, :safari_macos, :safari_iphone,
+      #          :safari_ipad, :edge, :linux, :macos, :windows, :iphone,
+      #          :ipad, :android, nil]
+      #
+      # @since 0.2.0
+      attr_reader :user_agent
+
       # Additional `Cookie` header. If a `Hash` is given, it will be converted
       # to a `String` using `Ronin::Support::Network::HTTP::Cookie`.
       #
@@ -139,6 +152,15 @@ module Ronin
       # @param [Hash{Symbol,String => String}, nil] headers
       #   Additional HTTP header names and values to add to the request.
       #
+      # @param [String, :random, :chrome, :chrome_linux, :chrome_macos,
+      #          :chrome_windows, :chrome_iphone, :chrome_ipad,
+      #          :chrome_android, :firefox, :firefox_linux, :firefox_macos,
+      #          :firefox_windows, :firefox_iphone, :firefox_ipad,
+      #          :firefox_android, :safari, :safari_macos, :safari_iphone,
+      #          :safari_ipad, :edge, :linux, :macos, :windows, :iphone,
+      #          :ipad, :android, nil] user_agent
+      #   The optional HTTP `User-Agent` header to send with each request.
+      #
       # @param [Hash{String => String}, nil] cookie
       #   Additional `Cookie` header. If a `Hash` is given, it will be
       #   converted to a `String` using `Ronin::Support::Network::HTTP::Cookie`.
@@ -159,6 +181,7 @@ module Ronin
                           user:           nil,
                           password:       nil,
                           headers:        nil,
+                          user_agent:     nil,
                           cookie:         nil,
                           form_data:      nil,
                           referer:        nil)
@@ -176,6 +199,7 @@ module Ronin
         @user           = user
         @password       = password
         @headers        = headers
+        @user_agent     = user_agent
         @cookie         = cookie
         @form_data      = form_data
         @referer        = referer
@@ -392,6 +416,9 @@ module Ronin
       # @option kwargs [Hash{String => String}, nil] :headers
       #   Additional headers to send with requests.
       #
+      # @option kwargs [String, :random, :chrome, :chrome_linux, :chrome_macos, :chrome_windows, :chrome_iphone, :chrome_ipad, :chrome_android, :firefox, :firefox_linux, :firefox_macos, :firefox_windows, :firefox_iphone, :firefox_ipad, :firefox_android, :safari, :safari_macos, :safari_iphone, :safari_ipad, :edge, :linux, :macos, :windows, :iphone, :ipad, :android, nil] :user_agent
+      #   Optional `User-Agent` header to send with requests.
+      #
       # @option kwargs [Hash{String => String}, Ronin::Support::Network::HTTP::Cookie, nil] :cookie
       #   Additional cookie params to send with requests.
       #
@@ -502,6 +529,9 @@ module Ronin
       # @option kwargs [Hash{String => String}, nil] :headers
       #   Additional headers to send with requests.
       #
+      # @option kwargs [String, :random, :chrome, :chrome_linux, :chrome_macos, :chrome_windows, :chrome_iphone, :chrome_ipad, :chrome_android, :firefox, :firefox_linux, :firefox_macos, :firefox_windows, :firefox_iphone, :firefox_ipad, :firefox_android, :safari, :safari_macos, :safari_iphone, :safari_ipad, :edge, :linux, :macos, :windows, :iphone, :ipad, :android, nil] :user_agent
+      #   Optional `User-Agent` header to send with requests.
+      #
       # @option kwargs [Hash{String => String}, Ronin::Support::Network::HTTP::Cookie, nil] :cookie
       #   Additional cookie params to send with requests.
       #
@@ -537,6 +567,7 @@ module Ronin
           @request_method, @url.path, user:         @user,
                                       password:     @password,
                                       query_params: @query_params,
+                                      user_agent:   @user_agent,
                                       cookie:       @cookie,
                                       referer:      @referer,
                                       headers:      @headers,
