@@ -25,6 +25,7 @@ describe Ronin::Vulns::WebVuln do
     let(:cookie_value)   { '1234'       }
     let(:cookie)         { {cookie_param => cookie_value} }
 
+    let(:user_agent)     { 'Mozilla/5.0 Foo Bar' }
     let(:referer)        { 'https://example.com/' }
 
     let(:header_name1)  { 'X-Foo' }
@@ -55,6 +56,7 @@ describe Ronin::Vulns::WebVuln do
         request_method: request_method,
         user:           user,
         password:       password,
+        user_agent:     user_agent,
         cookie:         cookie,
         referer:        referer,
         headers:        headers,
@@ -71,7 +73,7 @@ describe Ronin::Vulns::WebVuln do
           'Content-Type'    => 'application/x-www-form-urlencoded',
           'Cookie'          => "#{cookie_param}=#{cookie_value}",
           'Referer'         => referer,
-          'User-Agent'      => 'Ruby',
+          'User-Agent'      => user_agent,
           header_name1      => header_value1,
           header_name2      => header_value2
         },
