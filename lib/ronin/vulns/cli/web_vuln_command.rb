@@ -48,6 +48,8 @@ module Ronin
 
         option :print_curl, desc: 'Also prints an example curl command for each vulnerability'
 
+        option :print_http, desc: 'Also prints an example HTTP request for each vulnerability'
+
         option :header, short: '-H',
                         value: {
                           type:  /[A-Za-z0-9-]+:\s*\w+/,
@@ -286,6 +288,12 @@ module Ronin
           if options[:print_curl]
             puts
             puts "    #{vuln.to_curl}"
+            puts
+          elsif options[:print_http]
+            puts
+            vuln.to_http.each_line do |line|
+              puts "    #{line}"
+            end
             puts
           end
         end
