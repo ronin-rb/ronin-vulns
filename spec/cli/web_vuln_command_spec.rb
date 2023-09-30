@@ -32,6 +32,26 @@ describe Ronin::Vulns::CLI::WebVulnCommand do
     end
   end
 
+  describe "#user_agent" do
+    it "must default to nil" do
+      expect(subject.user_agent).to be(nil)
+    end
+  end
+
+  describe "#user_agent=" do
+    let(:new_user_agent) { 'Mozilla/5.0 Foo Bar' }
+
+    before { subject.user_agent = new_user_agent }
+
+    it "must set #user_agent" do
+      expect(subject.user_agent).to eq(new_user_agent)
+    end
+
+    it "must set :user_agent in #scan_kwargs" do
+      expect(subject.scan_kwargs[:user_agent]).to eq(new_user_agent)
+    end
+  end
+
   describe "#cookie" do
     it "must default to an empty Ronin::Support::Network::HTTP::Cookie" do
       expect(subject.cookie).to be_kind_of(Ronin::Support::Network::HTTP::Cookie)
