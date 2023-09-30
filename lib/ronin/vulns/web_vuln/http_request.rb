@@ -20,6 +20,7 @@
 
 require 'ronin/vulns/vuln'
 require 'ronin/support/network/http/cookie'
+require 'ronin/support/network/http/user_agents'
 
 require 'uri/query_params'
 
@@ -54,6 +55,19 @@ module Ronin
         #
         # @return [String, nil]
         attr_reader :password
+
+        # The optional HTTP `User-Agent` header to send with each request.
+        #
+        # @return [String, :random, :chrome, :chrome_linux, :chrome_macos,
+        #          :chrome_windows, :chrome_iphone, :chrome_ipad,
+        #          :chrome_android, :firefox, :firefox_linux, :firefox_macos,
+        #          :firefox_windows, :firefox_iphone, :firefox_ipad,
+        #          :firefox_android, :safari, :safari_macos, :safari_iphone,
+        #          :safari_ipad, :edge, :linux, :macos, :windows, :iphone,
+        #          :ipad, :android, nil]
+        #
+        # @since 0.2.0
+        attr_reader :user_agent
 
         # The optional HTTP `Referer` header for the request.
         #
@@ -103,6 +117,9 @@ module Ronin
         # @param [Hash{Symbol,String => String}, nil] headers
         #   Additional HTTP header names and values to add to the request.
         #
+        # @param [String, :random, :chrome, :chrome_linux, :chrome_macos, :chrome_windows, :chrome_iphone, :chrome_ipad, :chrome_android, :firefox, :firefox_linux, :firefox_macos, :firefox_windows, :firefox_iphone, :firefox_ipad, :firefox_android, :safari, :safari_macos, :safari_iphone, :safari_ipad, :edge, :linux, :macos, :windows, :iphone, :ipad, :android, nil] user_agent
+        #   Optional `User-Agent` header to send with requests.
+        #
         # @param [String, Hash{String => String}, nil] cookie
         #   Additional `Cookie` header for the request..
         #
@@ -112,6 +129,7 @@ module Ronin
         def initialize(url, request_method: :get,
                             user:           nil,
                             password:       nil,
+                            user_agent:     nil,
                             referer:        nil,
                             query_params:   nil,
                             headers:        nil,
@@ -128,6 +146,7 @@ module Ronin
           @request_method = request_method
           @user           = user
           @password       = password
+          @user_agent     = user_agent
           @referer        = referer
 
           @query_params = query_params
@@ -136,6 +155,21 @@ module Ronin
                           end
           @headers      = headers
           @form_data    = form_data
+        end
+
+        #
+        # The `User-Agent` string for the request.
+        #
+        # @return [String, nil]
+        #
+        # @since 0.2.0
+        #
+        def user_agent_string
+          case @user_agent
+          when String, nil then @user_agent
+          else
+            Support::Network::HTTP::UserAgents[@user_agent]
+          end
         end
 
         #
@@ -154,6 +188,10 @@ module Ronin
 
           if (@user || @password)
             command << '--user' << escape.call("#{@user}:#{@password}")
+          end
+
+          if @user_agent
+            command << '--user-agent' << escape.call(user_agent_string)
           end
 
           if @referer
@@ -201,6 +239,7 @@ module Ronin
             request << "Authorization: Basic #{basic_auth}"
           end
 
+          request << "User-Agent: #{user_agent_string}" if @user_agent
           request << "Referer: #{@referer}" if @referer
           request << "Cookie: #{@cookie}"   if (@cookie && !@cookie.empty?)
 

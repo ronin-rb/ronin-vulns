@@ -32,6 +32,10 @@ describe Ronin::Vulns::WebVuln::HTTPRequest do
       expect(subject.password).to be(nil)
     end
 
+    it "must default #user_agent to nil" do
+      expect(subject.user_agent).to be(nil)
+    end
+
     it "must default #referer to nil" do
       expect(subject.referer).to be(nil)
     end
@@ -73,6 +77,28 @@ describe Ronin::Vulns::WebVuln::HTTPRequest do
 
       it "must set #password" do
         expect(subject.password).to be(password)
+      end
+    end
+
+    context "when the `user_agent:` keyword is given" do
+      context "and it's a String" do
+        let(:user_agent) { 'Mozilla/5.0 Foo Bar' }
+
+        subject { described_class.new(url, user_agent: user_agent) }
+
+        it "must set #user_agent" do
+          expect(subject.user_agent).to be(user_agent)
+        end
+      end
+
+      context "and it's a Symbol" do
+        let(:user_agent) { :chrome_linux }
+
+        subject { described_class.new(url, user_agent: user_agent) }
+
+        it "must set #user_agent" do
+          expect(subject.user_agent).to be(user_agent)
+        end
       end
     end
 
@@ -125,6 +151,37 @@ describe Ronin::Vulns::WebVuln::HTTPRequest do
     end
   end
 
+  describe "#user_agent_string" do
+    context "when #user_agent is a String" do
+      let(:user_agent) { 'Mozilla/5.0 Foo Bar' }
+
+      subject { described_class.new(url, user_agent: user_agent) }
+
+      it "must return #user_agent" do
+        expect(subject.user_agent_string).to eq(user_agent)
+      end
+    end
+
+    context "when #user_agent is a Symbol" do
+      let(:user_agent) { :chrome_linux }
+      let(:user_agent_string) do
+        Ronin::Support::Network::HTTP::UserAgents[user_agent]
+      end
+
+      subject { described_class.new(url, user_agent: user_agent) }
+
+      it "must resolve the #user_agent Symbol and return the String" do
+        expect(subject.user_agent_string).to eq(user_agent_string)
+      end
+    end
+
+    context "when #user_agent is nil" do
+      it "must return nil" do
+        expect(subject.user_agent_string).to be(nil)
+      end
+    end
+  end
+
   describe "#to_curl" do
     it "must return \"curl 'URL'\" in the command" do
       expect(subject.to_curl).to eq("curl '#{url}'")
@@ -159,6 +216,31 @@ describe Ronin::Vulns::WebVuln::HTTPRequest do
 
       it "must include \"--user 'user:password'\" in the command" do
         expect(subject.to_curl).to eq("curl --user '#{user}:#{password}' '#{url}'")
+      end
+    end
+
+    context "when #user_agent is set" do
+      context "and it's a String" do
+        let(:user_agent) { 'Mozilla/5.0 Foo Bar' }
+
+        subject { described_class.new(url, user_agent: user_agent) }
+
+        it "must include \"--user-agent '...'\" in the command" do
+          expect(subject.to_curl).to eq("curl --user-agent '#{user_agent}' '#{url}'")
+        end
+      end
+
+      context "and it's a Symbol" do
+        let(:user_agent) { :chrome_linux }
+        let(:user_agent_string) do
+          Ronin::Support::Network::HTTP::UserAgents[user_agent]
+        end
+
+        subject { described_class.new(url, user_agent: user_agent) }
+
+        it "must resolve the #user_agent Symbol and include \"--user-agent '...'\" in the command" do
+          expect(subject.to_curl).to eq("curl --user-agent '#{user_agent_string}' '#{url}'")
+        end
       end
     end
 
@@ -273,6 +355,43 @@ describe Ronin::Vulns::WebVuln::HTTPRequest do
             ''
           ].join("\r\n")
         )
+      end
+    end
+
+    context "when #user_agent is set" do
+      context "and it's a String" do
+        let(:user_agent) { 'Mozilla/5.0 Foo Bar' }
+
+        subject { described_class.new(url, user_agent: user_agent) }
+
+        it "must include the 'User-Agent: ...' header" do
+          expect(subject.to_http).to eq(
+            [
+              "GET #{url.request_uri} HTTP/1.1",
+              "User-Agent: #{user_agent}",
+              ''
+            ].join("\r\n")
+          )
+        end
+      end
+
+      context "and it's a Symbol" do
+        let(:user_agent) { :chrome_linux }
+        let(:user_agent_string) do
+          Ronin::Support::Network::HTTP::UserAgents[user_agent]
+        end
+
+        subject { described_class.new(url, user_agent: user_agent) }
+
+        it "must resolve the #user_agent Symbol and include the 'User-Agent: ...' header" do
+          expect(subject.to_http).to eq(
+            [
+              "GET #{url.request_uri} HTTP/1.1",
+              "User-Agent: #{user_agent_string}",
+              ''
+            ].join("\r\n")
+          )
+        end
       end
     end
 
