@@ -37,6 +37,9 @@ module Ronin
         #         --first                      Only find the first vulnerability for each URL
         #     -A, --all                        Find all vulnerabilities for each URL
         #     -H, --header "Name: value"       Sets an additional header
+        #     -U, --user-agent-string STRING   Sets the User-Agent header
+        #     -u chrome-linux|chrome-macos|chrome-windows|chrome-iphone|chrome-ipad|chrome-android|firefox-linux|firefox-macos|firefox-windows|firefox-iphone|firefox-ipad|firefox-android|safari-macos|safari-iphone|safari-ipad|edge,
+        #         --user-agent                 Sets the User-Agent to use
         #     -C, --cookie COOKIE              Sets the raw Cookie header
         #     -c, --cookie-param NAME=VALUE    Sets an additional cookie param
         #     -R, --referer URL                Sets the Referer header
