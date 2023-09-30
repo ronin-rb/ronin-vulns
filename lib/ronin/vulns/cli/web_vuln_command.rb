@@ -22,6 +22,7 @@ require 'ronin/vulns/cli/command'
 require 'ronin/vulns/cli/logging'
 
 require 'ronin/support/network/http/cookie'
+require 'ronin/support/network/http/user_agents'
 
 require 'set'
 
@@ -55,6 +56,25 @@ module Ronin
 
                           self.headers[name] = value
                         end
+
+        option :user_agent_string, short: '-U',
+                                   value: {
+                                     type:  String,
+                                     usage: 'STRING'
+                                   },
+                                   desc: 'Sets the User-Agent header' do |ua|
+                                     self.user_agent = ua
+                                   end
+
+        option :user_agent, short: '-u',
+                            value: {
+                              type: Support::Network::HTTP::UserAgents::ALIASES.transform_keys { |key|
+                                key.to_s.tr('_','-')
+                              }
+                            },
+                            desc: 'Sets the User-Agent to use' do |name|
+                              self.user_agent = name
+                            end
 
         option :cookie, short: '-C',
                         value: {
@@ -257,6 +277,49 @@ module Ronin
         #
         def headers
           @scan_kwargs[:headers] ||= {}
+        end
+
+        #
+        # The optional HTTP `User-Agent` header to send.
+        #
+        # @return [String, :random, :chrome, :chrome_linux, :chrome_macos,
+        #          :chrome_windows, :chrome_iphone, :chrome_ipad,
+        #          :chrome_android, :firefox, :firefox_linux, :firefox_macos,
+        #          :firefox_windows, :firefox_iphone, :firefox_ipad,
+        #          :firefox_android, :safari, :safari_macos, :safari_iphone,
+        #          :safari_ipad, :edge, :linux, :macos, :windows, :iphone,
+        #          :ipad, :android, nil]
+        #
+        # @since 0.2.0
+        #
+        def user_agent
+          @scan_kwargs[:user_agent]
+        end
+
+        #
+        # Sets the HTTP `User-Agent` header.
+        #
+        # @param [String, :random, :chrome, :chrome_linux, :chrome_macos,
+        #         :chrome_windows, :chrome_iphone, :chrome_ipad,
+        #         :chrome_android, :firefox, :firefox_linux, :firefox_macos,
+        #         :firefox_windows, :firefox_iphone, :firefox_ipad,
+        #         :firefox_android, :safari, :safari_macos, :safari_iphone,
+        #         :safari_ipad, :edge, :linux, :macos, :windows, :iphone,
+        #         :ipad, :android] new_user_agent
+        #   The new `User-Agent` value to send.
+        #
+        # @return [String, :random, :chrome, :chrome_linux, :chrome_macos,
+        #          :chrome_windows, :chrome_iphone, :chrome_ipad,
+        #          :chrome_android, :firefox, :firefox_linux, :firefox_macos,
+        #          :firefox_windows, :firefox_iphone, :firefox_ipad,
+        #          :firefox_android, :safari, :safari_macos, :safari_iphone,
+        #          :safari_ipad, :edge, :linux, :macos, :windows, :iphone,
+        #          :ipad, :android]
+        #
+        # @since 0.2.0
+        #
+        def user_agent=(new_user_agent)
+          @scan_kwargs[:user_agent] = new_user_agent
         end
 
         #
