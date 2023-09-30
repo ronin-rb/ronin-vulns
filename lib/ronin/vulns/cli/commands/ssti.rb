@@ -37,6 +37,8 @@ module Ronin
         #
         #         --first                      Only find the first vulnerability for each URL
         #     -A, --all                        Find all vulnerabilities for each URL
+        #         --print-curl                 Also prints an example curl command for each vulnerability
+        #         --print-http                 Also prints an example HTTP request for each vulnerability
         #     -H, --header "Name: value"       Sets an additional header
         #     -U, --user-agent-string STRING   Sets the User-Agent header
         #     -u chrome-linux|chrome-macos|chrome-windows|chrome-iphone|chrome-ipad|chrome-android|firefox-linux|firefox-macos|firefox-windows|firefox-iphone|firefox-ipad|firefox-android|safari-macos|safari-iphone|safari-ipad|edge,
