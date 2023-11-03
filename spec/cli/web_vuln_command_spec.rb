@@ -188,9 +188,9 @@ describe Ronin::Vulns::CLI::WebVulnCommand do
     end
 
     context "when the '--cookie \"...\"' option is parsed" do
-      let(:cookie_name1) { 'a' }
+      let(:cookie_name1)  { 'a' }
       let(:cookie_value1) { '1' }
-      let(:cookie_name2) { 'b' }
+      let(:cookie_name2)  { 'b' }
       let(:cookie_value2) { '2' }
       let(:cookie) do
         "#{cookie_name1}=#{cookie_value1}; #{cookie_name2}=#{cookie_value2}"
@@ -209,9 +209,9 @@ describe Ronin::Vulns::CLI::WebVulnCommand do
       end
 
       context "when #cookie is already set" do
-        let(:cookie_name3) { 'c' }
+        let(:cookie_name3)  { 'c' }
         let(:cookie_value3) { '3' }
-        let(:cookie_name4) { 'a' }
+        let(:cookie_name4)  { 'a' }
         let(:cookie_value4) { 'x' }
         let(:cookie2) do
           "#{cookie_name3}=#{cookie_value3}; #{cookie_name4}=#{cookie_value4}"
