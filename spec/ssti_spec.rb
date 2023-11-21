@@ -16,6 +16,10 @@ describe Ronin::Vulns::SSTI do
   describe "#initialize" do
     include_examples "Ronin::Vulns::WebVuln#initialize examples"
 
+    it "must default #escape_type to nil" do
+      expect(subject.escape_type).to be(nil)
+    end
+
     it "must default #escape to nil" do
       expect(subject.escape).to be(nil)
     end
@@ -27,12 +31,54 @@ describe Ronin::Vulns::SSTI do
     end
 
     context "when the escape: keyword argument is given" do
-      let(:escape) { described_class::ESCAPES[1] }
-
       subject { described_class.new(url, escape: escape) }
 
-      it "must set #escape" do
-        expect(subject.escape).to be(escape)
+      context "and it's a Symbol" do
+        let(:escape) { :double_curly_braces }
+
+        it "must set #escape_type to the escape Symbol" do
+          expect(subject.escape_type).to eq(escape)
+        end
+
+        it "must resolve the Symbol name and set #escape to the value in #{described_class}::ESCAPES" do
+          expect(subject.escape).to be(described_class::ESCAPES.fetch(escape))
+        end
+      end
+
+      context "and it's a Proc" do
+        let(:escape) do
+          ->(expr) { "{#{expr}}" }
+        end
+
+        it "must set #escape_type to :custom" do
+          expect(subject.escape_type).to be(:custom)
+        end
+
+        it "must set #escape" do
+          expect(subject.escape).to be(escape)
+        end
+      end
+
+      context "when it's nil" do
+        let(:escape) { nil }
+
+        it "must set #escape_type to nil" do
+          expect(subject.escape_type).to be(nil)
+        end
+
+        it "must set #escape" do
+          expect(subject.escape).to be(nil)
+        end
+      end
+
+      context "when it's another kind of Object" do
+        let(:escape) { Object.new }
+
+        it do
+          expect {
+            described_class.new(url, escape: escape)
+          }.to raise_error(ArgumentError,"invalid escape type, must be a Symbol, Proc, or nil: #{escape.inspect}")
+        end
       end
     end
   end
@@ -110,18 +156,62 @@ describe Ronin::Vulns::SSTI do
     end
 
     context "when the escape: keyword argument is given" do
-      let(:escape) { subject::ESCAPES[1] }
+      context "and it's a Symbol" do
+        let(:escape) { :double_curly_braces }
 
-      it "must scan the URL using only the given escape" do
-        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo={{#{test_string}}}")
-        stub_request(:get,"https://example.com/page?bar={{#{test_string}}}&baz=3&foo=1")
-        stub_request(:get,"https://example.com/page?bar=2&baz={{#{test_string}}}&foo=1")
+        it "must scan the URL using only the given escape type" do
+          stub_request(:get,"https://example.com/page?bar=2&baz=3&foo={{#{test_string}}}")
+          stub_request(:get,"https://example.com/page?bar={{#{test_string}}}&baz=3&foo=1")
+          stub_request(:get,"https://example.com/page?bar=2&baz={{#{test_string}}}&foo=1")
 
-        subject.scan(url, escape: escape, test_expr: test_expr)
+          subject.scan(url, escape: escape, test_expr: test_expr)
 
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo={{#{test_string}}}")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar={{#{test_string}}}&baz=3&foo=1")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz={{#{test_string}}}&foo=1")
+          expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo={{#{test_string}}}")
+          expect(WebMock).to have_requested(:get,"https://example.com/page?bar={{#{test_string}}}&baz=3&foo=1")
+          expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz={{#{test_string}}}&foo=1")
+        end
+      end
+
+      context "and it's a Proc" do
+        let(:escape) do
+          ->(expr) { "{#{expr}}" }
+        end
+
+        it "must scan the URL using only the given escape Proc" do
+          stub_request(:get,"https://example.com/page?bar=2&baz=3&foo={#{test_string}}")
+          stub_request(:get,"https://example.com/page?bar={#{test_string}}&baz=3&foo=1")
+          stub_request(:get,"https://example.com/page?bar=2&baz={#{test_string}}&foo=1")
+
+          subject.scan(url, escape: escape, test_expr: test_expr)
+
+          expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo={#{test_string}}")
+          expect(WebMock).to have_requested(:get,"https://example.com/page?bar={#{test_string}}&baz=3&foo=1")
+          expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz={#{test_string}}&foo=1")
+        end
+      end
+
+      context "and it's an Array" do
+        let(:escape) do
+          [:double_curly_braces, :dollar_curly_braces]
+        end
+
+        it "must scan the URL using the escape types" do
+          stub_request(:get,"https://example.com/page?bar=2&baz=3&foo={{#{test_string}}}")
+          stub_request(:get,"https://example.com/page?bar={{#{test_string}}}&baz=3&foo=1")
+          stub_request(:get,"https://example.com/page?bar=2&baz={{#{test_string}}}&foo=1")
+          stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=${#{test_string}}")
+          stub_request(:get,"https://example.com/page?bar=${#{test_string}}&baz=3&foo=1")
+          stub_request(:get,"https://example.com/page?bar=2&baz=${#{test_string}}&foo=1")
+
+          subject.scan(url, escape: escape, test_expr: test_expr)
+
+          expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo={{#{test_string}}}")
+          expect(WebMock).to have_requested(:get,"https://example.com/page?bar={{#{test_string}}}&baz=3&foo=1")
+          expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz={{#{test_string}}}&foo=1")
+          expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=${#{test_string}}")
+          expect(WebMock).to have_requested(:get,"https://example.com/page?bar=${#{test_string}}&baz=3&foo=1")
+          expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=${#{test_string}}&foo=1")
+        end
       end
     end
   end

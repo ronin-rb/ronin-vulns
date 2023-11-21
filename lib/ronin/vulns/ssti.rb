@@ -31,14 +31,22 @@ module Ronin
       # List of common Server Side Template Injection (SSTI) escapes.
       #
       # @api private
-      ESCAPES = [
-        nil, # does not escape the expression
-        ->(expression) { "{{#{expression}}}"    },
-        ->(expression) { "${#{expression}}"     },
-        ->(expression) { "${{#{expression}}}"   },
-        ->(expression) { "\#{#{expression}}"    },
-        ->(expression) { "<%= #{expression} %>" }
-      ]
+      ESCAPES = {
+        nil => nil, # does not escape the expression
+
+        double_curly_braces:        ->(expression) { "{{#{expression}}}"    },
+        dollar_curly_braces:        ->(expression) { "${#{expression}}"     },
+        dollar_double_curly_braces: ->(expression) { "${{#{expression}}}"   },
+        pound_curly_braces:         ->(expression) { "\#{#{expression}}"    },
+        angle_brackets_percent:     ->(expression) { "<%= #{expression} %>" }
+      }
+
+      # The type of SSTI escape used.
+      #
+      # @return [:double_curly_braces, :ndollar_curly_braces, :dollar_double_curly_braces, :pound_curly_braces, :angle_brackets_percent, :custom, nil]
+      #
+      # @since 0.2.0
+      attr_reader :escape_type
 
       # How to escape the payload so that it's executed.
       #
@@ -58,21 +66,39 @@ module Ronin
       # @param [String, URI::HTTP] url
       #   The URL to exploit.
       #
-      # @param [Proc, nil] escape
+      # @param [:double_curly_braces, :ndollar_curly_braces, :dollar_double_curly_braces, :pound_curly_braces, :angle_brackets_percent, :custom, Proc, nil] escape
       #   How to escape a given payload. Either a proc that will accept a String
-      #   and return a String, or `nil` to indicate that the payload will not
-      #   be escaped.
+      #   and return a String, a Symbol describing the template syntax to use,
+      #   or `nil` to indicate that the payload will not be escaped.
       #
       # @param [TestExpression] test_expr
       #   The test payload and expected result to check for when testing the URL
       #   for SSTI.
       #
-      def initialize(url, escape: nil,
-                          test_expr: self.class.random_test,
+      # @raise [ArgumentError]
+      #   An unknown `escape_type:` or `escape:` value was given, or no
+      #   `test_expr:` was given.
+      #
+      def initialize(url, escape_type: nil,
+                          escape:          nil,
+                          test_expr:       self.class.random_test,
                           **kwargs)
         super(url,**kwargs)
 
-        @escape    = escape
+        case escape
+        when Symbol
+          @escape_type = escape
+          @escape      = ESCAPES.fetch(escape) do
+                           raise(ArgumentError,"unknown template syntax: #{escape_type.inspect}")
+                         end
+        when Proc
+          @escape_type = :custom
+          @escape      = escape
+        when nil # no-op
+        else
+          raise(ArgumentError,"invalid escape type, must be a Symbol, Proc, or nil: #{escape.inspect}")
+        end
+
         @test_expr = test_expr
 
         unless @test_expr
@@ -102,9 +128,9 @@ module Ronin
       # @param [URI::HTTP, String] url
       #   The URL to scan.
       #
-      # @param [Array<Proc>, Proc, nil] escape
+      # @param [Array<Symbol, Proc>, Symbol, Proc, nil] escape
       #   The escape method to use. If `escape:` is not given, then all escapes
-      #   in {ESCAPES} will be tested..
+      #   names in {ESCAPES} will be tested..
       #
       # @param [Hash{Symbol => Object}] kwargs
       #   Additional keyword arguments for {#initialize}.
@@ -145,11 +171,11 @@ module Ronin
       # @return [Array<SSTI>]
       #   All discovered SSTI vulnerabilities.
       #
-      def self.scan(url, escape: ESCAPES, **kwargs,&block)
+      def self.scan(url, escape: ESCAPES.keys, **kwargs,&block)
         vulns = []
 
-        Array(escape).each do |escape_char|
-          vulns.concat(super(url, escape: escape_char, **kwargs, &block))
+        Array(escape).each do |escape_value|
+          vulns.concat(super(url, escape: escape_value, **kwargs, &block))
         end
 
         return vulns
