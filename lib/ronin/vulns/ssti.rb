@@ -43,7 +43,7 @@ module Ronin
 
       # The type of SSTI escape used.
       #
-      # @return [:double_curly_braces, :ndollar_curly_braces, :dollar_double_curly_braces, :pound_curly_braces, :angle_brackets_percent, :custom, nil]
+      # @return [:double_curly_braces, :dollar_curly_braces, :dollar_double_curly_braces, :pound_curly_braces, :angle_brackets_percent, :custom, nil]
       #
       # @since 0.2.0
       attr_reader :escape_type
@@ -66,7 +66,7 @@ module Ronin
       # @param [String, URI::HTTP] url
       #   The URL to exploit.
       #
-      # @param [:double_curly_braces, :ndollar_curly_braces, :dollar_double_curly_braces, :pound_curly_braces, :angle_brackets_percent, :custom, Proc, nil] escape
+      # @param [:double_curly_braces, :dollar_curly_braces, :dollar_double_curly_braces, :pound_curly_braces, :angle_brackets_percent, :custom, Proc, nil] escape
       #   How to escape a given payload. Either a proc that will accept a String
       #   and return a String, a Symbol describing the template syntax to use,
       #   or `nil` to indicate that the payload will not be escaped.
