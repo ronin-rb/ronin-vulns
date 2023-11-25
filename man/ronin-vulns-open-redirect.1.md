@@ -28,6 +28,9 @@ as additional arguments or read from a file using the `--input` option.
 `--print-http`
   Also prints an example HTTP request for each vulnerability.
 
+`-M`, `--request-method` `COPY`|`DELETE`|`GET`|`HEAD`|`LOCK`|`MKCOL`|`MOVE`|`OPTIONS`|`PATCH`|`POST`|`PROPFIND`|`PROPPATCH`|`PUT`|`TRACE`|`UNLOCK`
+  Sets the HTTP request method to use.
+
 `-H`, `--header` "*Name*: *value*"
   Sets an additional header using the given *Name* and *value*.
 

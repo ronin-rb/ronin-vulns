@@ -20,6 +20,26 @@ describe Ronin::Vulns::CLI::WebVulnCommand do
     end
   end
 
+  describe "#request_method" do
+    it "must default to nil" do
+      expect(subject.request_method).to be(nil)
+    end
+  end
+
+  describe "#request_method=" do
+    let(:http_method) { :post }
+
+    before { subject.request_method = http_method }
+
+    it "must set #request_method" do
+      expect(subject.request_method).to eq(http_method)
+    end
+
+    it "must set :request_method in #scan_kwargs" do
+      expect(subject.scan_kwargs[:request_method]).to eq(http_method)
+    end
+  end
+
   describe "#headers" do
     it "must default to an empty Hash" do
       expect(subject.headers).to eq({})
@@ -551,6 +571,15 @@ describe Ronin::Vulns::CLI::WebVulnCommand do
   describe "#scan_kwargs" do
     it "must return an empty Hash by default" do
       expect(subject.scan_kwargs).to eq({})
+    end
+
+    context "when #request_method is set" do
+      let(:argv) { ['--request-method', "POST"] }
+      before { subject.option_parser.parse(argv) }
+
+      it "must set the :request_method key in the Hash" do
+        expect(subject.scan_kwargs[:request_method]).to eq(:post)
+      end
     end
 
     context "when #headers is set" do

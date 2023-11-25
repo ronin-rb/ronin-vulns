@@ -50,6 +50,30 @@ module Ronin
 
         option :print_http, desc: 'Also prints an example HTTP request for each vulnerability'
 
+        option :request_method, short: '-M',
+                                value: {
+                                  type: {
+                                    'COPY'      => :copy,
+                                    'DELETE'    => :delete,
+                                    'GET'       => :get,
+                                    'HEAD'      => :head,
+                                    'LOCK'      => :lock,
+                                    'MKCOL'     => :mkcol,
+                                    'MOVE'      => :move,
+                                    'OPTIONS'   => :options,
+                                    'PATCH'     => :patch,
+                                    'POST'      => :post,
+                                    'PROPFIND'  => :propfind,
+                                    'PROPPATCH' => :proppatch,
+                                    'PUT'       => :put,
+                                    'TRACE'     => :trace,
+                                    'UNLOCK'    => :unlock
+                                  }
+                                },
+                                desc: 'The HTTP request method to use' do |verb|
+                                  self.request_method = verb
+                                end
+
         option :header, short: '-H',
                         value: {
                           type:  /[A-Za-z0-9-]+:\s*\w+/,
@@ -296,6 +320,36 @@ module Ronin
             end
             puts
           end
+        end
+
+        #
+        # The HTTP request method to use.
+        #
+        # @return [:copy, :delete, :get, :head, :lock, :mkcol, :move,
+        #          :options, :patch, :post, :propfind, :proppatch, :put,
+        #          :trace, :unlock]
+        #
+        # @since 0.2.0
+        #
+        def request_method
+          @scan_kwargs[:request_method]
+        end
+
+        #
+        # Sets the HTTP request method to use.
+        #
+        # @param [:copy, :delete, :get, :head, :lock, :mkcol, :move,
+        #         :options, :patch, :post, :propfind, :proppatch, :put,
+        #         :trace, :unlock] new_request_method
+        #
+        # @return [:copy, :delete, :get, :head, :lock, :mkcol, :move,
+        #          :options, :patch, :post, :propfind, :proppatch, :put,
+        #          :trace, :unlock]
+        #
+        # @since 0.2.0
+        #
+        def request_method=(new_request_method)
+          @scan_kwargs[:request_method] = new_request_method
         end
 
         #
