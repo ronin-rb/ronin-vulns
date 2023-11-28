@@ -100,17 +100,18 @@ module Ronin
       #   The URL of the RFI test script. If not specified, it will default to
       #   {test_script_for}.
       #
-      def initialize(url, script_lang: nil, test_script_url: nil, filter_bypass: nil, **kwargs)
+      def initialize(url, script_lang:     nil,
+                          test_script_url: nil,
+                          filter_bypass:   nil,
+                          **kwargs)
         super(url,**kwargs)
 
-        @script_lang = script_lang
+        @script_lang = script_lang || self.class.infer_script_lang(@url)
 
         @test_script_url = if test_script_url
                              test_script_url
-                           elsif script_lang
-                             self.class.test_script_url_for(script_lang)
-                           else
-                             self.class.test_script_for(@url)
+                           elsif @script_lang
+                             self.class.test_script_url_for(@script_lang)
                            end
 
         @filter_bypass = filter_bypass

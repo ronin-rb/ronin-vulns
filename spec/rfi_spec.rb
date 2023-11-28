@@ -212,12 +212,16 @@ describe Ronin::Vulns::RFI do
   end
 
   let(:query_param) { 'bar' }
-  let(:url)         { "https://example.com/page?foo=1&bar=2&baz=3" }
+  let(:url)         { "https://example.com/page.php?foo=1&bar=2&baz=3" }
 
   subject { described_class.new(url, query_param: query_param) }
 
   describe "#initialize" do
     include_examples "Ronin::Vulns::WebVuln#initialize examples"
+
+    it "must try to infer the #script_lang based on the URL's path extension" do
+      expect(subject.script_lang).to eq(:php)
+    end
 
     it "must default #test_script_url to .test_script_for(url)" do
       expect(subject.test_script_url).to eq(described_class.test_script_for(url))
@@ -267,6 +271,18 @@ describe Ronin::Vulns::RFI do
 
       it "must set #filter_bypass" do
         expect(subject.filter_bypass).to eq(filter_bypass)
+      end
+    end
+
+    context "when the URL has no path extension" do
+      let(:url) { "https://example.com/page?foo=1&bar=2&baz=3" }
+
+      it "must set #script_lang to nil" do
+        expect(subject.script_lang).to be(nil)
+      end
+
+      it "must set #test_script_url to nil" do
+        expect(subject.test_script_url).to be(nil)
       end
     end
   end
