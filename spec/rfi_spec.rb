@@ -235,6 +235,10 @@ describe Ronin::Vulns::RFI do
                                  script_lang: script_lang)
       end
 
+      it "must set #script_lang" do
+        expect(subject.script_lang).to eq(script_lang)
+      end
+
       it "must set #test_script_url to the according test script URL from #{described_class}::TEST_SCRIPT_URLS" do
         expect(subject.test_script_url).to eq(described_class.test_script_url_for(script_lang))
       end
