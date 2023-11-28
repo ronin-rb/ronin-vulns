@@ -59,6 +59,13 @@ module Ronin
       # script is executed.
       VULN_RESPONSE_STRING = "Security Alert: Remote File Inclusion Detected!"
 
+      # The scripting language that the URL is using.
+      #
+      # @return [:asp, :asp_net, :cold_fusion, :jsp, :php, :perl, nil]
+      #
+      # @since 0.2.0
+      attr_reader :script_lang
+
       # The filter bypass technique to use.
       #
       # @return [nil, :double_encode, :suffix_escape, :null_byte]
@@ -95,6 +102,8 @@ module Ronin
       #
       def initialize(url, script_lang: nil, test_script_url: nil, filter_bypass: nil, **kwargs)
         super(url,**kwargs)
+
+        @script_lang = script_lang
 
         @test_script_url = if test_script_url
                              test_script_url
