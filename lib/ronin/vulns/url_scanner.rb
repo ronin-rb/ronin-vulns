@@ -30,6 +30,16 @@ module Ronin
     #
     # Top-level module which scans a URL for all web vulnerabilities.
     #
+    # ## Examples
+    #
+    #     require 'ronin/vulns/url_scanner'
+    #
+    #     Ronin::Vulns::URLScanner.scan(url) do |vuln|
+    #       # ...
+    #     end
+    #
+    #     vuln = Ronin::Vulns::URLScanner.test(url)
+    #
     module URLScanner
       #
       # Scans a URL for web vulnerabilities.
