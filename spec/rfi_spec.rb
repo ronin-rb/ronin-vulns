@@ -335,7 +335,6 @@ describe Ronin::Vulns::RFI do
   end
 
   describe "#vulnerable?" do
-    let(:request_url) { subject.exploit_url(subject.test_script_url) }
     let(:response_body) do
       <<~HTML
         <html>
@@ -349,35 +348,105 @@ describe Ronin::Vulns::RFI do
     end
     let(:response) { double('Net::HTTPResponse', body: response_body) }
 
-    before do
-      expect(subject).to receive(:exploit).with(subject.test_script_url).and_return(response)
-    end
+    context "when #test_script_url is set" do
+      let(:request_url) { subject.exploit_url(subject.test_script_url) }
 
-    it "must call #exploit with #test_script_url" do
-      subject.vulnerable?
-    end
-
-    context "when the response body contains 'Security Alert: Remote File Inclusion Detected!''" do
-      let(:response_body) do
-        <<~HTML
-          <html>
-            <body>
-              <p>example content</p>
-              Security Alert: Remote File Inclusion Detected!
-              <p>more content</p>
-            </body>
-          </html>
-        HTML
+      before do
+        expect(subject).to receive(:exploit).with(subject.test_script_url).and_return(response)
       end
 
-      it "must return true" do
-        expect(subject.vulnerable?).to be(true)
+      it "must call #exploit with #test_script_url" do
+        subject.vulnerable?
+      end
+
+      context "when the response body contains 'Security Alert: Remote File Inclusion Detected!''" do
+        let(:response_body) do
+          <<~HTML
+            <html>
+              <body>
+                <p>example content</p>
+                Security Alert: Remote File Inclusion Detected!
+                <p>more content</p>
+              </body>
+            </html>
+          HTML
+        end
+
+        it "must return true" do
+          expect(subject.vulnerable?).to be(true)
+        end
+      end
+
+      context "when the response body does not contain 'Security Alert: Remote File Inclusion Detected!'" do
+        it "must return false" do
+          expect(subject.vulnerable?).to be(false)
+        end
       end
     end
 
-    context "when the response body does not contain 'Security Alert: Remote File Inclusion Detected!'" do
-      it "must return false" do
-        expect(subject.vulnerable?).to be(false)
+    context "when #script_lang and #test_script_url are nil and cannot be inferred from the #url's path extension" do
+      let(:url) { "https://example.com/page?foo=1&bar=2&baz=3" }
+
+      it "must try every test script URL in TEST_SCRIPT_URLS" do
+        described_class::TEST_SCRIPT_URLS.each_value do |test_script_url|
+          expect(subject).to receive(:exploit).with(test_script_url).and_return(response)
+        end
+
+        subject.vulnerable?
+      end
+
+      context "but none of them successfully execute" do
+        it "must return false" do
+          described_class::TEST_SCRIPT_URLS.each_value do |test_script_url|
+            expect(subject).to receive(:exploit).with(test_script_url).and_return(response)
+          end
+
+          expect(subject.vulnerable?).to be(false)
+        end
+      end
+
+      context "and one of them successfully executes" do
+        let(:regular_response) { response }
+
+        let(:vulnerable_response_body) do
+          <<~HTML
+            <html>
+              <body>
+                <p>example content</p>
+                Security Alert: Remote File Inclusion Detected!
+                <p>more content</p>
+              </body>
+            </html>
+          HTML
+        end
+        let(:vulnerable_response) do
+          double('Net::HTTPResponse', body: vulnerable_response_body)
+        end
+
+        before do
+          expect(subject).to receive(:exploit).with(described_class::TEST_SCRIPT_URLS[:php]).and_return(regular_response)
+          expect(subject).to receive(:exploit).with(described_class::TEST_SCRIPT_URLS[:asp]).and_return(regular_response)
+          expect(subject).to receive(:exploit).with(described_class::TEST_SCRIPT_URLS[:asp_net]).and_return(regular_response)
+          expect(subject).to receive(:exploit).with(described_class::TEST_SCRIPT_URLS[:jsp]).and_return(vulnerable_response)
+        end
+
+        it "must return true" do
+          expect(subject.vulnerable?).to be(true)
+        end
+
+        it "must also set #test_script_url to the test script URL that was successfully executed" do
+          subject.vulnerable?
+
+          jsp_test_script_url = described_class::TEST_SCRIPT_URLS[:jsp]
+
+          expect(subject.test_script_url).to eq(jsp_test_script_url)
+        end
+
+        it "must also set #script_lang to the scripting language of the successfully executed test script" do
+          subject.vulnerable?
+
+          expect(subject.script_lang).to eq(:jsp)
+        end
       end
     end
   end
