@@ -49,7 +49,28 @@ module Ronin
         # @return [String]
         #
         def vuln_type(vuln)
-          VULN_TYPES.fetch(vuln.class.vuln_type,'vulnerability')
+          VULN_TYPES.fetch(vuln.class.vuln_type)
+        end
+
+        #
+        # Determines the location of the web vulnerability.
+        #
+        # @param [WebVuln] vuln
+        #
+        # @return [String, nil]
+        #
+        # @since 0.2.0
+        #
+        def vuln_location(vuln)
+          if vuln.query_param
+            "query param '#{vuln.query_param}'"
+          elsif vuln.header_name
+            "Header '#{vuln.header_name}'"
+          elsif vuln.cookie_param
+            "Cookie param '#{vuln.cookie_param}'"
+          elsif vuln.form_param
+            "form param '#{vuln.form_param}'"
+          end
         end
 
         #
@@ -60,15 +81,7 @@ module Ronin
         #
         def log_vuln(vuln)
           vuln_name = vuln_type(vuln)
-          location  = if vuln.query_param
-                        "query param '#{vuln.query_param}'"
-                      elsif vuln.header_name
-                        "Header '#{vuln.header_name}'"
-                      elsif vuln.cookie_param
-                        "Cookie param '#{vuln.cookie_param}'"
-                      elsif vuln.form_param
-                        "form param '#{vuln.form_param}'"
-                      end
+          location  = vuln_location(vuln)
 
           if location
             log_info "Found #{vuln_name} on #{vuln.url} via #{location}!"
