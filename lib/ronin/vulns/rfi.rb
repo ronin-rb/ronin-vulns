@@ -47,11 +47,11 @@ module Ronin
 
       # Mapping of scripting languages to RFI test scripts.
       TEST_SCRIPT_URLS = {
+        php:         "#{GITHUB_BASE_URL}/rfi_test.php",
         asp:         "#{GITHUB_BASE_URL}/rfi_test.asp",
         asp_net:     "#{GITHUB_BASE_URL}/rfi_test.aspx",
-        cold_fusion: "#{GITHUB_BASE_URL}/rfi_test.cfm",
         jsp:         "#{GITHUB_BASE_URL}/rfi_test.jsp",
-        php:         "#{GITHUB_BASE_URL}/rfi_test.php",
+        cold_fusion: "#{GITHUB_BASE_URL}/rfi_test.cfm",
         perl:        "#{GITHUB_BASE_URL}/rfi_test.pl"
       }
 
@@ -206,10 +206,55 @@ module Ronin
       #   Specifies whether the URL and query parameter are vulnerable to RFI.
       #
       def vulnerable?
-        response = exploit(@test_script_url)
+        if @test_script_url
+          test_a_test_script(@test_script_url)
+        else
+          test_each_test_script
+        end
+      end
+
+      #
+      # Determines if a specific test script URL can be remotely injected.
+      #
+      # @param [String] test_script_url
+      #   The test script URL to attempt injecting.
+      #
+      # @return [Boolean]
+      #   Indicates whether the test script was successfully executed or not.
+      #
+      # @api private
+      #
+      def test_a_test_script(test_script_url)
+        response = exploit(test_script_url)
         body     = response.body
 
         return body.include?(VULN_RESPONSE_STRING)
+      end
+
+      #
+      # Test each scripting language and RFI test payload in {TEST_SCRIPT_URLS}
+      # until one succeeds.
+      #
+      # @return [Boolean]
+      #   Indicates whether one of the test script was successfully executed or
+      #   not.
+      #
+      # @note
+      #   If one of the test script URLs successfully executes, then
+      #   {#script_lang} and {#test_script_url} will be updated accordingly.
+      #
+      # @api private
+      #
+      def test_each_test_script
+        TEST_SCRIPT_URLS.each do |script_lang,test_script_url|
+          if test_a_test_script(test_script_url)
+            @script_lang     = script_lang
+            @test_script_url = test_script_url
+            return true
+          end
+        end
+
+        return false
       end
 
       #
