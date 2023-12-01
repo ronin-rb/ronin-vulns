@@ -19,6 +19,7 @@
 #
 
 require 'ronin/vulns/cli/command'
+require 'ronin/vulns/cli/importable'
 require 'ronin/vulns/cli/logging'
 
 require 'ronin/support/network/http/cookie'
@@ -35,7 +36,9 @@ module Ronin
       class WebVulnCommand < Command
 
         include Logging
+        include Importable
 
+        option :import, desc: 'Imports discovered vulnerabilities into the database'
         option :first, short: '-F',
                        desc:  'Only find the first vulnerability for each URL' do
                          @scan_mode = :first
@@ -245,6 +248,8 @@ module Ronin
             exit(-1)
           end
 
+          db_connect if options[:import]
+
           vulns_discovered = false
 
           if options[:input]
@@ -283,19 +288,32 @@ module Ronin
 
           if @scan_mode == :first
             if (first_vuln = test_url(url))
-              log_vuln(first_vuln)
+              process_vuln(first_vuln)
 
               vuln_discovered = true
             end
           else
             scan_url(url) do |vuln|
-              log_vuln(vuln)
+              process_vuln(vuln)
 
               vuln_discovered = true
             end
           end
 
           return vuln_discovered
+        end
+
+        #
+        # Logs and optioanlly imports a new discovered web vulnerability.
+        #
+        # @param [WebVuln] vuln
+        #   The discovered web vulnerability.
+        #
+        # @since 0.2.0
+        #
+        def process_vuln(vuln)
+          log_vuln(vuln)
+          import_vuln(vuln) if options[:import]
         end
 
         #

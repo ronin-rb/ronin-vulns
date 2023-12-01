@@ -417,13 +417,13 @@ describe Ronin::Vulns::CLI::WebVulnCommand do
     let(:url2) { 'https://example.com/page2' }
 
     context "when given URL arguments" do
-      let(:argv) { [url1, url2] }
+      let(:urls) { [url1, url2] }
 
       it "must call #process_url with each URL argument" do
         expect(subject).to receive(:process_url).with(url1)
         expect(subject).to receive(:process_url).with(url2)
 
-        subject.run(*argv)
+        subject.run(*urls)
       end
 
       context "and no vulnerabilities are discovered on any of the URLs" do
@@ -434,7 +434,20 @@ describe Ronin::Vulns::CLI::WebVulnCommand do
             subject.colors.green('No vulnerabilities found')
           )
 
-          subject.run(*argv)
+          subject.run(*urls)
+        end
+      end
+
+      context "when given the --import option" do
+        let(:argv) { ['--import'] }
+        before { subject.option_parser.parse(argv) }
+
+        it "must call #db_connect before calling #process_url with the URLs" do
+          expect(subject).to receive(:db_connect)
+          expect(subject).to receive(:process_url).with(url1)
+          expect(subject).to receive(:process_url).with(url2)
+
+          subject.run(*urls)
         end
       end
     end
@@ -469,6 +482,19 @@ describe Ronin::Vulns::CLI::WebVulnCommand do
           subject.run
         end
       end
+
+      context "when given the --import option" do
+        let(:argv) { ['--import', '--input', tempfile.path] }
+        before { subject.option_parser.parse(argv) }
+
+        it "must call #db_connect before calling #process_url with the URLs" do
+          expect(subject).to receive(:db_connect)
+          expect(subject).to receive(:process_url).with(url1)
+          expect(subject).to receive(:process_url).with(url2)
+
+          subject.run
+        end
+      end
     end
 
     context "when given neither URL arguments or '--input FILE'" do
@@ -492,9 +518,9 @@ describe Ronin::Vulns::CLI::WebVulnCommand do
       context "and #test_url returns a WebVuln object" do
         let(:vuln) { double('first returned WebVuln') }
 
-        it "must call #log_vuln with the WebVuln object" do
+        it "must call #process_vuln with the WebVuln object" do
           expect(subject).to receive(:test_url).with(url).and_return(vuln)
-          expect(subject).to receive(:log_vuln).with(vuln)
+          expect(subject).to receive(:process_vuln).with(vuln)
 
           subject.process_url(url)
         end
@@ -515,10 +541,10 @@ describe Ronin::Vulns::CLI::WebVulnCommand do
         let(:vuln1) { double('yielded WebVuln 1') }
         let(:vuln2) { double('yielded WebVuln 2') }
 
-        it "must call #log_vuln with the yielded WebVuln objects" do
+        it "must call #process_vuln with the yielded WebVuln objects" do
           expect(subject).to receive(:scan_url).with(url).and_yield(vuln1).and_yield(vuln2)
-          expect(subject).to receive(:log_vuln).with(vuln1)
-          expect(subject).to receive(:log_vuln).with(vuln2)
+          expect(subject).to receive(:process_vuln).with(vuln1)
+          expect(subject).to receive(:process_vuln).with(vuln2)
 
           subject.process_url(url)
         end
@@ -564,6 +590,27 @@ describe Ronin::Vulns::CLI::WebVulnCommand do
         expect {
           subject.process_url(url)
         }.to raise_error(SystemExit)
+      end
+    end
+  end
+
+  describe "#process_vuln" do
+    let(:vuln) { double('WebVuln object') }
+
+    it "must call #log_vuln with the given vuln object" do
+      expect(subject).to receive(:log_vuln).with(vuln)
+
+      subject.process_vuln(vuln)
+    end
+
+    context "when options[:import] is true" do
+      before { subject.options[:import] = true }
+
+      it "must call #log_vuln and then #import_vuln with the vuln object" do
+        expect(subject).to receive(:log_vuln).with(vuln)
+        expect(subject).to receive(:import_vuln).with(vuln)
+
+        subject.process_vuln(vuln)
       end
     end
   end
