@@ -17,6 +17,19 @@ to scan can be given as additional arguments or read from a file using the
 
 ## OPTIONS
 
+`--db` *NAME*
+  The database name to connect to. Defaults to `default` if not given.
+
+`--db-uri` *URI*
+  The database URI to connect to
+  (ex: `postgres://user:password@host/db`).
+
+`--db-file` *PATH*
+  The sqlite3 database file to use.
+
+`--import`
+  Imports discovered vulnerabilities into the database.
+
 `--first`
   Only find the first vulnerability for each URL.
 
