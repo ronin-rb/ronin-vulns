@@ -74,23 +74,26 @@ module Ronin
 
           usage '[options] {URL ... | --input FILE}'
 
+          # Regex for matching a single `CHAR` option value.
+          CHAR_REGEX = /./
+
           option :escape_quote, short: '-Q',
                                 value: {
-                                  type:  String,
+                                  type:  CHAR_REGEX,
                                   usage: 'CHAR'
                                 },
                                 desc:  'The string quotation character to use to escape the command'
 
           option :escape_operator, short: '-O',
                                    value: {
-                                     type:  String,
+                                     type:  CHAR_REGEX,
                                      usage: 'CHAR'
                                    },
                                    desc:  'The command operator character to use to escape the command'
 
           option :terminator, short: '-T',
                               value: {
-                                type:  String,
+                                type: CHAR_REGEX,
                                 usage: 'CHAR'
                               },
                               desc:  'The command termination character to use'
