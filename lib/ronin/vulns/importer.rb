@@ -83,6 +83,10 @@ module Ronin
           attributes[:sqli_terminate]     = vuln.terminate
         when SSTI
           attributes[:ssti_escape_type] = vuln.escape_type
+        when CommandInjection
+          attributes[:command_injection_escape_quote]    = vuln.escape_quote
+          attributes[:command_injection_escape_operator] = vuln.escape_operator
+          attributes[:command_injection_terminator]      = vuln.terminator
         end
 
         imported_vuln = DB::WebVuln.transaction do

@@ -4,6 +4,7 @@ require 'ronin/vulns/lfi'
 require 'ronin/vulns/rfi'
 require 'ronin/vulns/sqli'
 require 'ronin/vulns/ssti'
+require 'ronin/vulns/command_injection'
 require 'ronin/vulns/open_redirect'
 require 'ronin/vulns/reflected_xss'
 require 'ronin/db'
@@ -229,6 +230,51 @@ describe Ronin::Vulns::Importer do
           imported_vuln = subject.import(vuln)
 
           expect(imported_vuln.ssti_escape_type).to eq(vuln.escape_type.to_s)
+        end
+      end
+    end
+
+    context "when given an Ronin::Vulns::CommandInjection object" do
+      let(:vuln_class) { Ronin::Vulns::CommandInjection }
+
+      include_context "importing common attributes"
+
+      context "when #escape_quote is set on the CommandInjection vuln object" do
+        let(:vuln) do
+          vuln_class.new(url, query_param:  query_param,
+                              escape_quote: "'")
+        end
+
+        it "must set the #command_injection_escape_quote field to the CommandInjection vuln object's #escape_type" do
+          imported_vuln = subject.import(vuln)
+
+          expect(imported_vuln.command_injection_escape_quote).to eq(vuln.escape_quote)
+        end
+      end
+
+      context "when #escape_operator is set on the CommandInjection vuln object" do
+        let(:vuln) do
+          vuln_class.new(url, query_param:     query_param,
+                              escape_operator: ";")
+        end
+
+        it "must set the #command_injection_escape_operator field to the CommandInjection vuln object's #escape_type" do
+          imported_vuln = subject.import(vuln)
+
+          expect(imported_vuln.command_injection_escape_operator).to eq(vuln.escape_operator)
+        end
+      end
+
+      context "when #terminator is set on the CommandInjection vuln object" do
+        let(:vuln) do
+          vuln_class.new(url, query_param: query_param,
+                              terminator:  "#")
+        end
+
+        it "must set the #command_injection_terminator field to the CommandInjection vuln object's #escape_type" do
+          imported_vuln = subject.import(vuln)
+
+          expect(imported_vuln.command_injection_terminator).to eq(vuln.terminator)
         end
       end
     end
