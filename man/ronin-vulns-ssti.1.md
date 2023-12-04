@@ -13,85 +13,85 @@ to scan can be given as additional arguments or read from a file using the
 ## ARGUMENTS
 
 *URL*
-  A URL to scan.
+: A URL to scan.
 
 ## OPTIONS
 
 `--db` *NAME*
-  The database name to connect to. Defaults to `default` if not given.
+: The database name to connect to. Defaults to `default` if not given.
 
 `--db-uri` *URI*
-  The database URI to connect to
+: The database URI to connect to
   (ex: `postgres://user:password@host/db`).
 
 `--db-file` *PATH*
-  The sqlite3 database file to use.
+: The sqlite3 database file to use.
 
 `--import`
-  Imports discovered vulnerabilities into the database.
+: Imports discovered vulnerabilities into the database.
 
 `--first`
-  Only find the first vulnerability for each URL.
+: Only find the first vulnerability for each URL.
 
 `-A`, `--all`
-  Find all vulnerabilities for each URL.
+: Find all vulnerabilities for each URL.
 
 `--print-curl`
-  Also prints an example `curl` command for each vulnerability.
+: Also prints an example `curl` command for each vulnerability.
 
 `--print-http`
-  Also prints an example HTTP request for each vulnerability.
+: Also prints an example HTTP request for each vulnerability.
 
 `-M`, `--request-method` `COPY`|`DELETE`|`GET`|`HEAD`|`LOCK`|`MKCOL`|`MOVE`|`OPTIONS`|`PATCH`|`POST`|`PROPFIND`|`PROPPATCH`|`PUT`|`TRACE`|`UNLOCK`
-  Sets the HTTP request method to use.
+: Sets the HTTP request method to use.
 
 `-H`, `--header` "*Name*: *value*"
-  Sets an additional header using the given *Name* and *value*.
+: Sets an additional header using the given *Name* and *value*.
 
 `-U`, `--user-agent-string` *STRING*
-  Sets the `User-Agent` header string.
+: Sets the `User-Agent` header string.
 
 `-u`, `--user-agent` `chrome-linux`\|`chrome-macos`\|`chrome-windows`\|`chrome-iphone`\|`chrome-ipad`\|`chrome-android`\|`firefox-linux`\|`firefox-macos`\|`firefox-windows`\|`firefox-iphone`\|`firefox-ipad`\|`firefox-android`\|`safari-macos`\|`safari-iphone`\|`safari-ipad`\|`edge`
-  Sets the `User-Agent` header.
+: Sets the `User-Agent` header.
 
 `-C`, `--cookie` *COOKIE*
-  Sets the raw `Cookie` header.
+: Sets the raw `Cookie` header.
 
 `-c`, `--cookie-param` *NAME*`=`*VALUE*
-  Sets an additional `Cookie` param using the given *NAME* and *VALUE*.
+: Sets an additional `Cookie` param using the given *NAME* and *VALUE*.
 
 `-R`, `--referer` *URL*
-  Sets the `Referer` header.
+: Sets the `Referer` header.
 
 `-F`, `--form-param` *NAME*`=`*VALUE*
-  Sets an additional form param using the given *NAME* and *VALUE*.
+: Sets an additional form param using the given *NAME* and *VALUE*.
 
 `--test-query-param` *NAME*
-  Tests the URL query param name.
+: Tests the URL query param name.
 
 `--test-all-query-params`
-  Test all URL query param names.
+: Test all URL query param names.
 
 `--test-header-name` *NAME*
-  Tests the HTTP Header name.
+: Tests the HTTP Header name.
 
 `--test-cookie-param` *NAME*
-  Tests the HTTP Cookie name.
+: Tests the HTTP Cookie name.
 
 `--test-all-cookie-params`
-  Test all Cookie param names.
+: Test all Cookie param names.
 
 `--test-form-param` *NAME*
-  Tests the form param name.
+: Tests the form param name.
 
 `-i`, `--input` *FILE*
-  Reads URLs from the given *FILE*.
+: Reads URLs from the given *FILE*.
 
 `-T`, `--test-expr` {*X\*Y* \| *X/Z* \| *X+Y* \| *X-Y*}
-  Optional numeric test to use.
+: Optional numeric test to use.
 
 `-h`, `--help`
-  Print help information.
+: Print help information.
 
 ## AUTHOR
 
@@ -99,4 +99,4 @@ Postmodern <postmodern.mod3@gmail.com>
 
 ## SEE ALSO
 
-ronin-vulns-scan(1)
+[ronin-vulns-scan](ronin-vulns-scan.1.md)
