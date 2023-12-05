@@ -1,5 +1,9 @@
 # ronin-vulns-sqli 1 "May 2022" Ronin "User Manuals"
 
+## NAME
+
+ronin-vulns-sqli - Scans URL(s) for SQL injection (SQLi) vulnerabilities
+
 ## SYNOPSIS
 
 `ronin-vulns sqli` [*options*] {*URL* ... \| `--input` *FILE*}

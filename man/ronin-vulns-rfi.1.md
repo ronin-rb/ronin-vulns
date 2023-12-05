@@ -1,5 +1,9 @@
 # ronin-vulns-rfi 1 "May 2022" Ronin "User Manuals"
 
+## NAME
+
+ronin-vulns-rfi - Scans URL(s) for Remote File Inclusion (RFI) vulnerabilities
+
 ## SYNOPSIS
 
 `ronin-vulns rfi` [*options*] {*URL* ... \| `--input` *FILE*}

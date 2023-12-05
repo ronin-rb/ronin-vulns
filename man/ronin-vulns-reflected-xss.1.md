@@ -1,5 +1,9 @@
 # ronin-vulns-reflected-xss 1 "May 2022" Ronin "User Manuals"
 
+## NAME
+
+ronin-vulns-reflected-xss - Scans URL(s) for Reflected Cross Site Scripting (XSS) vulnerabilities
+
 ## SYNOPSIS
 
 `ronin-vulns reflected-xss` [*options*] {*URL* ... \| `--input` *FILE*}

@@ -1,5 +1,9 @@
 # ronin-vulns-command-injection 1 "May 2023" Ronin "User Manuals"
 
+## NAME
+
+ronin-vulns-command-injection - Scans URL(s) for Command Injection vulnerabilities
+
 ## SYNOPSIS
 
 `ronin-vulns command-injection` [*options*] {*URL* ... \| `--input` *FILE*}

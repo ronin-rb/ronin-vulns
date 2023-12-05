@@ -1,5 +1,9 @@
 # ronin-vulns-scan 1 "May 2022" Ronin "User Manuals"
 
+## NAME
+
+ronin-vulns-scan - Scans URL(s) for web vulnerabilities
+
 ## SYNOPSIS
 
 `ronin-vulns scan` [*options*] {*URL* ... \| `--input` *FILE*}

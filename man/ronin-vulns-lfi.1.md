@@ -1,5 +1,9 @@
 # ronin-vulns-lfi 1 "May 2022" Ronin "User Manuals"
 
+## NAME
+
+ronin-vulns-lfi - Scans URL(s) for Local File Inclusion (LFI) vulnerabilities
+
 ## SYNOPSIS
 
 `ronin-vulns lfi` [*options*] {*URL* ... \| `--input` *FILE*}
