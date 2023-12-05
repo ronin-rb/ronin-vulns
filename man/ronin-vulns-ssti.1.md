@@ -1,5 +1,9 @@
 # ronin-vulns-lfi 1 "May 2022" Ronin "User Manuals"
 
+## NAME
+
+ronin-vulns-ssti - Scans URL(s) for Server Side Template Injection (SSTI) vulnerabilities
+
 ## SYNOPSIS
 
 `ronin-vulns lfi` [*options*] {*URL* ... \| `--input` *FILE*}

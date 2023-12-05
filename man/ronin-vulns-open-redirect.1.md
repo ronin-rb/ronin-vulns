@@ -1,5 +1,9 @@
 # ronin-vulns-open-redirect 1 "May 2022" Ronin "User Manuals"
 
+## NAME
+
+ronin-vulns-open-redirect - Scans URL(s) for Open Redirect vulnerabilities
+
 ## SYNOPSIS
 
 `ronin-vulns open-redirect` [*options*] {*URL* ... \| `--input` *FILE*}
