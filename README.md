@@ -56,6 +56,7 @@ Arguments:
     [ARGS ...]                       Additional arguments for the command
 
 Commands:
+    completion
     help
     lfi
     open-redirect
@@ -273,7 +274,7 @@ end
 
 * [Ruby] >= 3.0.0
 * [ronin-support] ~> 1.0
-* [ronin-core] ~> 0.1
+* [ronin-core] ~> 0.2
 * [ronin-db] ~> 0.2
 
 ## Install
