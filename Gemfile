@@ -39,4 +39,6 @@ group :development do
   gem 'stackprof',       require: false, platform: :mri
   gem 'rubocop',         require: false, platform: :mri
   gem 'rubocop-ronin',   require: false, platform: :mri
+
+  gem 'command_kit-completion', '~> 0.1', require: false
 end
