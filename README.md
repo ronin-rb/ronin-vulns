@@ -58,6 +58,7 @@ Arguments:
 Commands:
     completion
     help
+    irb
     lfi
     open-redirect
     reflected-xss, xss
