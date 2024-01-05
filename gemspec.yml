@@ -26,6 +26,7 @@ required_ruby_version: ">= 3.0.0"
 
 generated_files:
   - data/completions/ronin-vulns
+  - man/ronin-vulns.1
   - man/ronin-vulns-completion.1
   - man/ronin-vulns-lfi.1
   - man/ronin-vulns-rfi.1
