@@ -36,6 +36,9 @@ Runs a `ronin-vulns` *COMMAND*.
 *help*
 : Lists available commands or shows help about a specific command.
 
+*irb*
+: Starts an interactive Ruby shell with ronin-vulns loaded.
+
 *lfi*
 : Scans URL(s) for Local File Inclusion (LFI) vulnerabilities.
 

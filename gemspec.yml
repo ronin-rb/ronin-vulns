@@ -28,6 +28,7 @@ generated_files:
   - data/completions/ronin-vulns
   - man/ronin-vulns.1
   - man/ronin-vulns-completion.1
+  - man/ronin-vulns-irb.1
   - man/ronin-vulns-lfi.1
   - man/ronin-vulns-rfi.1
   - man/ronin-vulns-sqli.1
