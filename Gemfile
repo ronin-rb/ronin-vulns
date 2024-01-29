@@ -4,7 +4,11 @@ source 'https://rubygems.org'
 
 gemspec
 
-gem 'jruby-openssl',	'~> 0.7', platforms: :jruby
+platform :jruby do
+  gem 'jruby-openssl',	'~> 0.7'
+  gem 'activerecord-jdbcsqlite3-adapter', '~> 70.0'
+  gem 'activerecord', '< 7.1.0'
+end
 
 # gem 'command_kit', '~> 0.4', github: 'postmodern/command_kit.rb',
 #                              branch: '0.4.0'
