@@ -62,22 +62,14 @@ describe Ronin::Vulns::SQLI do
     end
   end
 
-  describe ".scan" do
+  describe ".test_param" do
     subject { described_class }
 
-    let(:url) { "https://example.com/page?foo=1&bar=2&baz=3" }
+    let(:url)         { URI("https://example.com/page?foo=1&bar=2&baz=3") }
+    let(:query_param) { 'bar' }
+    let(:http)        { Ronin::Support::Network::HTTP.connect_uri(url) }
 
-    it "must scan the URL using every combination of escape_quote: false/true, escape_parens: false/true, and terminate: false/true" do
-      # query_param: foo, escape_quote: false, escape_parens: false, terminate: false
-      stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3&foo=1%20OR%20\d+=\d+\z})
-      stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3&foo=1%20AND%20\d+=\d+\z})
-      stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1%20SLEEP(5)")
-      stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1%3BSELECT%20SLEEP(5)")
-      stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1%20PG_SLEEP(5)")
-      stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1%3BSELECT%20PG_SLEEP(5)")
-      stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1%20WAITFOR%20DELAY%20'0:0:5'")
-      stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'")
-
+    it "must scan the URL and param using every combination of escape_quote: false/true, escape_parens: false/true, and terminate: false/true" do
       # query_param: bar, escape_quote: false, escape_parens: false, terminate: false
       stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2%20OR%20\d+=\d+&baz=3&foo=1\z})
       stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2%20AND%20\d+=\d+&baz=3&foo=1\z})
@@ -87,26 +79,6 @@ describe Ronin::Vulns::SQLI do
       stub_request(:get,"https://example.com/page?bar=2%3BSELECT%20PG_SLEEP(5)&baz=3&foo=1")
       stub_request(:get,"https://example.com/page?bar=2%20WAITFOR%20DELAY%20'0:0:5'&baz=3&foo=1")
       stub_request(:get,"https://example.com/page?bar=2%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'&baz=3&foo=1")
-
-      # query_param: baz, escape_quote: false, escape_parens: false, terminate: false
-      stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3%20OR%20\d+=\d+&foo=1\z})
-      stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3%20AND%20\d+=\d+&foo=1\z})
-      stub_request(:get,"https://example.com/page?bar=2&baz=3%20SLEEP(5)&foo=1")
-      stub_request(:get,"https://example.com/page?bar=2&baz=3%3BSELECT%20SLEEP(5)&foo=1")
-      stub_request(:get,"https://example.com/page?bar=2&baz=3%20PG_SLEEP(5)&foo=1")
-      stub_request(:get,"https://example.com/page?bar=2&baz=3%3BSELECT%20PG_SLEEP(5)&foo=1")
-      stub_request(:get,"https://example.com/page?bar=2&baz=3%20WAITFOR%20DELAY%20'0:0:5'&foo=1")
-      stub_request(:get,"https://example.com/page?bar=2&baz=3%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'&foo=1")
-
-      # query_param: foo, escape_quote: false, escape_parens: false, terminate: true
-      stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3&foo=1%20OR%20\d+=\d+--\z})
-      stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3&foo=1%20AND%20\d+=\d+--\z})
-      stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1%20SLEEP(5)--")
-      stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1%3BSELECT%20SLEEP(5)--")
-      stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1%20PG_SLEEP(5)--")
-      stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1%3BSELECT%20PG_SLEEP(5)--")
-      stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1%20WAITFOR%20DELAY%20'0:0:5'--")
-      stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'--")
 
       # query_param: bar, escape_quote: false, escape_parens: false, terminate: true
       stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2%20OR%20\d+=\d+--&baz=3&foo=1\z})
@@ -118,26 +90,6 @@ describe Ronin::Vulns::SQLI do
       stub_request(:get,"https://example.com/page?bar=2%20WAITFOR%20DELAY%20'0:0:5'--&baz=3&foo=1")
       stub_request(:get,"https://example.com/page?bar=2%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'--&baz=3&foo=1")
 
-      # query_param: baz, escape_quote: false, escape_parens: false, terminate: true
-      stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3%20OR%20\d+=\d+--&foo=1\z})
-      stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3%20AND%20\d+=\d+--&foo=1\z})
-      stub_request(:get,"https://example.com/page?bar=2&baz=3%20SLEEP(5)--&foo=1")
-      stub_request(:get,"https://example.com/page?bar=2&baz=3%3BSELECT%20SLEEP(5)--&foo=1")
-      stub_request(:get,"https://example.com/page?bar=2&baz=3%20PG_SLEEP(5)--&foo=1")
-      stub_request(:get,"https://example.com/page?bar=2&baz=3%3BSELECT%20PG_SLEEP(5)--&foo=1")
-      stub_request(:get,"https://example.com/page?bar=2&baz=3%20WAITFOR%20DELAY%20'0:0:5'--&foo=1")
-      stub_request(:get,"https://example.com/page?bar=2&baz=3%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'--&foo=1")
-
-      # query_param: foo, escape_quote: false, escape_parens: true, terminate: false
-      stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3&foo=1\)%20OR%20\d+=\d+\z})
-      stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3&foo=1\)%20AND%20\d+=\d+\z})
-      stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1)%20SLEEP(5")
-      stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1)%3BSELECT%20SLEEP(5")
-      stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1)%20PG_SLEEP(5")
-      stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1)%3BSELECT%20PG_SLEEP(5")
-      stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1)%20WAITFOR%20DELAY%20'0:0:5'")
-      stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1)%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'")
-
       # query_param: bar, escape_quote: false, escape_parens: true, terminate: false
       stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2\)%20OR%20\d+=\d+&baz=3&foo=1\z})
       stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2\)%20AND%20\d+=\d+&baz=3&foo=1\z})
@@ -147,26 +99,6 @@ describe Ronin::Vulns::SQLI do
       stub_request(:get,"https://example.com/page?bar=2)%3BSELECT%20PG_SLEEP(5&baz=3&foo=1")
       stub_request(:get,"https://example.com/page?bar=2)%20WAITFOR%20DELAY%20'0:0:5'&baz=3&foo=1")
       stub_request(:get,"https://example.com/page?bar=2)%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'&baz=3&foo=1")
-
-      # query_param: baz, escape_quote: false, escape_parens: true, terminate: false
-      stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3\)%20OR%20\d+=\d+&foo=1\z})
-      stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3\)%20AND%20\d+=\d+&foo=1\z})
-      stub_request(:get,"https://example.com/page?bar=2&baz=3)%20SLEEP(5&foo=1")
-      stub_request(:get,"https://example.com/page?bar=2&baz=3)%3BSELECT%20SLEEP(5&foo=1")
-      stub_request(:get,"https://example.com/page?bar=2&baz=3)%20PG_SLEEP(5&foo=1")
-      stub_request(:get,"https://example.com/page?bar=2&baz=3)%3BSELECT%20PG_SLEEP(5&foo=1")
-      stub_request(:get,"https://example.com/page?bar=2&baz=3)%20WAITFOR%20DELAY%20'0:0:5'&foo=1")
-      stub_request(:get,"https://example.com/page?bar=2&baz=3)%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'&foo=1")
-
-      # query_param: foo, escape_quote: false, escape_parens: true, terminate: true
-      stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3&foo=1\)%20OR%20\d+=\d+--\z})
-      stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3&foo=1\)%20AND%20\d+=\d+--\z})
-      stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1)%20SLEEP(5)--")
-      stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1)%3BSELECT%20SLEEP(5)--")
-      stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1)%20PG_SLEEP(5)--")
-      stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1)%3BSELECT%20PG_SLEEP(5)--")
-      stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1)%20WAITFOR%20DELAY%20'0:0:5'--")
-      stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1)%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'--")
 
       # query_param: bar, escape_quote: false, escape_parens: true, terminate: true
       stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2\)%20OR%20\d+=\d+--&baz=3&foo=1\z})
@@ -178,26 +110,6 @@ describe Ronin::Vulns::SQLI do
       stub_request(:get,"https://example.com/page?bar=2)%20WAITFOR%20DELAY%20'0:0:5'--&baz=3&foo=1")
       stub_request(:get,"https://example.com/page?bar=2)%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'--&baz=3&foo=1")
 
-      # query_param: baz, escape_quote: false, escape_parens: true, terminate: true
-      stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3\)%20OR%20\d+=\d+--&foo=1\z})
-      stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3\)%20AND%20\d+=\d+--&foo=1\z})
-      stub_request(:get,"https://example.com/page?bar=2&baz=3)%20SLEEP(5)--&foo=1")
-      stub_request(:get,"https://example.com/page?bar=2&baz=3)%3BSELECT%20SLEEP(5)--&foo=1")
-      stub_request(:get,"https://example.com/page?bar=2&baz=3)%20PG_SLEEP(5)--&foo=1")
-      stub_request(:get,"https://example.com/page?bar=2&baz=3)%3BSELECT%20PG_SLEEP(5)--&foo=1")
-      stub_request(:get,"https://example.com/page?bar=2&baz=3)%20WAITFOR%20DELAY%20'0:0:5'--&foo=1")
-      stub_request(:get,"https://example.com/page?bar=2&baz=3)%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'--&foo=1")
-
-      # query_param: foo, escape_quote: true, escape_parens: false, terminate: false
-      stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3&foo=1'%20OR%20\d+=\d+\z})
-      stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3&foo=1'%20AND%20\d+=\d+\z})
-      stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1'%20SLEEP(5)")
-      stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1'%3BSELECT%20SLEEP(5)")
-      stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1'%20PG_SLEEP(5)")
-      stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1'%3BSELECT%20PG_SLEEP(5)")
-      stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1'%20WAITFOR%20DELAY%20'0:0:5")
-      stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1'%3BSELECT%20WAITFOR%20DELAY%20'0:0:5")
-
       # query_param: bar, escape_quote: true, escape_parens: false, terminate: false
       stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2'%20OR%20\d+=\d+&baz=3&foo=1\z})
       stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2'%20AND%20\d+=\d+&baz=3&foo=1\z})
@@ -207,26 +119,6 @@ describe Ronin::Vulns::SQLI do
       stub_request(:get,"https://example.com/page?bar=2'%3BSELECT%20PG_SLEEP(5)&baz=3&foo=1")
       stub_request(:get,"https://example.com/page?bar=2'%20WAITFOR%20DELAY%20'0:0:5&baz=3&foo=1")
       stub_request(:get,"https://example.com/page?bar=2'%3BSELECT%20WAITFOR%20DELAY%20'0:0:5&baz=3&foo=1")
-
-      # query_param: baz, escape_quote: true, escape_parens: false, terminate: false
-      stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3'%20OR%20\d+=\d+&foo=1\z})
-      stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3'%20AND%20\d+=\d+&foo=1\z})
-      stub_request(:get,"https://example.com/page?bar=2&baz=3'%20SLEEP(5)&foo=1")
-      stub_request(:get,"https://example.com/page?bar=2&baz=3'%3BSELECT%20SLEEP(5)&foo=1")
-      stub_request(:get,"https://example.com/page?bar=2&baz=3'%20PG_SLEEP(5)&foo=1")
-      stub_request(:get,"https://example.com/page?bar=2&baz=3'%3BSELECT%20PG_SLEEP(5)&foo=1")
-      stub_request(:get,"https://example.com/page?bar=2&baz=3'%20WAITFOR%20DELAY%20'0:0:5&foo=1")
-      stub_request(:get,"https://example.com/page?bar=2&baz=3'%3BSELECT%20WAITFOR%20DELAY%20'0:0:5&foo=1")
-
-      # query_param: foo, escape_quote: true, escape_parens: false, terminate: true
-      stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3&foo=1'%20OR%20\d+=\d+--\z})
-      stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3&foo=1'%20AND%20\d+=\d+--\z})
-      stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1'%20SLEEP(5)--")
-      stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1'%3BSELECT%20SLEEP(5)--")
-      stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1'%20PG_SLEEP(5)--")
-      stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1'%3BSELECT%20PG_SLEEP(5)--")
-      stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1'%20WAITFOR%20DELAY%20'0:0:5'--")
-      stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1'%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'--")
 
       # query_param: bar, escape_quote: true, escape_parens: false, terminate: true
       stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2'%20OR%20\d+=\d+--&baz=3&foo=1\z})
@@ -238,26 +130,6 @@ describe Ronin::Vulns::SQLI do
       stub_request(:get,"https://example.com/page?bar=2'%20WAITFOR%20DELAY%20'0:0:5'--&baz=3&foo=1")
       stub_request(:get,"https://example.com/page?bar=2'%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'--&baz=3&foo=1")
 
-      # query_param: baz, escape_quote: true, escape_parens: false, terminate: true
-      stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3'%20OR%20\d+=\d+--&foo=1\z})
-      stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3'%20AND%20\d+=\d+--&foo=1\z})
-      stub_request(:get,"https://example.com/page?bar=2&baz=3'%20SLEEP(5)--&foo=1")
-      stub_request(:get,"https://example.com/page?bar=2&baz=3'%3BSELECT%20SLEEP(5)--&foo=1")
-      stub_request(:get,"https://example.com/page?bar=2&baz=3'%20PG_SLEEP(5)--&foo=1")
-      stub_request(:get,"https://example.com/page?bar=2&baz=3'%3BSELECT%20PG_SLEEP(5)--&foo=1")
-      stub_request(:get,"https://example.com/page?bar=2&baz=3'%20WAITFOR%20DELAY%20'0:0:5'--&foo=1")
-      stub_request(:get,"https://example.com/page?bar=2&baz=3'%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'--&foo=1")
-
-      # query_param: foo, escape_quote: true, escape_parens: true, terminate: false
-      stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3&foo=1'\)%20OR%20\d+=\d+\z})
-      stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3&foo=1'\)%20AND%20\d+=\d+\z})
-      stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1')%20SLEEP(5")
-      stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1')%3BSELECT%20SLEEP(5")
-      stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1')%20PG_SLEEP(5")
-      stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1')%3BSELECT%20PG_SLEEP(5")
-      stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1')%20WAITFOR%20DELAY%20'0:0:5")
-      stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1')%3BSELECT%20WAITFOR%20DELAY%20'0:0:5")
-
       # query_param: bar, escape_quote: true, escape_parens: true, terminate: false
       stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2'\)%20OR%20\d+=\d+&baz=3&foo=1\z})
       stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2'\)%20AND%20\d+=\d+&baz=3&foo=1\z})
@@ -267,26 +139,6 @@ describe Ronin::Vulns::SQLI do
       stub_request(:get,"https://example.com/page?bar=2')%3BSELECT%20PG_SLEEP(5&baz=3&foo=1")
       stub_request(:get,"https://example.com/page?bar=2')%20WAITFOR%20DELAY%20'0:0:5&baz=3&foo=1")
       stub_request(:get,"https://example.com/page?bar=2')%3BSELECT%20WAITFOR%20DELAY%20'0:0:5&baz=3&foo=1")
-
-      # query_param: baz, escape_quote: true, escape_parens: true, terminate: false
-      stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3'\)%20OR%20\d+=\d+&foo=1\z})
-      stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3'\)%20AND%20\d+=\d+&foo=1\z})
-      stub_request(:get,"https://example.com/page?bar=2&baz=3')%20SLEEP(5&foo=1")
-      stub_request(:get,"https://example.com/page?bar=2&baz=3')%3BSELECT%20SLEEP(5&foo=1")
-      stub_request(:get,"https://example.com/page?bar=2&baz=3')%20PG_SLEEP(5&foo=1")
-      stub_request(:get,"https://example.com/page?bar=2&baz=3')%3BSELECT%20PG_SLEEP(5&foo=1")
-      stub_request(:get,"https://example.com/page?bar=2&baz=3')%20WAITFOR%20DELAY%20'0:0:5&foo=1")
-      stub_request(:get,"https://example.com/page?bar=2&baz=3')%3BSELECT%20WAITFOR%20DELAY%20'0:0:5&foo=1")
-
-      # query_param: foo, escape_quote: true, escape_parens: true, terminate: true
-      stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3&foo=1'\)%20OR%20\d+=\d+--\z})
-      stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3&foo=1'\)%20AND%20\d+=\d+--\z})
-      stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1')%20SLEEP(5)--")
-      stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1')%3BSELECT%20SLEEP(5)--")
-      stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1')%20PG_SLEEP(5)--")
-      stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1')%3BSELECT%20PG_SLEEP(5)--")
-      stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1')%20WAITFOR%20DELAY%20'0:0:5'--")
-      stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1')%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'--")
 
       # query_param: bar, escape_quote: true, escape_parens: true, terminate: true
       stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2'\)%20OR%20\d+=\d+--&baz=3&foo=1\z})
@@ -298,27 +150,7 @@ describe Ronin::Vulns::SQLI do
       stub_request(:get,"https://example.com/page?bar=2')%20WAITFOR%20DELAY%20'0:0:5'--&baz=3&foo=1")
       stub_request(:get,"https://example.com/page?bar=2')%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'--&baz=3&foo=1")
 
-      # query_param: baz, escape_quote: true, escape_parens: true, terminate: true
-      stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3'\)%20OR%20\d+=\d+--&foo=1\z})
-      stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3'\)%20AND%20\d+=\d+--&foo=1\z})
-      stub_request(:get,"https://example.com/page?bar=2&baz=3')%20SLEEP(5)--&foo=1")
-      stub_request(:get,"https://example.com/page?bar=2&baz=3')%3BSELECT%20SLEEP(5)--&foo=1")
-      stub_request(:get,"https://example.com/page?bar=2&baz=3')%20PG_SLEEP(5)--&foo=1")
-      stub_request(:get,"https://example.com/page?bar=2&baz=3')%3BSELECT%20PG_SLEEP(5)--&foo=1")
-      stub_request(:get,"https://example.com/page?bar=2&baz=3')%20WAITFOR%20DELAY%20'0:0:5'--&foo=1")
-      stub_request(:get,"https://example.com/page?bar=2&baz=3')%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'--&foo=1")
-
-      subject.scan(url)
-
-      # query_param: foo, escape_quote: false, escape_parens: false, terminate: false
-      expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3&foo=1%20OR%20\d+=\d+\z})
-      expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3&foo=1%20AND%20\d+=\d+\z})
-      expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1%20SLEEP(5)")
-      expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1%3BSELECT%20SLEEP(5)")
-      expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1%20PG_SLEEP(5)")
-      expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1%3BSELECT%20PG_SLEEP(5)")
-      expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1%20WAITFOR%20DELAY%20'0:0:5'")
-      expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'")
+      subject.test_param(url, query_param: query_param, http: http)
 
       # query_param: bar, escape_quote: false, escape_parens: false, terminate: false
       expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2%20OR%20\d+=\d+&baz=3&foo=1\z})
@@ -330,26 +162,6 @@ describe Ronin::Vulns::SQLI do
       expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2%20WAITFOR%20DELAY%20'0:0:5'&baz=3&foo=1")
       expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'&baz=3&foo=1")
 
-      # query_param: baz, escape_quote: false, escape_parens: false, terminate: false
-      expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3%20OR%20\d+=\d+&foo=1\z})
-      expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3%20AND%20\d+=\d+&foo=1\z})
-      expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3%20SLEEP(5)&foo=1")
-      expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3%3BSELECT%20SLEEP(5)&foo=1")
-      expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3%20PG_SLEEP(5)&foo=1")
-      expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3%3BSELECT%20PG_SLEEP(5)&foo=1")
-      expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3%20WAITFOR%20DELAY%20'0:0:5'&foo=1")
-      expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'&foo=1")
-
-      # query_param: foo, escape_quote: false, escape_parens: false, terminate: true
-      expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3&foo=1%20OR%20\d+=\d+--\z})
-      expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3&foo=1%20AND%20\d+=\d+--\z})
-      expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1%20SLEEP(5)--")
-      expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1%3BSELECT%20SLEEP(5)--")
-      expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1%20PG_SLEEP(5)--")
-      expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1%3BSELECT%20PG_SLEEP(5)--")
-      expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1%20WAITFOR%20DELAY%20'0:0:5'--")
-      expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'--")
-
       # query_param: bar, escape_quote: false, escape_parens: false, terminate: true
       expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2%20OR%20\d+=\d+--&baz=3&foo=1\z})
       expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2%20AND%20\d+=\d+--&baz=3&foo=1\z})
@@ -359,26 +171,6 @@ describe Ronin::Vulns::SQLI do
       expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2%3BSELECT%20PG_SLEEP(5)--&baz=3&foo=1")
       expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2%20WAITFOR%20DELAY%20'0:0:5'--&baz=3&foo=1")
       expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'--&baz=3&foo=1")
-
-      # query_param: baz, escape_quote: false, escape_parens: false, terminate: true
-      expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3%20OR%20\d+=\d+--&foo=1\z})
-      expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3%20AND%20\d+=\d+--&foo=1\z})
-      expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3%20SLEEP(5)--&foo=1")
-      expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3%3BSELECT%20SLEEP(5)--&foo=1")
-      expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3%20PG_SLEEP(5)--&foo=1")
-      expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3%3BSELECT%20PG_SLEEP(5)--&foo=1")
-      expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3%20WAITFOR%20DELAY%20'0:0:5'--&foo=1")
-      expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'--&foo=1")
-
-      # query_param: foo, escape_quote: false, escape_parens: true, terminate: false
-      expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3&foo=1\)%20OR%20\d+=\d+\z})
-      expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3&foo=1\)%20AND%20\d+=\d+\z})
-      expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1)%20SLEEP(5")
-      expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1)%3BSELECT%20SLEEP(5")
-      expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1)%20PG_SLEEP(5")
-      expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1)%3BSELECT%20PG_SLEEP(5")
-      expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1)%20WAITFOR%20DELAY%20'0:0:5'")
-      expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1)%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'")
 
       # query_param: bar, escape_quote: false, escape_parens: true, terminate: false
       expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2\)%20OR%20\d+=\d+&baz=3&foo=1\z})
@@ -390,26 +182,6 @@ describe Ronin::Vulns::SQLI do
       expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2)%20WAITFOR%20DELAY%20'0:0:5'&baz=3&foo=1")
       expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2)%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'&baz=3&foo=1")
 
-      # query_param: baz, escape_quote: false, escape_parens: true, terminate: false
-      expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3\)%20OR%20\d+=\d+&foo=1\z})
-      expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3\)%20AND%20\d+=\d+&foo=1\z})
-      expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3)%20SLEEP(5&foo=1")
-      expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3)%3BSELECT%20SLEEP(5&foo=1")
-      expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3)%20PG_SLEEP(5&foo=1")
-      expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3)%3BSELECT%20PG_SLEEP(5&foo=1")
-      expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3)%20WAITFOR%20DELAY%20'0:0:5'&foo=1")
-      expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3)%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'&foo=1")
-
-      # query_param: foo, escape_quote: false, escape_parens: true, terminate: true
-      expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3&foo=1\)%20OR%20\d+=\d+--\z})
-      expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3&foo=1\)%20AND%20\d+=\d+--\z})
-      expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1)%20SLEEP(5)--")
-      expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1)%3BSELECT%20SLEEP(5)--")
-      expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1)%20PG_SLEEP(5)--")
-      expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1)%3BSELECT%20PG_SLEEP(5)--")
-      expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1)%20WAITFOR%20DELAY%20'0:0:5'--")
-      expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1)%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'--")
-
       # query_param: bar, escape_quote: false, escape_parens: true, terminate: true
       expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2\)%20OR%20\d+=\d+--&baz=3&foo=1\z})
       expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2\)%20AND%20\d+=\d+--&baz=3&foo=1\z})
@@ -419,26 +191,6 @@ describe Ronin::Vulns::SQLI do
       expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2)%3BSELECT%20PG_SLEEP(5)--&baz=3&foo=1")
       expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2)%20WAITFOR%20DELAY%20'0:0:5'--&baz=3&foo=1")
       expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2)%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'--&baz=3&foo=1")
-
-      # query_param: baz, escape_quote: false, escape_parens: true, terminate: true
-      expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3\)%20OR%20\d+=\d+--&foo=1\z})
-      expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3\)%20AND%20\d+=\d+--&foo=1\z})
-      expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3)%20SLEEP(5)--&foo=1")
-      expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3)%3BSELECT%20SLEEP(5)--&foo=1")
-      expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3)%20PG_SLEEP(5)--&foo=1")
-      expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3)%3BSELECT%20PG_SLEEP(5)--&foo=1")
-      expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3)%20WAITFOR%20DELAY%20'0:0:5'--&foo=1")
-      expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3)%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'--&foo=1")
-
-      # query_param: foo, escape_quote: true, escape_parens: false, terminate: false
-      expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3&foo=1'%20OR%20\d+=\d+\z})
-      expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3&foo=1'%20AND%20\d+=\d+\z})
-      expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1'%20SLEEP(5)")
-      expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1'%3BSELECT%20SLEEP(5)")
-      expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1'%20PG_SLEEP(5)")
-      expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1'%3BSELECT%20PG_SLEEP(5)")
-      expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1'%20WAITFOR%20DELAY%20'0:0:5")
-      expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1'%3BSELECT%20WAITFOR%20DELAY%20'0:0:5")
 
       # query_param: bar, escape_quote: true, escape_parens: false, terminate: false
       expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2'%20OR%20\d+=\d+&baz=3&foo=1\z})
@@ -450,26 +202,6 @@ describe Ronin::Vulns::SQLI do
       expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2'%20WAITFOR%20DELAY%20'0:0:5&baz=3&foo=1")
       expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2'%3BSELECT%20WAITFOR%20DELAY%20'0:0:5&baz=3&foo=1")
 
-      # query_param: baz, escape_quote: true, escape_parens: false, terminate: false
-      expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3'%20OR%20\d+=\d+&foo=1\z})
-      expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3'%20AND%20\d+=\d+&foo=1\z})
-      expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3'%20SLEEP(5)&foo=1")
-      expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3'%3BSELECT%20SLEEP(5)&foo=1")
-      expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3'%20PG_SLEEP(5)&foo=1")
-      expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3'%3BSELECT%20PG_SLEEP(5)&foo=1")
-      expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3'%20WAITFOR%20DELAY%20'0:0:5&foo=1")
-      expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3'%3BSELECT%20WAITFOR%20DELAY%20'0:0:5&foo=1")
-
-      # query_param: foo, escape_quote: true, escape_parens: false, terminate: true
-      expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3&foo=1'%20OR%20\d+=\d+--\z})
-      expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3&foo=1'%20AND%20\d+=\d+--\z})
-      expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1'%20SLEEP(5)--")
-      expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1'%3BSELECT%20SLEEP(5)--")
-      expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1'%20PG_SLEEP(5)--")
-      expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1'%3BSELECT%20PG_SLEEP(5)--")
-      expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1'%20WAITFOR%20DELAY%20'0:0:5'--")
-      expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1'%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'--")
-
       # query_param: bar, escape_quote: true, escape_parens: false, terminate: true
       expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2'%20OR%20\d+=\d+--&baz=3&foo=1\z})
       expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2'%20AND%20\d+=\d+--&baz=3&foo=1\z})
@@ -479,26 +211,6 @@ describe Ronin::Vulns::SQLI do
       expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2'%3BSELECT%20PG_SLEEP(5)--&baz=3&foo=1")
       expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2'%20WAITFOR%20DELAY%20'0:0:5'--&baz=3&foo=1")
       expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2'%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'--&baz=3&foo=1")
-
-      # query_param: baz, escape_quote: true, escape_parens: false, terminate: true
-      expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3'%20OR%20\d+=\d+--&foo=1\z})
-      expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3'%20AND%20\d+=\d+--&foo=1\z})
-      expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3'%20SLEEP(5)--&foo=1")
-      expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3'%3BSELECT%20SLEEP(5)--&foo=1")
-      expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3'%20PG_SLEEP(5)--&foo=1")
-      expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3'%3BSELECT%20PG_SLEEP(5)--&foo=1")
-      expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3'%20WAITFOR%20DELAY%20'0:0:5'--&foo=1")
-      expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3'%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'--&foo=1")
-
-      # query_param: foo, escape_quote: true, escape_parens: true, terminate: false
-      expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3&foo=1'\)%20OR%20\d+=\d+\z})
-      expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3&foo=1'\)%20AND%20\d+=\d+\z})
-      expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1')%20SLEEP(5")
-      expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1')%3BSELECT%20SLEEP(5")
-      expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1')%20PG_SLEEP(5")
-      expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1')%3BSELECT%20PG_SLEEP(5")
-      expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1')%20WAITFOR%20DELAY%20'0:0:5")
-      expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1')%3BSELECT%20WAITFOR%20DELAY%20'0:0:5")
 
       # query_param: bar, escape_quote: true, escape_parens: true, terminate: false
       expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2'\)%20OR%20\d+=\d+&baz=3&foo=1\z})
@@ -510,26 +222,6 @@ describe Ronin::Vulns::SQLI do
       expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2')%20WAITFOR%20DELAY%20'0:0:5&baz=3&foo=1")
       expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2')%3BSELECT%20WAITFOR%20DELAY%20'0:0:5&baz=3&foo=1")
 
-      # query_param: baz, escape_quote: true, escape_parens: true, terminate: false
-      expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3'\)%20OR%20\d+=\d+&foo=1\z})
-      expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3'\)%20AND%20\d+=\d+&foo=1\z})
-      expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3')%20SLEEP(5&foo=1")
-      expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3')%3BSELECT%20SLEEP(5&foo=1")
-      expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3')%20PG_SLEEP(5&foo=1")
-      expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3')%3BSELECT%20PG_SLEEP(5&foo=1")
-      expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3')%20WAITFOR%20DELAY%20'0:0:5&foo=1")
-      expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3')%3BSELECT%20WAITFOR%20DELAY%20'0:0:5&foo=1")
-
-      # query_param: foo, escape_quote: true, escape_parens: true, terminate: true
-      expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3&foo=1'\)%20OR%20\d+=\d+--\z})
-      expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3&foo=1'\)%20AND%20\d+=\d+--\z})
-      expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1')%20SLEEP(5)--")
-      expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1')%3BSELECT%20SLEEP(5)--")
-      expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1')%20PG_SLEEP(5)--")
-      expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1')%3BSELECT%20PG_SLEEP(5)--")
-      expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1')%20WAITFOR%20DELAY%20'0:0:5'--")
-      expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1')%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'--")
-
       # query_param: bar, escape_quote: true, escape_parens: true, terminate: true
       expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2'\)%20OR%20\d+=\d+--&baz=3&foo=1\z})
       expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2'\)%20AND%20\d+=\d+--&baz=3&foo=1\z})
@@ -539,30 +231,56 @@ describe Ronin::Vulns::SQLI do
       expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2')%3BSELECT%20PG_SLEEP(5)--&baz=3&foo=1")
       expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2')%20WAITFOR%20DELAY%20'0:0:5'--&baz=3&foo=1")
       expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2')%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'--&baz=3&foo=1")
-
-      # query_param: baz, escape_quote: true, escape_parens: true, terminate: true
-      expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3'\)%20OR%20\d+=\d+--&foo=1\z})
-      expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3'\)%20AND%20\d+=\d+--&foo=1\z})
-      expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3')%20SLEEP(5)--&foo=1")
-      expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3')%3BSELECT%20SLEEP(5)--&foo=1")
-      expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3')%20PG_SLEEP(5)--&foo=1")
-      expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3')%3BSELECT%20PG_SLEEP(5)--&foo=1")
-      expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3')%20WAITFOR%20DELAY%20'0:0:5'--&foo=1")
-      expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3')%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'--&foo=1")
     end
 
-    context "when `escape_quote: false` is given" do
-      it "must not add a quote to the SQL escape string in any of the requests" do
-        # query_param: foo, escape_quote: false, escape_parens: false, terminate: false
-        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3&foo=1%20OR%20\d+=\d+\z})
-        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3&foo=1%20AND%20\d+=\d+\z})
-        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1%20SLEEP(5)")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1%3BSELECT%20SLEEP(5)")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1%20PG_SLEEP(5)")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1%3BSELECT%20PG_SLEEP(5)")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1%20WAITFOR%20DELAY%20'0:0:5'")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'")
+    context "and when one of the responses indicates a SQL injection vulnerability" do
+      let(:response_body1) do
+        <<~HTML
+          <html>
+            <body>
+              <p>example content</p>
+              <table>
+                <tr>
+                  <th>ID</th>
+                  <th>Value</th>
+                </tr>
+                <tr>
+                  <td>1</td>
+                  <td>Foo</td>
+                </tr>
+                <tr>
+                  <td>2</td>
+                  <td>Bar</td>
+                </tr>
+                <tr>
+                  <td>3</td>
+                  <td>Baz</td>
+                </tr>
+              </table>
+              <p>more content</p>
+            </body>
+          </html>
+        HTML
+      end
 
+      let(:response_body2) do
+        <<~HTML
+          <html>
+            <body>
+              <p>example content</p>
+              <table>
+                <tr>
+                  <th>ID</th>
+                  <th>Value</th>
+                </tr>
+              </table>
+              <p>more content</p>
+            </body>
+          </html>
+        HTML
+      end
+
+      it "must stop enumerating the combinations of escape_quote: false/true, escape_parens: false/true, and terminate: false/true, and return a vulnerable #{described_class} object" do
         # query_param: bar, escape_quote: false, escape_parens: false, terminate: false
         stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2%20OR%20\d+=\d+&baz=3&foo=1\z})
         stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2%20AND%20\d+=\d+&baz=3&foo=1\z})
@@ -573,25 +291,32 @@ describe Ronin::Vulns::SQLI do
         stub_request(:get,"https://example.com/page?bar=2%20WAITFOR%20DELAY%20'0:0:5'&baz=3&foo=1")
         stub_request(:get,"https://example.com/page?bar=2%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'&baz=3&foo=1")
 
-        # query_param: baz, escape_quote: false, escape_parens: false, terminate: false
-        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3%20OR%20\d+=\d+&foo=1\z})
-        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3%20AND%20\d+=\d+&foo=1\z})
-        stub_request(:get,"https://example.com/page?bar=2&baz=3%20SLEEP(5)&foo=1")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3%3BSELECT%20SLEEP(5)&foo=1")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3%20PG_SLEEP(5)&foo=1")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3%3BSELECT%20PG_SLEEP(5)&foo=1")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3%20WAITFOR%20DELAY%20'0:0:5'&foo=1")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'&foo=1")
+        # query_param: bar, escape_quote: false, escape_parens: false, terminate: true
+        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2%20OR%20\d+=\d+--&baz=3&foo=1\z}).to_return(status: 200, body: response_body1)
+        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2%20AND%20\d+=\d+--&baz=3&foo=1\z}).to_return(status: 200, body: response_body2)
 
-        # query_param: foo, escape_quote: false, escape_parens: false, terminate: true
-        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3&foo=1%20OR%20\d+=\d+--\z})
-        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3&foo=1%20AND%20\d+=\d+--\z})
-        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1%20SLEEP(5)--")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1%3BSELECT%20SLEEP(5)--")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1%20PG_SLEEP(5)--")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1%3BSELECT%20PG_SLEEP(5)--")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1%20WAITFOR%20DELAY%20'0:0:5'--")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'--")
+        vuln = subject.test_param(url, query_param: query_param,
+                                       http:        http)
+
+        expect(vuln).to be_kind_of(described_class)
+        expect(vuln.query_param).to eq(query_param)
+        expect(vuln.escape_quote).to be(false)
+        expect(vuln.escape_parens).to be(false)
+        expect(vuln.terminate).to be(true)
+      end
+    end
+
+    context "but none of the responses indicate a SQL injection vulnerability" do
+      it "must return nil" do
+        # query_param: bar, escape_quote: false, escape_parens: false, terminate: false
+        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2%20OR%20\d+=\d+&baz=3&foo=1\z})
+        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2%20AND%20\d+=\d+&baz=3&foo=1\z})
+        stub_request(:get,"https://example.com/page?bar=2%20SLEEP(5)&baz=3&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2%3BSELECT%20SLEEP(5)&baz=3&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2%20PG_SLEEP(5)&baz=3&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2%3BSELECT%20PG_SLEEP(5)&baz=3&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2%20WAITFOR%20DELAY%20'0:0:5'&baz=3&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'&baz=3&foo=1")
 
         # query_param: bar, escape_quote: false, escape_parens: false, terminate: true
         stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2%20OR%20\d+=\d+--&baz=3&foo=1\z})
@@ -603,26 +328,6 @@ describe Ronin::Vulns::SQLI do
         stub_request(:get,"https://example.com/page?bar=2%20WAITFOR%20DELAY%20'0:0:5'--&baz=3&foo=1")
         stub_request(:get,"https://example.com/page?bar=2%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'--&baz=3&foo=1")
 
-        # query_param: baz, escape_quote: false, escape_parens: false, terminate: true
-        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3%20OR%20\d+=\d+--&foo=1\z})
-        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3%20AND%20\d+=\d+--&foo=1\z})
-        stub_request(:get,"https://example.com/page?bar=2&baz=3%20SLEEP(5)--&foo=1")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3%3BSELECT%20SLEEP(5)--&foo=1")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3%20PG_SLEEP(5)--&foo=1")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3%3BSELECT%20PG_SLEEP(5)--&foo=1")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3%20WAITFOR%20DELAY%20'0:0:5'--&foo=1")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'--&foo=1")
-
-        # query_param: foo, escape_quote: false, escape_parens: true, terminate: false
-        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3&foo=1\)%20OR%20\d+=\d+\z})
-        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3&foo=1\)%20AND%20\d+=\d+\z})
-        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1)%20SLEEP(5")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1)%3BSELECT%20SLEEP(5")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1)%20PG_SLEEP(5")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1)%3BSELECT%20PG_SLEEP(5")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1)%20WAITFOR%20DELAY%20'0:0:5'")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1)%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'")
-
         # query_param: bar, escape_quote: false, escape_parens: true, terminate: false
         stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2\)%20OR%20\d+=\d+&baz=3&foo=1\z})
         stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2\)%20AND%20\d+=\d+&baz=3&foo=1\z})
@@ -632,26 +337,6 @@ describe Ronin::Vulns::SQLI do
         stub_request(:get,"https://example.com/page?bar=2)%3BSELECT%20PG_SLEEP(5&baz=3&foo=1")
         stub_request(:get,"https://example.com/page?bar=2)%20WAITFOR%20DELAY%20'0:0:5'&baz=3&foo=1")
         stub_request(:get,"https://example.com/page?bar=2)%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'&baz=3&foo=1")
-
-        # query_param: baz, escape_quote: false, escape_parens: true, terminate: false
-        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3\)%20OR%20\d+=\d+&foo=1\z})
-        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3\)%20AND%20\d+=\d+&foo=1\z})
-        stub_request(:get,"https://example.com/page?bar=2&baz=3)%20SLEEP(5&foo=1")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3)%3BSELECT%20SLEEP(5&foo=1")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3)%20PG_SLEEP(5&foo=1")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3)%3BSELECT%20PG_SLEEP(5&foo=1")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3)%20WAITFOR%20DELAY%20'0:0:5'&foo=1")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3)%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'&foo=1")
-
-        # query_param: foo, escape_quote: false, escape_parens: true, terminate: true
-        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3&foo=1\)%20OR%20\d+=\d+--\z})
-        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3&foo=1\)%20AND%20\d+=\d+--\z})
-        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1)%20SLEEP(5)--")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1)%3BSELECT%20SLEEP(5)--")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1)%20PG_SLEEP(5)--")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1)%3BSELECT%20PG_SLEEP(5)--")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1)%20WAITFOR%20DELAY%20'0:0:5'--")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1)%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'--")
 
         # query_param: bar, escape_quote: false, escape_parens: true, terminate: true
         stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2\)%20OR%20\d+=\d+--&baz=3&foo=1\z})
@@ -663,27 +348,97 @@ describe Ronin::Vulns::SQLI do
         stub_request(:get,"https://example.com/page?bar=2)%20WAITFOR%20DELAY%20'0:0:5'--&baz=3&foo=1")
         stub_request(:get,"https://example.com/page?bar=2)%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'--&baz=3&foo=1")
 
-        # query_param: baz, escape_quote: false, escape_parens: true, terminate: true
-        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3\)%20OR%20\d+=\d+--&foo=1\z})
-        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3\)%20AND%20\d+=\d+--&foo=1\z})
-        stub_request(:get,"https://example.com/page?bar=2&baz=3)%20SLEEP(5)--&foo=1")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3)%3BSELECT%20SLEEP(5)--&foo=1")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3)%20PG_SLEEP(5)--&foo=1")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3)%3BSELECT%20PG_SLEEP(5)--&foo=1")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3)%20WAITFOR%20DELAY%20'0:0:5'--&foo=1")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3)%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'--&foo=1")
+        # query_param: bar, escape_quote: true, escape_parens: false, terminate: false
+        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2'%20OR%20\d+=\d+&baz=3&foo=1\z})
+        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2'%20AND%20\d+=\d+&baz=3&foo=1\z})
+        stub_request(:get,"https://example.com/page?bar=2'%20SLEEP(5)&baz=3&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2'%3BSELECT%20SLEEP(5)&baz=3&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2'%20PG_SLEEP(5)&baz=3&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2'%3BSELECT%20PG_SLEEP(5)&baz=3&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2'%20WAITFOR%20DELAY%20'0:0:5&baz=3&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2'%3BSELECT%20WAITFOR%20DELAY%20'0:0:5&baz=3&foo=1")
 
-        subject.scan(url, escape_quote: false)
+        # query_param: bar, escape_quote: true, escape_parens: false, terminate: true
+        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2'%20OR%20\d+=\d+--&baz=3&foo=1\z})
+        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2'%20AND%20\d+=\d+--&baz=3&foo=1\z})
+        stub_request(:get,"https://example.com/page?bar=2'%20SLEEP(5)--&baz=3&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2'%3BSELECT%20SLEEP(5)--&baz=3&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2'%20PG_SLEEP(5)--&baz=3&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2'%3BSELECT%20PG_SLEEP(5)--&baz=3&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2'%20WAITFOR%20DELAY%20'0:0:5'--&baz=3&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2'%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'--&baz=3&foo=1")
 
-        # query_param: foo, escape_quote: false, escape_parens: false, terminate: false
-        expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3&foo=1%20OR%20\d+=\d+\z})
-        expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3&foo=1%20AND%20\d+=\d+\z})
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1%20SLEEP(5)")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1%3BSELECT%20SLEEP(5)")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1%20PG_SLEEP(5)")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1%3BSELECT%20PG_SLEEP(5)")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1%20WAITFOR%20DELAY%20'0:0:5'")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'")
+        # query_param: bar, escape_quote: true, escape_parens: true, terminate: false
+        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2'\)%20OR%20\d+=\d+&baz=3&foo=1\z})
+        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2'\)%20AND%20\d+=\d+&baz=3&foo=1\z})
+        stub_request(:get,"https://example.com/page?bar=2')%20SLEEP(5&baz=3&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2')%3BSELECT%20SLEEP(5&baz=3&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2')%20PG_SLEEP(5&baz=3&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2')%3BSELECT%20PG_SLEEP(5&baz=3&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2')%20WAITFOR%20DELAY%20'0:0:5&baz=3&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2')%3BSELECT%20WAITFOR%20DELAY%20'0:0:5&baz=3&foo=1")
+
+        # query_param: bar, escape_quote: true, escape_parens: true, terminate: true
+        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2'\)%20OR%20\d+=\d+--&baz=3&foo=1\z})
+        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2'\)%20AND%20\d+=\d+--&baz=3&foo=1\z})
+        stub_request(:get,"https://example.com/page?bar=2')%20SLEEP(5)--&baz=3&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2')%3BSELECT%20SLEEP(5)--&baz=3&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2')%20PG_SLEEP(5)--&baz=3&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2')%3BSELECT%20PG_SLEEP(5)--&baz=3&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2')%20WAITFOR%20DELAY%20'0:0:5'--&baz=3&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2')%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'--&baz=3&foo=1")
+
+        vuln = subject.test_param(url, query_param: query_param, http: http)
+
+        expect(vuln).to be(nil)
+      end
+    end
+
+    context "when `escape_quote: false` is given" do
+      it "must not add a quote to the SQL escape string in any of the requests" do
+        # query_param: bar, escape_quote: false, escape_parens: false, terminate: false
+        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2%20OR%20\d+=\d+&baz=3&foo=1\z})
+        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2%20AND%20\d+=\d+&baz=3&foo=1\z})
+        stub_request(:get,"https://example.com/page?bar=2%20SLEEP(5)&baz=3&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2%3BSELECT%20SLEEP(5)&baz=3&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2%20PG_SLEEP(5)&baz=3&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2%3BSELECT%20PG_SLEEP(5)&baz=3&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2%20WAITFOR%20DELAY%20'0:0:5'&baz=3&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'&baz=3&foo=1")
+
+        # query_param: bar, escape_quote: false, escape_parens: false, terminate: true
+        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2%20OR%20\d+=\d+--&baz=3&foo=1\z})
+        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2%20AND%20\d+=\d+--&baz=3&foo=1\z})
+        stub_request(:get,"https://example.com/page?bar=2%20SLEEP(5)--&baz=3&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2%3BSELECT%20SLEEP(5)--&baz=3&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2%20PG_SLEEP(5)--&baz=3&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2%3BSELECT%20PG_SLEEP(5)--&baz=3&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2%20WAITFOR%20DELAY%20'0:0:5'--&baz=3&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'--&baz=3&foo=1")
+
+        # query_param: bar, escape_quote: false, escape_parens: true, terminate: false
+        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2\)%20OR%20\d+=\d+&baz=3&foo=1\z})
+        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2\)%20AND%20\d+=\d+&baz=3&foo=1\z})
+        stub_request(:get,"https://example.com/page?bar=2)%20SLEEP(5&baz=3&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2)%3BSELECT%20SLEEP(5&baz=3&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2)%20PG_SLEEP(5&baz=3&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2)%3BSELECT%20PG_SLEEP(5&baz=3&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2)%20WAITFOR%20DELAY%20'0:0:5'&baz=3&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2)%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'&baz=3&foo=1")
+
+        # query_param: bar, escape_quote: false, escape_parens: true, terminate: true
+        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2\)%20OR%20\d+=\d+--&baz=3&foo=1\z})
+        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2\)%20AND%20\d+=\d+--&baz=3&foo=1\z})
+        stub_request(:get,"https://example.com/page?bar=2)%20SLEEP(5)--&baz=3&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2)%3BSELECT%20SLEEP(5)--&baz=3&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2)%20PG_SLEEP(5)--&baz=3&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2)%3BSELECT%20PG_SLEEP(5)--&baz=3&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2)%20WAITFOR%20DELAY%20'0:0:5'--&baz=3&foo=1")
+        stub_request(:get,"https://example.com/page?bar=2)%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'--&baz=3&foo=1")
+
+        subject.test_param(url, query_param:  query_param,
+                                escape_quote: false,
+                                http:         http)
 
         # query_param: bar, escape_quote: false, escape_parens: false, terminate: false
         expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2%20OR%20\d+=\d+&baz=3&foo=1\z})
@@ -695,26 +450,6 @@ describe Ronin::Vulns::SQLI do
         expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2%20WAITFOR%20DELAY%20'0:0:5'&baz=3&foo=1")
         expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'&baz=3&foo=1")
 
-        # query_param: baz, escape_quote: false, escape_parens: false, terminate: false
-        expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3%20OR%20\d+=\d+&foo=1\z})
-        expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3%20AND%20\d+=\d+&foo=1\z})
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3%20SLEEP(5)&foo=1")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3%3BSELECT%20SLEEP(5)&foo=1")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3%20PG_SLEEP(5)&foo=1")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3%3BSELECT%20PG_SLEEP(5)&foo=1")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3%20WAITFOR%20DELAY%20'0:0:5'&foo=1")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'&foo=1")
-
-        # query_param: foo, escape_quote: false, escape_parens: false, terminate: true
-        expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3&foo=1%20OR%20\d+=\d+--\z})
-        expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3&foo=1%20AND%20\d+=\d+--\z})
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1%20SLEEP(5)--")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1%3BSELECT%20SLEEP(5)--")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1%20PG_SLEEP(5)--")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1%3BSELECT%20PG_SLEEP(5)--")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1%20WAITFOR%20DELAY%20'0:0:5'--")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'--")
-
         # query_param: bar, escape_quote: false, escape_parens: false, terminate: true
         expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2%20OR%20\d+=\d+--&baz=3&foo=1\z})
         expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2%20AND%20\d+=\d+--&baz=3&foo=1\z})
@@ -724,26 +459,6 @@ describe Ronin::Vulns::SQLI do
         expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2%3BSELECT%20PG_SLEEP(5)--&baz=3&foo=1")
         expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2%20WAITFOR%20DELAY%20'0:0:5'--&baz=3&foo=1")
         expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'--&baz=3&foo=1")
-
-        # query_param: baz, escape_quote: false, escape_parens: false, terminate: true
-        expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3%20OR%20\d+=\d+--&foo=1\z})
-        expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3%20AND%20\d+=\d+--&foo=1\z})
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3%20SLEEP(5)--&foo=1")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3%3BSELECT%20SLEEP(5)--&foo=1")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3%20PG_SLEEP(5)--&foo=1")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3%3BSELECT%20PG_SLEEP(5)--&foo=1")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3%20WAITFOR%20DELAY%20'0:0:5'--&foo=1")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'--&foo=1")
-
-        # query_param: foo, escape_quote: false, escape_parens: true, terminate: false
-        expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3&foo=1\)%20OR%20\d+=\d+\z})
-        expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3&foo=1\)%20AND%20\d+=\d+\z})
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1)%20SLEEP(5")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1)%3BSELECT%20SLEEP(5")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1)%20PG_SLEEP(5")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1)%3BSELECT%20PG_SLEEP(5")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1)%20WAITFOR%20DELAY%20'0:0:5'")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1)%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'")
 
         # query_param: bar, escape_quote: false, escape_parens: true, terminate: false
         expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2\)%20OR%20\d+=\d+&baz=3&foo=1\z})
@@ -755,26 +470,6 @@ describe Ronin::Vulns::SQLI do
         expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2)%20WAITFOR%20DELAY%20'0:0:5'&baz=3&foo=1")
         expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2)%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'&baz=3&foo=1")
 
-        # query_param: baz, escape_quote: false, escape_parens: true, terminate: false
-        expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3\)%20OR%20\d+=\d+&foo=1\z})
-        expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3\)%20AND%20\d+=\d+&foo=1\z})
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3)%20SLEEP(5&foo=1")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3)%3BSELECT%20SLEEP(5&foo=1")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3)%20PG_SLEEP(5&foo=1")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3)%3BSELECT%20PG_SLEEP(5&foo=1")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3)%20WAITFOR%20DELAY%20'0:0:5'&foo=1")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3)%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'&foo=1")
-
-        # query_param: foo, escape_quote: false, escape_parens: true, terminate: true
-        expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3&foo=1\)%20OR%20\d+=\d+--\z})
-        expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3&foo=1\)%20AND%20\d+=\d+--\z})
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1)%20SLEEP(5)--")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1)%3BSELECT%20SLEEP(5)--")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1)%20PG_SLEEP(5)--")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1)%3BSELECT%20PG_SLEEP(5)--")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1)%20WAITFOR%20DELAY%20'0:0:5'--")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1)%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'--")
-
         # query_param: bar, escape_quote: false, escape_parens: true, terminate: true
         expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2\)%20OR%20\d+=\d+--&baz=3&foo=1\z})
         expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2\)%20AND%20\d+=\d+--&baz=3&foo=1\z})
@@ -784,31 +479,11 @@ describe Ronin::Vulns::SQLI do
         expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2)%3BSELECT%20PG_SLEEP(5)--&baz=3&foo=1")
         expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2)%20WAITFOR%20DELAY%20'0:0:5'--&baz=3&foo=1")
         expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2)%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'--&baz=3&foo=1")
-
-        # query_param: baz, escape_quote: false, escape_parens: true, terminate: true
-        expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3\)%20OR%20\d+=\d+--&foo=1\z})
-        expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3\)%20AND%20\d+=\d+--&foo=1\z})
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3)%20SLEEP(5)--&foo=1")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3)%3BSELECT%20SLEEP(5)--&foo=1")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3)%20PG_SLEEP(5)--&foo=1")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3)%3BSELECT%20PG_SLEEP(5)--&foo=1")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3)%20WAITFOR%20DELAY%20'0:0:5'--&foo=1")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3)%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'--&foo=1")
       end
     end
 
     context "when `escape_quote: true` is given" do
       it "must only send requests containing a quote in the SQL escape string" do
-        # query_param: foo, escape_quote: true, escape_parens: false, terminate: false
-        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3&foo=1'%20OR%20\d+=\d+\z})
-        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3&foo=1'%20AND%20\d+=\d+\z})
-        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1'%20SLEEP(5)")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1'%3BSELECT%20SLEEP(5)")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1'%20PG_SLEEP(5)")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1'%3BSELECT%20PG_SLEEP(5)")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1'%20WAITFOR%20DELAY%20'0:0:5")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1'%3BSELECT%20WAITFOR%20DELAY%20'0:0:5")
-
         # query_param: bar, escape_quote: true, escape_parens: false, terminate: false
         stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2'%20OR%20\d+=\d+&baz=3&foo=1\z})
         stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2'%20AND%20\d+=\d+&baz=3&foo=1\z})
@@ -818,26 +493,6 @@ describe Ronin::Vulns::SQLI do
         stub_request(:get,"https://example.com/page?bar=2'%3BSELECT%20PG_SLEEP(5)&baz=3&foo=1")
         stub_request(:get,"https://example.com/page?bar=2'%20WAITFOR%20DELAY%20'0:0:5&baz=3&foo=1")
         stub_request(:get,"https://example.com/page?bar=2'%3BSELECT%20WAITFOR%20DELAY%20'0:0:5&baz=3&foo=1")
-
-        # query_param: baz, escape_quote: true, escape_parens: false, terminate: false
-        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3'%20OR%20\d+=\d+&foo=1\z})
-        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3'%20AND%20\d+=\d+&foo=1\z})
-        stub_request(:get,"https://example.com/page?bar=2&baz=3'%20SLEEP(5)&foo=1")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3'%3BSELECT%20SLEEP(5)&foo=1")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3'%20PG_SLEEP(5)&foo=1")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3'%3BSELECT%20PG_SLEEP(5)&foo=1")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3'%20WAITFOR%20DELAY%20'0:0:5&foo=1")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3'%3BSELECT%20WAITFOR%20DELAY%20'0:0:5&foo=1")
-
-        # query_param: foo, escape_quote: true, escape_parens: false, terminate: true
-        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3&foo=1'%20OR%20\d+=\d+--\z})
-        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3&foo=1'%20AND%20\d+=\d+--\z})
-        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1'%20SLEEP(5)--")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1'%3BSELECT%20SLEEP(5)--")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1'%20PG_SLEEP(5)--")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1'%3BSELECT%20PG_SLEEP(5)--")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1'%20WAITFOR%20DELAY%20'0:0:5'--")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1'%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'--")
 
         # query_param: bar, escape_quote: true, escape_parens: false, terminate: true
         stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2'%20OR%20\d+=\d+--&baz=3&foo=1\z})
@@ -849,26 +504,6 @@ describe Ronin::Vulns::SQLI do
         stub_request(:get,"https://example.com/page?bar=2'%20WAITFOR%20DELAY%20'0:0:5'--&baz=3&foo=1")
         stub_request(:get,"https://example.com/page?bar=2'%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'--&baz=3&foo=1")
 
-        # query_param: baz, escape_quote: true, escape_parens: false, terminate: true
-        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3'%20OR%20\d+=\d+--&foo=1\z})
-        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3'%20AND%20\d+=\d+--&foo=1\z})
-        stub_request(:get,"https://example.com/page?bar=2&baz=3'%20SLEEP(5)--&foo=1")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3'%3BSELECT%20SLEEP(5)--&foo=1")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3'%20PG_SLEEP(5)--&foo=1")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3'%3BSELECT%20PG_SLEEP(5)--&foo=1")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3'%20WAITFOR%20DELAY%20'0:0:5'--&foo=1")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3'%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'--&foo=1")
-
-        # query_param: foo, escape_quote: true, escape_parens: true, terminate: false
-        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3&foo=1'\)%20OR%20\d+=\d+\z})
-        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3&foo=1'\)%20AND%20\d+=\d+\z})
-        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1')%20SLEEP(5")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1')%3BSELECT%20SLEEP(5")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1')%20PG_SLEEP(5")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1')%3BSELECT%20PG_SLEEP(5")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1')%20WAITFOR%20DELAY%20'0:0:5")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1')%3BSELECT%20WAITFOR%20DELAY%20'0:0:5")
-
         # query_param: bar, escape_quote: true, escape_parens: true, terminate: false
         stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2'\)%20OR%20\d+=\d+&baz=3&foo=1\z})
         stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2'\)%20AND%20\d+=\d+&baz=3&foo=1\z})
@@ -878,26 +513,6 @@ describe Ronin::Vulns::SQLI do
         stub_request(:get,"https://example.com/page?bar=2')%3BSELECT%20PG_SLEEP(5&baz=3&foo=1")
         stub_request(:get,"https://example.com/page?bar=2')%20WAITFOR%20DELAY%20'0:0:5&baz=3&foo=1")
         stub_request(:get,"https://example.com/page?bar=2')%3BSELECT%20WAITFOR%20DELAY%20'0:0:5&baz=3&foo=1")
-
-        # query_param: baz, escape_quote: true, escape_parens: true, terminate: false
-        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3'\)%20OR%20\d+=\d+&foo=1\z})
-        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3'\)%20AND%20\d+=\d+&foo=1\z})
-        stub_request(:get,"https://example.com/page?bar=2&baz=3')%20SLEEP(5&foo=1")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3')%3BSELECT%20SLEEP(5&foo=1")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3')%20PG_SLEEP(5&foo=1")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3')%3BSELECT%20PG_SLEEP(5&foo=1")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3')%20WAITFOR%20DELAY%20'0:0:5&foo=1")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3')%3BSELECT%20WAITFOR%20DELAY%20'0:0:5&foo=1")
-
-        # query_param: foo, escape_quote: true, escape_parens: true, terminate: true
-        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3&foo=1'\)%20OR%20\d+=\d+--\z})
-        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3&foo=1'\)%20AND%20\d+=\d+--\z})
-        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1')%20SLEEP(5)--")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1')%3BSELECT%20SLEEP(5)--")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1')%20PG_SLEEP(5)--")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1')%3BSELECT%20PG_SLEEP(5)--")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1')%20WAITFOR%20DELAY%20'0:0:5'--")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1')%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'--")
 
         # query_param: bar, escape_quote: true, escape_parens: true, terminate: true
         stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2'\)%20OR%20\d+=\d+--&baz=3&foo=1\z})
@@ -909,27 +524,9 @@ describe Ronin::Vulns::SQLI do
         stub_request(:get,"https://example.com/page?bar=2')%20WAITFOR%20DELAY%20'0:0:5'--&baz=3&foo=1")
         stub_request(:get,"https://example.com/page?bar=2')%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'--&baz=3&foo=1")
 
-        # query_param: baz, escape_quote: true, escape_parens: true, terminate: true
-        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3'\)%20OR%20\d+=\d+--&foo=1\z})
-        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3'\)%20AND%20\d+=\d+--&foo=1\z})
-        stub_request(:get,"https://example.com/page?bar=2&baz=3')%20SLEEP(5)--&foo=1")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3')%3BSELECT%20SLEEP(5)--&foo=1")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3')%20PG_SLEEP(5)--&foo=1")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3')%3BSELECT%20PG_SLEEP(5)--&foo=1")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3')%20WAITFOR%20DELAY%20'0:0:5'--&foo=1")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3')%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'--&foo=1")
-
-        subject.scan(url, escape_quote: true)
-
-        # query_param: foo, escape_quote: true, escape_parens: false, terminate: false
-        expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3&foo=1'%20OR%20\d+=\d+\z})
-        expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3&foo=1'%20AND%20\d+=\d+\z})
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1'%20SLEEP(5)")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1'%3BSELECT%20SLEEP(5)")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1'%20PG_SLEEP(5)")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1'%3BSELECT%20PG_SLEEP(5)")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1'%20WAITFOR%20DELAY%20'0:0:5")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1'%3BSELECT%20WAITFOR%20DELAY%20'0:0:5")
+        subject.test_param(url, query_param:  query_param,
+                                escape_quote: true,
+                                http:         http)
 
         # query_param: bar, escape_quote: true, escape_parens: false, terminate: false
         expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2'%20OR%20\d+=\d+&baz=3&foo=1\z})
@@ -941,26 +538,6 @@ describe Ronin::Vulns::SQLI do
         expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2'%20WAITFOR%20DELAY%20'0:0:5&baz=3&foo=1")
         expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2'%3BSELECT%20WAITFOR%20DELAY%20'0:0:5&baz=3&foo=1")
 
-        # query_param: baz, escape_quote: true, escape_parens: false, terminate: false
-        expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3'%20OR%20\d+=\d+&foo=1\z})
-        expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3'%20AND%20\d+=\d+&foo=1\z})
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3'%20SLEEP(5)&foo=1")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3'%3BSELECT%20SLEEP(5)&foo=1")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3'%20PG_SLEEP(5)&foo=1")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3'%3BSELECT%20PG_SLEEP(5)&foo=1")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3'%20WAITFOR%20DELAY%20'0:0:5&foo=1")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3'%3BSELECT%20WAITFOR%20DELAY%20'0:0:5&foo=1")
-
-        # query_param: foo, escape_quote: true, escape_parens: false, terminate: true
-        expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3&foo=1'%20OR%20\d+=\d+--\z})
-        expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3&foo=1'%20AND%20\d+=\d+--\z})
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1'%20SLEEP(5)--")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1'%3BSELECT%20SLEEP(5)--")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1'%20PG_SLEEP(5)--")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1'%3BSELECT%20PG_SLEEP(5)--")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1'%20WAITFOR%20DELAY%20'0:0:5'--")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1'%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'--")
-
         # query_param: bar, escape_quote: true, escape_parens: false, terminate: true
         expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2'%20OR%20\d+=\d+--&baz=3&foo=1\z})
         expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2'%20AND%20\d+=\d+--&baz=3&foo=1\z})
@@ -970,26 +547,6 @@ describe Ronin::Vulns::SQLI do
         expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2'%3BSELECT%20PG_SLEEP(5)--&baz=3&foo=1")
         expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2'%20WAITFOR%20DELAY%20'0:0:5'--&baz=3&foo=1")
         expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2'%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'--&baz=3&foo=1")
-
-        # query_param: baz, escape_quote: true, escape_parens: false, terminate: true
-        expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3'%20OR%20\d+=\d+--&foo=1\z})
-        expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3'%20AND%20\d+=\d+--&foo=1\z})
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3'%20SLEEP(5)--&foo=1")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3'%3BSELECT%20SLEEP(5)--&foo=1")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3'%20PG_SLEEP(5)--&foo=1")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3'%3BSELECT%20PG_SLEEP(5)--&foo=1")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3'%20WAITFOR%20DELAY%20'0:0:5'--&foo=1")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3'%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'--&foo=1")
-
-        # query_param: foo, escape_quote: true, escape_parens: true, terminate: false
-        expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3&foo=1'\)%20OR%20\d+=\d+\z})
-        expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3&foo=1'\)%20AND%20\d+=\d+\z})
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1')%20SLEEP(5")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1')%3BSELECT%20SLEEP(5")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1')%20PG_SLEEP(5")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1')%3BSELECT%20PG_SLEEP(5")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1')%20WAITFOR%20DELAY%20'0:0:5")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1')%3BSELECT%20WAITFOR%20DELAY%20'0:0:5")
 
         # query_param: bar, escape_quote: true, escape_parens: true, terminate: false
         expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2'\)%20OR%20\d+=\d+&baz=3&foo=1\z})
@@ -1001,26 +558,6 @@ describe Ronin::Vulns::SQLI do
         expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2')%20WAITFOR%20DELAY%20'0:0:5&baz=3&foo=1")
         expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2')%3BSELECT%20WAITFOR%20DELAY%20'0:0:5&baz=3&foo=1")
 
-        # query_param: baz, escape_quote: true, escape_parens: true, terminate: false
-        expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3'\)%20OR%20\d+=\d+&foo=1\z})
-        expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3'\)%20AND%20\d+=\d+&foo=1\z})
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3')%20SLEEP(5&foo=1")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3')%3BSELECT%20SLEEP(5&foo=1")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3')%20PG_SLEEP(5&foo=1")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3')%3BSELECT%20PG_SLEEP(5&foo=1")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3')%20WAITFOR%20DELAY%20'0:0:5&foo=1")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3')%3BSELECT%20WAITFOR%20DELAY%20'0:0:5&foo=1")
-
-        # query_param: foo, escape_quote: true, escape_parens: true, terminate: true
-        expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3&foo=1'\)%20OR%20\d+=\d+--\z})
-        expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3&foo=1'\)%20AND%20\d+=\d+--\z})
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1')%20SLEEP(5)--")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1')%3BSELECT%20SLEEP(5)--")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1')%20PG_SLEEP(5)--")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1')%3BSELECT%20PG_SLEEP(5)--")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1')%20WAITFOR%20DELAY%20'0:0:5'--")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1')%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'--")
-
         # query_param: bar, escape_quote: true, escape_parens: true, terminate: true
         expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2'\)%20OR%20\d+=\d+--&baz=3&foo=1\z})
         expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2'\)%20AND%20\d+=\d+--&baz=3&foo=1\z})
@@ -1030,31 +567,11 @@ describe Ronin::Vulns::SQLI do
         expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2')%3BSELECT%20PG_SLEEP(5)--&baz=3&foo=1")
         expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2')%20WAITFOR%20DELAY%20'0:0:5'--&baz=3&foo=1")
         expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2')%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'--&baz=3&foo=1")
-
-        # query_param: baz, escape_quote: true, escape_parens: true, terminate: true
-        expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3'\)%20OR%20\d+=\d+--&foo=1\z})
-        expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3'\)%20AND%20\d+=\d+--&foo=1\z})
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3')%20SLEEP(5)--&foo=1")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3')%3BSELECT%20SLEEP(5)--&foo=1")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3')%20PG_SLEEP(5)--&foo=1")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3')%3BSELECT%20PG_SLEEP(5)--&foo=1")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3')%20WAITFOR%20DELAY%20'0:0:5'--&foo=1")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3')%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'--&foo=1")
       end
     end
 
     context "when `escape_parens: false` is given" do
       it "must not add a closing parenthesis character to the SQL escape string in any requests" do
-        # query_param: foo, escape_quote: false, escape_parens: false, terminate: false
-        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3&foo=1%20OR%20\d+=\d+\z})
-        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3&foo=1%20AND%20\d+=\d+\z})
-        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1%20SLEEP(5)")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1%3BSELECT%20SLEEP(5)")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1%20PG_SLEEP(5)")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1%3BSELECT%20PG_SLEEP(5)")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1%20WAITFOR%20DELAY%20'0:0:5'")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'")
-
         # query_param: bar, escape_quote: false, escape_parens: false, terminate: false
         stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2%20OR%20\d+=\d+&baz=3&foo=1\z})
         stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2%20AND%20\d+=\d+&baz=3&foo=1\z})
@@ -1064,26 +581,6 @@ describe Ronin::Vulns::SQLI do
         stub_request(:get,"https://example.com/page?bar=2%3BSELECT%20PG_SLEEP(5)&baz=3&foo=1")
         stub_request(:get,"https://example.com/page?bar=2%20WAITFOR%20DELAY%20'0:0:5'&baz=3&foo=1")
         stub_request(:get,"https://example.com/page?bar=2%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'&baz=3&foo=1")
-
-        # query_param: baz, escape_quote: false, escape_parens: false, terminate: false
-        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3%20OR%20\d+=\d+&foo=1\z})
-        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3%20AND%20\d+=\d+&foo=1\z})
-        stub_request(:get,"https://example.com/page?bar=2&baz=3%20SLEEP(5)&foo=1")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3%3BSELECT%20SLEEP(5)&foo=1")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3%20PG_SLEEP(5)&foo=1")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3%3BSELECT%20PG_SLEEP(5)&foo=1")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3%20WAITFOR%20DELAY%20'0:0:5'&foo=1")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'&foo=1")
-
-        # query_param: foo, escape_quote: false, escape_parens: false, terminate: true
-        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3&foo=1%20OR%20\d+=\d+--\z})
-        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3&foo=1%20AND%20\d+=\d+--\z})
-        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1%20SLEEP(5)--")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1%3BSELECT%20SLEEP(5)--")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1%20PG_SLEEP(5)--")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1%3BSELECT%20PG_SLEEP(5)--")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1%20WAITFOR%20DELAY%20'0:0:5'--")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'--")
 
         # query_param: bar, escape_quote: false, escape_parens: false, terminate: true
         stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2%20OR%20\d+=\d+--&baz=3&foo=1\z})
@@ -1095,26 +592,6 @@ describe Ronin::Vulns::SQLI do
         stub_request(:get,"https://example.com/page?bar=2%20WAITFOR%20DELAY%20'0:0:5'--&baz=3&foo=1")
         stub_request(:get,"https://example.com/page?bar=2%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'--&baz=3&foo=1")
 
-        # query_param: baz, escape_quote: false, escape_parens: false, terminate: true
-        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3%20OR%20\d+=\d+--&foo=1\z})
-        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3%20AND%20\d+=\d+--&foo=1\z})
-        stub_request(:get,"https://example.com/page?bar=2&baz=3%20SLEEP(5)--&foo=1")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3%3BSELECT%20SLEEP(5)--&foo=1")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3%20PG_SLEEP(5)--&foo=1")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3%3BSELECT%20PG_SLEEP(5)--&foo=1")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3%20WAITFOR%20DELAY%20'0:0:5'--&foo=1")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'--&foo=1")
-
-        # query_param: foo, escape_quote: true, escape_parens: false, terminate: false
-        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3&foo=1'%20OR%20\d+=\d+\z})
-        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3&foo=1'%20AND%20\d+=\d+\z})
-        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1'%20SLEEP(5)")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1'%3BSELECT%20SLEEP(5)")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1'%20PG_SLEEP(5)")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1'%3BSELECT%20PG_SLEEP(5)")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1'%20WAITFOR%20DELAY%20'0:0:5")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1'%3BSELECT%20WAITFOR%20DELAY%20'0:0:5")
-
         # query_param: bar, escape_quote: true, escape_parens: false, terminate: false
         stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2'%20OR%20\d+=\d+&baz=3&foo=1\z})
         stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2'%20AND%20\d+=\d+&baz=3&foo=1\z})
@@ -1124,26 +601,6 @@ describe Ronin::Vulns::SQLI do
         stub_request(:get,"https://example.com/page?bar=2'%3BSELECT%20PG_SLEEP(5)&baz=3&foo=1")
         stub_request(:get,"https://example.com/page?bar=2'%20WAITFOR%20DELAY%20'0:0:5&baz=3&foo=1")
         stub_request(:get,"https://example.com/page?bar=2'%3BSELECT%20WAITFOR%20DELAY%20'0:0:5&baz=3&foo=1")
-
-        # query_param: baz, escape_quote: true, escape_parens: false, terminate: false
-        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3'%20OR%20\d+=\d+&foo=1\z})
-        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3'%20AND%20\d+=\d+&foo=1\z})
-        stub_request(:get,"https://example.com/page?bar=2&baz=3'%20SLEEP(5)&foo=1")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3'%3BSELECT%20SLEEP(5)&foo=1")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3'%20PG_SLEEP(5)&foo=1")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3'%3BSELECT%20PG_SLEEP(5)&foo=1")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3'%20WAITFOR%20DELAY%20'0:0:5&foo=1")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3'%3BSELECT%20WAITFOR%20DELAY%20'0:0:5&foo=1")
-
-        # query_param: foo, escape_quote: true, escape_parens: false, terminate: true
-        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3&foo=1'%20OR%20\d+=\d+--\z})
-        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3&foo=1'%20AND%20\d+=\d+--\z})
-        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1'%20SLEEP(5)--")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1'%3BSELECT%20SLEEP(5)--")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1'%20PG_SLEEP(5)--")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1'%3BSELECT%20PG_SLEEP(5)--")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1'%20WAITFOR%20DELAY%20'0:0:5'--")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1'%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'--")
 
         # query_param: bar, escape_quote: true, escape_parens: false, terminate: true
         stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2'%20OR%20\d+=\d+--&baz=3&foo=1\z})
@@ -1155,27 +612,9 @@ describe Ronin::Vulns::SQLI do
         stub_request(:get,"https://example.com/page?bar=2'%20WAITFOR%20DELAY%20'0:0:5'--&baz=3&foo=1")
         stub_request(:get,"https://example.com/page?bar=2'%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'--&baz=3&foo=1")
 
-        # query_param: baz, escape_quote: true, escape_parens: false, terminate: true
-        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3'%20OR%20\d+=\d+--&foo=1\z})
-        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3'%20AND%20\d+=\d+--&foo=1\z})
-        stub_request(:get,"https://example.com/page?bar=2&baz=3'%20SLEEP(5)--&foo=1")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3'%3BSELECT%20SLEEP(5)--&foo=1")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3'%20PG_SLEEP(5)--&foo=1")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3'%3BSELECT%20PG_SLEEP(5)--&foo=1")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3'%20WAITFOR%20DELAY%20'0:0:5'--&foo=1")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3'%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'--&foo=1")
-
-        subject.scan(url, escape_parens: false)
-
-        # query_param: foo, escape_quote: false, escape_parens: false, terminate: false
-        expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3&foo=1%20OR%20\d+=\d+\z})
-        expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3&foo=1%20AND%20\d+=\d+\z})
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1%20SLEEP(5)")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1%3BSELECT%20SLEEP(5)")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1%20PG_SLEEP(5)")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1%3BSELECT%20PG_SLEEP(5)")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1%20WAITFOR%20DELAY%20'0:0:5'")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'")
+        subject.test_param(url, query_param:   query_param,
+                                escape_parens: false,
+                                http:          http)
 
         # query_param: bar, escape_quote: false, escape_parens: false, terminate: false
         expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2%20OR%20\d+=\d+&baz=3&foo=1\z})
@@ -1187,26 +626,6 @@ describe Ronin::Vulns::SQLI do
         expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2%20WAITFOR%20DELAY%20'0:0:5'&baz=3&foo=1")
         expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'&baz=3&foo=1")
 
-        # query_param: baz, escape_quote: false, escape_parens: false, terminate: false
-        expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3%20OR%20\d+=\d+&foo=1\z})
-        expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3%20AND%20\d+=\d+&foo=1\z})
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3%20SLEEP(5)&foo=1")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3%3BSELECT%20SLEEP(5)&foo=1")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3%20PG_SLEEP(5)&foo=1")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3%3BSELECT%20PG_SLEEP(5)&foo=1")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3%20WAITFOR%20DELAY%20'0:0:5'&foo=1")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'&foo=1")
-
-        # query_param: foo, escape_quote: false, escape_parens: false, terminate: true
-        expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3&foo=1%20OR%20\d+=\d+--\z})
-        expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3&foo=1%20AND%20\d+=\d+--\z})
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1%20SLEEP(5)--")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1%3BSELECT%20SLEEP(5)--")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1%20PG_SLEEP(5)--")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1%3BSELECT%20PG_SLEEP(5)--")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1%20WAITFOR%20DELAY%20'0:0:5'--")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'--")
-
         # query_param: bar, escape_quote: false, escape_parens: false, terminate: true
         expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2%20OR%20\d+=\d+--&baz=3&foo=1\z})
         expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2%20AND%20\d+=\d+--&baz=3&foo=1\z})
@@ -1216,26 +635,6 @@ describe Ronin::Vulns::SQLI do
         expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2%3BSELECT%20PG_SLEEP(5)--&baz=3&foo=1")
         expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2%20WAITFOR%20DELAY%20'0:0:5'--&baz=3&foo=1")
         expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'--&baz=3&foo=1")
-
-        # query_param: baz, escape_quote: false, escape_parens: false, terminate: true
-        expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3%20OR%20\d+=\d+--&foo=1\z})
-        expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3%20AND%20\d+=\d+--&foo=1\z})
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3%20SLEEP(5)--&foo=1")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3%3BSELECT%20SLEEP(5)--&foo=1")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3%20PG_SLEEP(5)--&foo=1")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3%3BSELECT%20PG_SLEEP(5)--&foo=1")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3%20WAITFOR%20DELAY%20'0:0:5'--&foo=1")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'--&foo=1")
-
-        # query_param: foo, escape_quote: true, escape_parens: false, terminate: false
-        expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3&foo=1'%20OR%20\d+=\d+\z})
-        expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3&foo=1'%20AND%20\d+=\d+\z})
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1'%20SLEEP(5)")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1'%3BSELECT%20SLEEP(5)")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1'%20PG_SLEEP(5)")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1'%3BSELECT%20PG_SLEEP(5)")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1'%20WAITFOR%20DELAY%20'0:0:5")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1'%3BSELECT%20WAITFOR%20DELAY%20'0:0:5")
 
         # query_param: bar, escape_quote: true, escape_parens: false, terminate: false
         expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2'%20OR%20\d+=\d+&baz=3&foo=1\z})
@@ -1247,26 +646,6 @@ describe Ronin::Vulns::SQLI do
         expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2'%20WAITFOR%20DELAY%20'0:0:5&baz=3&foo=1")
         expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2'%3BSELECT%20WAITFOR%20DELAY%20'0:0:5&baz=3&foo=1")
 
-        # query_param: baz, escape_quote: true, escape_parens: false, terminate: false
-        expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3'%20OR%20\d+=\d+&foo=1\z})
-        expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3'%20AND%20\d+=\d+&foo=1\z})
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3'%20SLEEP(5)&foo=1")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3'%3BSELECT%20SLEEP(5)&foo=1")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3'%20PG_SLEEP(5)&foo=1")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3'%3BSELECT%20PG_SLEEP(5)&foo=1")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3'%20WAITFOR%20DELAY%20'0:0:5&foo=1")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3'%3BSELECT%20WAITFOR%20DELAY%20'0:0:5&foo=1")
-
-        # query_param: foo, escape_quote: true, escape_parens: false, terminate: true
-        expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3&foo=1'%20OR%20\d+=\d+--\z})
-        expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3&foo=1'%20AND%20\d+=\d+--\z})
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1'%20SLEEP(5)--")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1'%3BSELECT%20SLEEP(5)--")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1'%20PG_SLEEP(5)--")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1'%3BSELECT%20PG_SLEEP(5)--")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1'%20WAITFOR%20DELAY%20'0:0:5'--")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1'%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'--")
-
         # query_param: bar, escape_quote: true, escape_parens: false, terminate: true
         expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2'%20OR%20\d+=\d+--&baz=3&foo=1\z})
         expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2'%20AND%20\d+=\d+--&baz=3&foo=1\z})
@@ -1276,31 +655,11 @@ describe Ronin::Vulns::SQLI do
         expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2'%3BSELECT%20PG_SLEEP(5)--&baz=3&foo=1")
         expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2'%20WAITFOR%20DELAY%20'0:0:5'--&baz=3&foo=1")
         expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2'%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'--&baz=3&foo=1")
-
-        # query_param: baz, escape_quote: true, escape_parens: false, terminate: true
-        expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3'%20OR%20\d+=\d+--&foo=1\z})
-        expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3'%20AND%20\d+=\d+--&foo=1\z})
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3'%20SLEEP(5)--&foo=1")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3'%3BSELECT%20SLEEP(5)--&foo=1")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3'%20PG_SLEEP(5)--&foo=1")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3'%3BSELECT%20PG_SLEEP(5)--&foo=1")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3'%20WAITFOR%20DELAY%20'0:0:5'--&foo=1")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3'%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'--&foo=1")
       end
     end
 
     context "when `escape_parens: true` is given" do
       it "must only send requests containing a closing parenthesis in the SQL escape string" do
-        # query_param: foo, escape_quote: false, escape_parens: true, terminate: false
-        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3&foo=1\)%20OR%20\d+=\d+\z})
-        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3&foo=1\)%20AND%20\d+=\d+\z})
-        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1)%20SLEEP(5")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1)%3BSELECT%20SLEEP(5")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1)%20PG_SLEEP(5")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1)%3BSELECT%20PG_SLEEP(5")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1)%20WAITFOR%20DELAY%20'0:0:5'")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1)%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'")
-
         # query_param: bar, escape_quote: false, escape_parens: true, terminate: false
         stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2\)%20OR%20\d+=\d+&baz=3&foo=1\z})
         stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2\)%20AND%20\d+=\d+&baz=3&foo=1\z})
@@ -1310,26 +669,6 @@ describe Ronin::Vulns::SQLI do
         stub_request(:get,"https://example.com/page?bar=2)%3BSELECT%20PG_SLEEP(5&baz=3&foo=1")
         stub_request(:get,"https://example.com/page?bar=2)%20WAITFOR%20DELAY%20'0:0:5'&baz=3&foo=1")
         stub_request(:get,"https://example.com/page?bar=2)%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'&baz=3&foo=1")
-
-        # query_param: baz, escape_quote: false, escape_parens: true, terminate: false
-        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3\)%20OR%20\d+=\d+&foo=1\z})
-        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3\)%20AND%20\d+=\d+&foo=1\z})
-        stub_request(:get,"https://example.com/page?bar=2&baz=3)%20SLEEP(5&foo=1")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3)%3BSELECT%20SLEEP(5&foo=1")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3)%20PG_SLEEP(5&foo=1")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3)%3BSELECT%20PG_SLEEP(5&foo=1")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3)%20WAITFOR%20DELAY%20'0:0:5'&foo=1")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3)%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'&foo=1")
-
-        # query_param: foo, escape_quote: false, escape_parens: true, terminate: true
-        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3&foo=1\)%20OR%20\d+=\d+--\z})
-        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3&foo=1\)%20AND%20\d+=\d+--\z})
-        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1)%20SLEEP(5)--")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1)%3BSELECT%20SLEEP(5)--")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1)%20PG_SLEEP(5)--")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1)%3BSELECT%20PG_SLEEP(5)--")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1)%20WAITFOR%20DELAY%20'0:0:5'--")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1)%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'--")
 
         # query_param: bar, escape_quote: false, escape_parens: true, terminate: true
         stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2\)%20OR%20\d+=\d+--&baz=3&foo=1\z})
@@ -1341,26 +680,6 @@ describe Ronin::Vulns::SQLI do
         stub_request(:get,"https://example.com/page?bar=2)%20WAITFOR%20DELAY%20'0:0:5'--&baz=3&foo=1")
         stub_request(:get,"https://example.com/page?bar=2)%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'--&baz=3&foo=1")
 
-        # query_param: baz, escape_quote: false, escape_parens: true, terminate: true
-        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3\)%20OR%20\d+=\d+--&foo=1\z})
-        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3\)%20AND%20\d+=\d+--&foo=1\z})
-        stub_request(:get,"https://example.com/page?bar=2&baz=3)%20SLEEP(5)--&foo=1")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3)%3BSELECT%20SLEEP(5)--&foo=1")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3)%20PG_SLEEP(5)--&foo=1")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3)%3BSELECT%20PG_SLEEP(5)--&foo=1")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3)%20WAITFOR%20DELAY%20'0:0:5'--&foo=1")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3)%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'--&foo=1")
-
-        # query_param: foo, escape_quote: true, escape_parens: true, terminate: false
-        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3&foo=1'\)%20OR%20\d+=\d+\z})
-        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3&foo=1'\)%20AND%20\d+=\d+\z})
-        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1')%20SLEEP(5")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1')%3BSELECT%20SLEEP(5")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1')%20PG_SLEEP(5")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1')%3BSELECT%20PG_SLEEP(5")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1')%20WAITFOR%20DELAY%20'0:0:5")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1')%3BSELECT%20WAITFOR%20DELAY%20'0:0:5")
-
         # query_param: bar, escape_quote: true, escape_parens: true, terminate: false
         stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2'\)%20OR%20\d+=\d+&baz=3&foo=1\z})
         stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2'\)%20AND%20\d+=\d+&baz=3&foo=1\z})
@@ -1370,26 +689,6 @@ describe Ronin::Vulns::SQLI do
         stub_request(:get,"https://example.com/page?bar=2')%3BSELECT%20PG_SLEEP(5&baz=3&foo=1")
         stub_request(:get,"https://example.com/page?bar=2')%20WAITFOR%20DELAY%20'0:0:5&baz=3&foo=1")
         stub_request(:get,"https://example.com/page?bar=2')%3BSELECT%20WAITFOR%20DELAY%20'0:0:5&baz=3&foo=1")
-
-        # query_param: baz, escape_quote: true, escape_parens: true, terminate: false
-        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3'\)%20OR%20\d+=\d+&foo=1\z})
-        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3'\)%20AND%20\d+=\d+&foo=1\z})
-        stub_request(:get,"https://example.com/page?bar=2&baz=3')%20SLEEP(5&foo=1")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3')%3BSELECT%20SLEEP(5&foo=1")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3')%20PG_SLEEP(5&foo=1")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3')%3BSELECT%20PG_SLEEP(5&foo=1")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3')%20WAITFOR%20DELAY%20'0:0:5&foo=1")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3')%3BSELECT%20WAITFOR%20DELAY%20'0:0:5&foo=1")
-
-        # query_param: foo, escape_quote: true, escape_parens: true, terminate: true
-        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3&foo=1'\)%20OR%20\d+=\d+--\z})
-        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3&foo=1'\)%20AND%20\d+=\d+--\z})
-        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1')%20SLEEP(5)--")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1')%3BSELECT%20SLEEP(5)--")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1')%20PG_SLEEP(5)--")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1')%3BSELECT%20PG_SLEEP(5)--")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1')%20WAITFOR%20DELAY%20'0:0:5'--")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1')%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'--")
 
         # query_param: bar, escape_quote: true, escape_parens: true, terminate: true
         stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2'\)%20OR%20\d+=\d+--&baz=3&foo=1\z})
@@ -1401,27 +700,9 @@ describe Ronin::Vulns::SQLI do
         stub_request(:get,"https://example.com/page?bar=2')%20WAITFOR%20DELAY%20'0:0:5'--&baz=3&foo=1")
         stub_request(:get,"https://example.com/page?bar=2')%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'--&baz=3&foo=1")
 
-        # query_param: baz, escape_quote: true, escape_parens: true, terminate: true
-        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3'\)%20OR%20\d+=\d+--&foo=1\z})
-        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3'\)%20AND%20\d+=\d+--&foo=1\z})
-        stub_request(:get,"https://example.com/page?bar=2&baz=3')%20SLEEP(5)--&foo=1")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3')%3BSELECT%20SLEEP(5)--&foo=1")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3')%20PG_SLEEP(5)--&foo=1")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3')%3BSELECT%20PG_SLEEP(5)--&foo=1")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3')%20WAITFOR%20DELAY%20'0:0:5'--&foo=1")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3')%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'--&foo=1")
-
-        subject.scan(url, escape_parens: true)
-
-        # query_param: foo, escape_quote: false, escape_parens: true, terminate: false
-        expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3&foo=1\)%20OR%20\d+=\d+\z})
-        expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3&foo=1\)%20AND%20\d+=\d+\z})
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1)%20SLEEP(5")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1)%3BSELECT%20SLEEP(5")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1)%20PG_SLEEP(5")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1)%3BSELECT%20PG_SLEEP(5")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1)%20WAITFOR%20DELAY%20'0:0:5'")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1)%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'")
+        subject.test_param(url, query_param:   query_param,
+                                escape_parens: true,
+                                http:          http)
 
         # query_param: bar, escape_quote: false, escape_parens: true, terminate: false
         expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2\)%20OR%20\d+=\d+&baz=3&foo=1\z})
@@ -1433,26 +714,6 @@ describe Ronin::Vulns::SQLI do
         expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2)%20WAITFOR%20DELAY%20'0:0:5'&baz=3&foo=1")
         expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2)%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'&baz=3&foo=1")
 
-        # query_param: baz, escape_quote: false, escape_parens: true, terminate: false
-        expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3\)%20OR%20\d+=\d+&foo=1\z})
-        expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3\)%20AND%20\d+=\d+&foo=1\z})
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3)%20SLEEP(5&foo=1")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3)%3BSELECT%20SLEEP(5&foo=1")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3)%20PG_SLEEP(5&foo=1")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3)%3BSELECT%20PG_SLEEP(5&foo=1")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3)%20WAITFOR%20DELAY%20'0:0:5'&foo=1")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3)%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'&foo=1")
-
-        # query_param: foo, escape_quote: false, escape_parens: true, terminate: true
-        expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3&foo=1\)%20OR%20\d+=\d+--\z})
-        expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3&foo=1\)%20AND%20\d+=\d+--\z})
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1)%20SLEEP(5)--")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1)%3BSELECT%20SLEEP(5)--")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1)%20PG_SLEEP(5)--")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1)%3BSELECT%20PG_SLEEP(5)--")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1)%20WAITFOR%20DELAY%20'0:0:5'--")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1)%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'--")
-
         # query_param: bar, escape_quote: false, escape_parens: true, terminate: true
         expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2\)%20OR%20\d+=\d+--&baz=3&foo=1\z})
         expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2\)%20AND%20\d+=\d+--&baz=3&foo=1\z})
@@ -1462,26 +723,6 @@ describe Ronin::Vulns::SQLI do
         expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2)%3BSELECT%20PG_SLEEP(5)--&baz=3&foo=1")
         expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2)%20WAITFOR%20DELAY%20'0:0:5'--&baz=3&foo=1")
         expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2)%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'--&baz=3&foo=1")
-
-        # query_param: baz, escape_quote: false, escape_parens: true, terminate: true
-        expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3\)%20OR%20\d+=\d+--&foo=1\z})
-        expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3\)%20AND%20\d+=\d+--&foo=1\z})
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3)%20SLEEP(5)--&foo=1")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3)%3BSELECT%20SLEEP(5)--&foo=1")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3)%20PG_SLEEP(5)--&foo=1")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3)%3BSELECT%20PG_SLEEP(5)--&foo=1")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3)%20WAITFOR%20DELAY%20'0:0:5'--&foo=1")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3)%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'--&foo=1")
-
-        # query_param: foo, escape_quote: true, escape_parens: true, terminate: false
-        expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3&foo=1'\)%20OR%20\d+=\d+\z})
-        expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3&foo=1'\)%20AND%20\d+=\d+\z})
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1')%20SLEEP(5")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1')%3BSELECT%20SLEEP(5")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1')%20PG_SLEEP(5")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1')%3BSELECT%20PG_SLEEP(5")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1')%20WAITFOR%20DELAY%20'0:0:5")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1')%3BSELECT%20WAITFOR%20DELAY%20'0:0:5")
 
         # query_param: bar, escape_quote: true, escape_parens: true, terminate: false
         expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2'\)%20OR%20\d+=\d+&baz=3&foo=1\z})
@@ -1493,26 +734,6 @@ describe Ronin::Vulns::SQLI do
         expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2')%20WAITFOR%20DELAY%20'0:0:5&baz=3&foo=1")
         expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2')%3BSELECT%20WAITFOR%20DELAY%20'0:0:5&baz=3&foo=1")
 
-        # query_param: baz, escape_quote: true, escape_parens: true, terminate: false
-        expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3'\)%20OR%20\d+=\d+&foo=1\z})
-        expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3'\)%20AND%20\d+=\d+&foo=1\z})
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3')%20SLEEP(5&foo=1")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3')%3BSELECT%20SLEEP(5&foo=1")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3')%20PG_SLEEP(5&foo=1")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3')%3BSELECT%20PG_SLEEP(5&foo=1")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3')%20WAITFOR%20DELAY%20'0:0:5&foo=1")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3')%3BSELECT%20WAITFOR%20DELAY%20'0:0:5&foo=1")
-
-        # query_param: foo, escape_quote: true, escape_parens: true, terminate: true
-        expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3&foo=1'\)%20OR%20\d+=\d+--\z})
-        expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3&foo=1'\)%20AND%20\d+=\d+--\z})
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1')%20SLEEP(5)--")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1')%3BSELECT%20SLEEP(5)--")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1')%20PG_SLEEP(5)--")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1')%3BSELECT%20PG_SLEEP(5)--")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1')%20WAITFOR%20DELAY%20'0:0:5'--")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1')%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'--")
-
         # query_param: bar, escape_quote: true, escape_parens: true, terminate: true
         expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2'\)%20OR%20\d+=\d+--&baz=3&foo=1\z})
         expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2'\)%20AND%20\d+=\d+--&baz=3&foo=1\z})
@@ -1522,31 +743,11 @@ describe Ronin::Vulns::SQLI do
         expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2')%3BSELECT%20PG_SLEEP(5)--&baz=3&foo=1")
         expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2')%20WAITFOR%20DELAY%20'0:0:5'--&baz=3&foo=1")
         expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2')%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'--&baz=3&foo=1")
-
-        # query_param: baz, escape_quote: true, escape_parens: true, terminate: true
-        expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3'\)%20OR%20\d+=\d+--&foo=1\z})
-        expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3'\)%20AND%20\d+=\d+--&foo=1\z})
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3')%20SLEEP(5)--&foo=1")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3')%3BSELECT%20SLEEP(5)--&foo=1")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3')%20PG_SLEEP(5)--&foo=1")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3')%3BSELECT%20PG_SLEEP(5)--&foo=1")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3')%20WAITFOR%20DELAY%20'0:0:5'--&foo=1")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3')%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'--&foo=1")
       end
     end
 
     context "when given `terminate: false`" do
       it "must not terminate the SQL statement in any of the requests" do
-        # query_param: foo, escape_quote: false, escape_parens: false, terminate: false
-        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3&foo=1%20OR%20\d+=\d+\z})
-        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3&foo=1%20AND%20\d+=\d+\z})
-        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1%20SLEEP(5)")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1%3BSELECT%20SLEEP(5)")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1%20PG_SLEEP(5)")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1%3BSELECT%20PG_SLEEP(5)")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1%20WAITFOR%20DELAY%20'0:0:5'")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'")
-
         # query_param: bar, escape_quote: false, escape_parens: false, terminate: false
         stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2%20OR%20\d+=\d+&baz=3&foo=1\z})
         stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2%20AND%20\d+=\d+&baz=3&foo=1\z})
@@ -1557,26 +758,6 @@ describe Ronin::Vulns::SQLI do
         stub_request(:get,"https://example.com/page?bar=2%20WAITFOR%20DELAY%20'0:0:5'&baz=3&foo=1")
         stub_request(:get,"https://example.com/page?bar=2%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'&baz=3&foo=1")
 
-        # query_param: baz, escape_quote: false, escape_parens: false, terminate: false
-        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3%20OR%20\d+=\d+&foo=1\z})
-        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3%20AND%20\d+=\d+&foo=1\z})
-        stub_request(:get,"https://example.com/page?bar=2&baz=3%20SLEEP(5)&foo=1")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3%3BSELECT%20SLEEP(5)&foo=1")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3%20PG_SLEEP(5)&foo=1")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3%3BSELECT%20PG_SLEEP(5)&foo=1")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3%20WAITFOR%20DELAY%20'0:0:5'&foo=1")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'&foo=1")
-
-        # query_param: foo, escape_quote: false, escape_parens: true, terminate: false
-        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3&foo=1\)%20OR%20\d+=\d+\z})
-        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3&foo=1\)%20AND%20\d+=\d+\z})
-        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1)%20SLEEP(5")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1)%3BSELECT%20SLEEP(5")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1)%20PG_SLEEP(5")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1)%3BSELECT%20PG_SLEEP(5")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1)%20WAITFOR%20DELAY%20'0:0:5'")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1)%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'")
-
         # query_param: bar, escape_quote: false, escape_parens: true, terminate: false
         stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2\)%20OR%20\d+=\d+&baz=3&foo=1\z})
         stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2\)%20AND%20\d+=\d+&baz=3&foo=1\z})
@@ -1586,26 +767,6 @@ describe Ronin::Vulns::SQLI do
         stub_request(:get,"https://example.com/page?bar=2)%3BSELECT%20PG_SLEEP(5&baz=3&foo=1")
         stub_request(:get,"https://example.com/page?bar=2)%20WAITFOR%20DELAY%20'0:0:5'&baz=3&foo=1")
         stub_request(:get,"https://example.com/page?bar=2)%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'&baz=3&foo=1")
-
-        # query_param: baz, escape_quote: false, escape_parens: true, terminate: false
-        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3\)%20OR%20\d+=\d+&foo=1\z})
-        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3\)%20AND%20\d+=\d+&foo=1\z})
-        stub_request(:get,"https://example.com/page?bar=2&baz=3)%20SLEEP(5&foo=1")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3)%3BSELECT%20SLEEP(5&foo=1")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3)%20PG_SLEEP(5&foo=1")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3)%3BSELECT%20PG_SLEEP(5&foo=1")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3)%20WAITFOR%20DELAY%20'0:0:5'&foo=1")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3)%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'&foo=1")
-
-        # query_param: foo, escape_quote: true, escape_parens: false, terminate: false
-        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3&foo=1'%20OR%20\d+=\d+\z})
-        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3&foo=1'%20AND%20\d+=\d+\z})
-        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1'%20SLEEP(5)")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1'%3BSELECT%20SLEEP(5)")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1'%20PG_SLEEP(5)")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1'%3BSELECT%20PG_SLEEP(5)")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1'%20WAITFOR%20DELAY%20'0:0:5")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1'%3BSELECT%20WAITFOR%20DELAY%20'0:0:5")
 
         # query_param: bar, escape_quote: true, escape_parens: false, terminate: false
         stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2'%20OR%20\d+=\d+&baz=3&foo=1\z})
@@ -1617,26 +778,6 @@ describe Ronin::Vulns::SQLI do
         stub_request(:get,"https://example.com/page?bar=2'%20WAITFOR%20DELAY%20'0:0:5&baz=3&foo=1")
         stub_request(:get,"https://example.com/page?bar=2'%3BSELECT%20WAITFOR%20DELAY%20'0:0:5&baz=3&foo=1")
 
-        # query_param: baz, escape_quote: true, escape_parens: false, terminate: false
-        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3'%20OR%20\d+=\d+&foo=1\z})
-        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3'%20AND%20\d+=\d+&foo=1\z})
-        stub_request(:get,"https://example.com/page?bar=2&baz=3'%20SLEEP(5)&foo=1")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3'%3BSELECT%20SLEEP(5)&foo=1")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3'%20PG_SLEEP(5)&foo=1")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3'%3BSELECT%20PG_SLEEP(5)&foo=1")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3'%20WAITFOR%20DELAY%20'0:0:5&foo=1")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3'%3BSELECT%20WAITFOR%20DELAY%20'0:0:5&foo=1")
-
-        # query_param: foo, escape_quote: true, escape_parens: true, terminate: false
-        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3&foo=1'\)%20OR%20\d+=\d+\z})
-        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3&foo=1'\)%20AND%20\d+=\d+\z})
-        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1')%20SLEEP(5")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1')%3BSELECT%20SLEEP(5")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1')%20PG_SLEEP(5")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1')%3BSELECT%20PG_SLEEP(5")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1')%20WAITFOR%20DELAY%20'0:0:5")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1')%3BSELECT%20WAITFOR%20DELAY%20'0:0:5")
-
         # query_param: bar, escape_quote: true, escape_parens: true, terminate: false
         stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2'\)%20OR%20\d+=\d+&baz=3&foo=1\z})
         stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2'\)%20AND%20\d+=\d+&baz=3&foo=1\z})
@@ -1647,27 +788,9 @@ describe Ronin::Vulns::SQLI do
         stub_request(:get,"https://example.com/page?bar=2')%20WAITFOR%20DELAY%20'0:0:5&baz=3&foo=1")
         stub_request(:get,"https://example.com/page?bar=2')%3BSELECT%20WAITFOR%20DELAY%20'0:0:5&baz=3&foo=1")
 
-        # query_param: baz, escape_quote: true, escape_parens: true, terminate: false
-        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3'\)%20OR%20\d+=\d+&foo=1\z})
-        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3'\)%20AND%20\d+=\d+&foo=1\z})
-        stub_request(:get,"https://example.com/page?bar=2&baz=3')%20SLEEP(5&foo=1")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3')%3BSELECT%20SLEEP(5&foo=1")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3')%20PG_SLEEP(5&foo=1")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3')%3BSELECT%20PG_SLEEP(5&foo=1")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3')%20WAITFOR%20DELAY%20'0:0:5&foo=1")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3')%3BSELECT%20WAITFOR%20DELAY%20'0:0:5&foo=1")
-
-        subject.scan(url, terminate: false)
-
-        # query_param: foo, escape_quote: false, escape_parens: false, terminate: false
-        expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3&foo=1%20OR%20\d+=\d+\z})
-        expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3&foo=1%20AND%20\d+=\d+\z})
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1%20SLEEP(5)")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1%3BSELECT%20SLEEP(5)")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1%20PG_SLEEP(5)")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1%3BSELECT%20PG_SLEEP(5)")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1%20WAITFOR%20DELAY%20'0:0:5'")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'")
+        subject.test_param(url, query_param: query_param,
+                                terminate:   false,
+                                http:        http)
 
         # query_param: bar, escape_quote: false, escape_parens: false, terminate: false
         expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2%20OR%20\d+=\d+&baz=3&foo=1\z})
@@ -1679,26 +802,6 @@ describe Ronin::Vulns::SQLI do
         expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2%20WAITFOR%20DELAY%20'0:0:5'&baz=3&foo=1")
         expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'&baz=3&foo=1")
 
-        # query_param: baz, escape_quote: false, escape_parens: false, terminate: false
-        expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3%20OR%20\d+=\d+&foo=1\z})
-        expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3%20AND%20\d+=\d+&foo=1\z})
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3%20SLEEP(5)&foo=1")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3%3BSELECT%20SLEEP(5)&foo=1")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3%20PG_SLEEP(5)&foo=1")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3%3BSELECT%20PG_SLEEP(5)&foo=1")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3%20WAITFOR%20DELAY%20'0:0:5'&foo=1")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'&foo=1")
-
-        # query_param: foo, escape_quote: false, escape_parens: true, terminate: false
-        expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3&foo=1\)%20OR%20\d+=\d+\z})
-        expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3&foo=1\)%20AND%20\d+=\d+\z})
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1)%20SLEEP(5")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1)%3BSELECT%20SLEEP(5")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1)%20PG_SLEEP(5")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1)%3BSELECT%20PG_SLEEP(5")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1)%20WAITFOR%20DELAY%20'0:0:5'")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1)%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'")
-
         # query_param: bar, escape_quote: false, escape_parens: true, terminate: false
         expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2\)%20OR%20\d+=\d+&baz=3&foo=1\z})
         expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2\)%20AND%20\d+=\d+&baz=3&foo=1\z})
@@ -1708,26 +811,6 @@ describe Ronin::Vulns::SQLI do
         expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2)%3BSELECT%20PG_SLEEP(5&baz=3&foo=1")
         expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2)%20WAITFOR%20DELAY%20'0:0:5'&baz=3&foo=1")
         expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2)%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'&baz=3&foo=1")
-
-        # query_param: baz, escape_quote: false, escape_parens: true, terminate: false
-        expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3\)%20OR%20\d+=\d+&foo=1\z})
-        expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3\)%20AND%20\d+=\d+&foo=1\z})
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3)%20SLEEP(5&foo=1")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3)%3BSELECT%20SLEEP(5&foo=1")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3)%20PG_SLEEP(5&foo=1")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3)%3BSELECT%20PG_SLEEP(5&foo=1")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3)%20WAITFOR%20DELAY%20'0:0:5'&foo=1")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3)%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'&foo=1")
-
-        # query_param: foo, escape_quote: true, escape_parens: false, terminate: false
-        expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3&foo=1'%20OR%20\d+=\d+\z})
-        expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3&foo=1'%20AND%20\d+=\d+\z})
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1'%20SLEEP(5)")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1'%3BSELECT%20SLEEP(5)")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1'%20PG_SLEEP(5)")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1'%3BSELECT%20PG_SLEEP(5)")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1'%20WAITFOR%20DELAY%20'0:0:5")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1'%3BSELECT%20WAITFOR%20DELAY%20'0:0:5")
 
         # query_param: bar, escape_quote: true, escape_parens: false, terminate: false
         expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2'%20OR%20\d+=\d+&baz=3&foo=1\z})
@@ -1739,26 +822,6 @@ describe Ronin::Vulns::SQLI do
         expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2'%20WAITFOR%20DELAY%20'0:0:5&baz=3&foo=1")
         expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2'%3BSELECT%20WAITFOR%20DELAY%20'0:0:5&baz=3&foo=1")
 
-        # query_param: baz, escape_quote: true, escape_parens: false, terminate: false
-        expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3'%20OR%20\d+=\d+&foo=1\z})
-        expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3'%20AND%20\d+=\d+&foo=1\z})
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3'%20SLEEP(5)&foo=1")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3'%3BSELECT%20SLEEP(5)&foo=1")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3'%20PG_SLEEP(5)&foo=1")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3'%3BSELECT%20PG_SLEEP(5)&foo=1")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3'%20WAITFOR%20DELAY%20'0:0:5&foo=1")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3'%3BSELECT%20WAITFOR%20DELAY%20'0:0:5&foo=1")
-
-        # query_param: foo, escape_quote: true, escape_parens: true, terminate: false
-        expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3&foo=1'\)%20OR%20\d+=\d+\z})
-        expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3&foo=1'\)%20AND%20\d+=\d+\z})
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1')%20SLEEP(5")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1')%3BSELECT%20SLEEP(5")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1')%20PG_SLEEP(5")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1')%3BSELECT%20PG_SLEEP(5")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1')%20WAITFOR%20DELAY%20'0:0:5")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1')%3BSELECT%20WAITFOR%20DELAY%20'0:0:5")
-
         # query_param: bar, escape_quote: true, escape_parens: true, terminate: false
         expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2'\)%20OR%20\d+=\d+&baz=3&foo=1\z})
         expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2'\)%20AND%20\d+=\d+&baz=3&foo=1\z})
@@ -1768,31 +831,11 @@ describe Ronin::Vulns::SQLI do
         expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2')%3BSELECT%20PG_SLEEP(5&baz=3&foo=1")
         expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2')%20WAITFOR%20DELAY%20'0:0:5&baz=3&foo=1")
         expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2')%3BSELECT%20WAITFOR%20DELAY%20'0:0:5&baz=3&foo=1")
-
-        # query_param: baz, escape_quote: true, escape_parens: true, terminate: false
-        expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3'\)%20OR%20\d+=\d+&foo=1\z})
-        expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3'\)%20AND%20\d+=\d+&foo=1\z})
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3')%20SLEEP(5&foo=1")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3')%3BSELECT%20SLEEP(5&foo=1")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3')%20PG_SLEEP(5&foo=1")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3')%3BSELECT%20PG_SLEEP(5&foo=1")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3')%20WAITFOR%20DELAY%20'0:0:5&foo=1")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3')%3BSELECT%20WAITFOR%20DELAY%20'0:0:5&foo=1")
       end
     end
 
     context "when given `terminate: true`" do
       it "must only send requests with terminated SQL statements" do
-        # query_param: foo, escape_quote: false, escape_parens: false, terminate: true
-        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3&foo=1%20OR%20\d+=\d+--\z})
-        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3&foo=1%20AND%20\d+=\d+--\z})
-        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1%20SLEEP(5)--")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1%3BSELECT%20SLEEP(5)--")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1%20PG_SLEEP(5)--")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1%3BSELECT%20PG_SLEEP(5)--")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1%20WAITFOR%20DELAY%20'0:0:5'--")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'--")
-
         # query_param: bar, escape_quote: false, escape_parens: false, terminate: true
         stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2%20OR%20\d+=\d+--&baz=3&foo=1\z})
         stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2%20AND%20\d+=\d+--&baz=3&foo=1\z})
@@ -1802,26 +845,6 @@ describe Ronin::Vulns::SQLI do
         stub_request(:get,"https://example.com/page?bar=2%3BSELECT%20PG_SLEEP(5)--&baz=3&foo=1")
         stub_request(:get,"https://example.com/page?bar=2%20WAITFOR%20DELAY%20'0:0:5'--&baz=3&foo=1")
         stub_request(:get,"https://example.com/page?bar=2%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'--&baz=3&foo=1")
-
-        # query_param: baz, escape_quote: false, escape_parens: false, terminate: true
-        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3%20OR%20\d+=\d+--&foo=1\z})
-        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3%20AND%20\d+=\d+--&foo=1\z})
-        stub_request(:get,"https://example.com/page?bar=2&baz=3%20SLEEP(5)--&foo=1")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3%3BSELECT%20SLEEP(5)--&foo=1")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3%20PG_SLEEP(5)--&foo=1")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3%3BSELECT%20PG_SLEEP(5)--&foo=1")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3%20WAITFOR%20DELAY%20'0:0:5'--&foo=1")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'--&foo=1")
-
-        # query_param: foo, escape_quote: false, escape_parens: true, terminate: true
-        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3&foo=1\)%20OR%20\d+=\d+--\z})
-        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3&foo=1\)%20AND%20\d+=\d+--\z})
-        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1)%20SLEEP(5)--")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1)%3BSELECT%20SLEEP(5)--")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1)%20PG_SLEEP(5)--")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1)%3BSELECT%20PG_SLEEP(5)--")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1)%20WAITFOR%20DELAY%20'0:0:5'--")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1)%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'--")
 
         # query_param: bar, escape_quote: false, escape_parens: true, terminate: true
         stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2\)%20OR%20\d+=\d+--&baz=3&foo=1\z})
@@ -1833,26 +856,6 @@ describe Ronin::Vulns::SQLI do
         stub_request(:get,"https://example.com/page?bar=2)%20WAITFOR%20DELAY%20'0:0:5'--&baz=3&foo=1")
         stub_request(:get,"https://example.com/page?bar=2)%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'--&baz=3&foo=1")
 
-        # query_param: baz, escape_quote: false, escape_parens: true, terminate: true
-        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3\)%20OR%20\d+=\d+--&foo=1\z})
-        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3\)%20AND%20\d+=\d+--&foo=1\z})
-        stub_request(:get,"https://example.com/page?bar=2&baz=3)%20SLEEP(5)--&foo=1")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3)%3BSELECT%20SLEEP(5)--&foo=1")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3)%20PG_SLEEP(5)--&foo=1")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3)%3BSELECT%20PG_SLEEP(5)--&foo=1")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3)%20WAITFOR%20DELAY%20'0:0:5'--&foo=1")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3)%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'--&foo=1")
-
-        # query_param: foo, escape_quote: true, escape_parens: false, terminate: true
-        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3&foo=1'%20OR%20\d+=\d+--\z})
-        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3&foo=1'%20AND%20\d+=\d+--\z})
-        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1'%20SLEEP(5)--")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1'%3BSELECT%20SLEEP(5)--")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1'%20PG_SLEEP(5)--")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1'%3BSELECT%20PG_SLEEP(5)--")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1'%20WAITFOR%20DELAY%20'0:0:5'--")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1'%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'--")
-
         # query_param: bar, escape_quote: true, escape_parens: false, terminate: true
         stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2'%20OR%20\d+=\d+--&baz=3&foo=1\z})
         stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2'%20AND%20\d+=\d+--&baz=3&foo=1\z})
@@ -1862,26 +865,6 @@ describe Ronin::Vulns::SQLI do
         stub_request(:get,"https://example.com/page?bar=2'%3BSELECT%20PG_SLEEP(5)--&baz=3&foo=1")
         stub_request(:get,"https://example.com/page?bar=2'%20WAITFOR%20DELAY%20'0:0:5'--&baz=3&foo=1")
         stub_request(:get,"https://example.com/page?bar=2'%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'--&baz=3&foo=1")
-
-        # query_param: baz, escape_quote: true, escape_parens: false, terminate: true
-        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3'%20OR%20\d+=\d+--&foo=1\z})
-        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3'%20AND%20\d+=\d+--&foo=1\z})
-        stub_request(:get,"https://example.com/page?bar=2&baz=3'%20SLEEP(5)--&foo=1")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3'%3BSELECT%20SLEEP(5)--&foo=1")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3'%20PG_SLEEP(5)--&foo=1")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3'%3BSELECT%20PG_SLEEP(5)--&foo=1")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3'%20WAITFOR%20DELAY%20'0:0:5'--&foo=1")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3'%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'--&foo=1")
-
-        # query_param: foo, escape_quote: true, escape_parens: true, terminate: true
-        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3&foo=1'\)%20OR%20\d+=\d+--\z})
-        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3&foo=1'\)%20AND%20\d+=\d+--\z})
-        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1')%20SLEEP(5)--")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1')%3BSELECT%20SLEEP(5)--")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1')%20PG_SLEEP(5)--")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1')%3BSELECT%20PG_SLEEP(5)--")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1')%20WAITFOR%20DELAY%20'0:0:5'--")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=1')%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'--")
 
         # query_param: bar, escape_quote: true, escape_parens: true, terminate: true
         stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2'\)%20OR%20\d+=\d+--&baz=3&foo=1\z})
@@ -1893,27 +876,9 @@ describe Ronin::Vulns::SQLI do
         stub_request(:get,"https://example.com/page?bar=2')%20WAITFOR%20DELAY%20'0:0:5'--&baz=3&foo=1")
         stub_request(:get,"https://example.com/page?bar=2')%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'--&baz=3&foo=1")
 
-        # query_param: baz, escape_quote: true, escape_parens: true, terminate: true
-        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3'\)%20OR%20\d+=\d+--&foo=1\z})
-        stub_request(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3'\)%20AND%20\d+=\d+--&foo=1\z})
-        stub_request(:get,"https://example.com/page?bar=2&baz=3')%20SLEEP(5)--&foo=1")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3')%3BSELECT%20SLEEP(5)--&foo=1")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3')%20PG_SLEEP(5)--&foo=1")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3')%3BSELECT%20PG_SLEEP(5)--&foo=1")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3')%20WAITFOR%20DELAY%20'0:0:5'--&foo=1")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3')%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'--&foo=1")
-
-        subject.scan(url, terminate: true)
-
-        # query_param: foo, escape_quote: false, escape_parens: false, terminate: true
-        expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3&foo=1%20OR%20\d+=\d+--\z})
-        expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3&foo=1%20AND%20\d+=\d+--\z})
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1%20SLEEP(5)--")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1%3BSELECT%20SLEEP(5)--")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1%20PG_SLEEP(5)--")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1%3BSELECT%20PG_SLEEP(5)--")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1%20WAITFOR%20DELAY%20'0:0:5'--")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'--")
+        subject.test_param(url, query_param: query_param,
+                                terminate:   true,
+                                http:        http)
 
         # query_param: bar, escape_quote: false, escape_parens: false, terminate: true
         expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2%20OR%20\d+=\d+--&baz=3&foo=1\z})
@@ -1925,26 +890,6 @@ describe Ronin::Vulns::SQLI do
         expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2%20WAITFOR%20DELAY%20'0:0:5'--&baz=3&foo=1")
         expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'--&baz=3&foo=1")
 
-        # query_param: baz, escape_quote: false, escape_parens: false, terminate: true
-        expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3%20OR%20\d+=\d+--&foo=1\z})
-        expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3%20AND%20\d+=\d+--&foo=1\z})
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3%20SLEEP(5)--&foo=1")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3%3BSELECT%20SLEEP(5)--&foo=1")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3%20PG_SLEEP(5)--&foo=1")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3%3BSELECT%20PG_SLEEP(5)--&foo=1")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3%20WAITFOR%20DELAY%20'0:0:5'--&foo=1")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'--&foo=1")
-
-        # query_param: foo, escape_quote: false, escape_parens: true, terminate: true
-        expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3&foo=1\)%20OR%20\d+=\d+--\z})
-        expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3&foo=1\)%20AND%20\d+=\d+--\z})
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1)%20SLEEP(5)--")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1)%3BSELECT%20SLEEP(5)--")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1)%20PG_SLEEP(5)--")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1)%3BSELECT%20PG_SLEEP(5)--")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1)%20WAITFOR%20DELAY%20'0:0:5'--")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1)%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'--")
-
         # query_param: bar, escape_quote: false, escape_parens: true, terminate: true
         expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2\)%20OR%20\d+=\d+--&baz=3&foo=1\z})
         expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2\)%20AND%20\d+=\d+--&baz=3&foo=1\z})
@@ -1954,26 +899,6 @@ describe Ronin::Vulns::SQLI do
         expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2)%3BSELECT%20PG_SLEEP(5)--&baz=3&foo=1")
         expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2)%20WAITFOR%20DELAY%20'0:0:5'--&baz=3&foo=1")
         expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2)%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'--&baz=3&foo=1")
-
-        # query_param: baz, escape_quote: false, escape_parens: true, terminate: true
-        expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3\)%20OR%20\d+=\d+--&foo=1\z})
-        expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3\)%20AND%20\d+=\d+--&foo=1\z})
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3)%20SLEEP(5)--&foo=1")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3)%3BSELECT%20SLEEP(5)--&foo=1")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3)%20PG_SLEEP(5)--&foo=1")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3)%3BSELECT%20PG_SLEEP(5)--&foo=1")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3)%20WAITFOR%20DELAY%20'0:0:5'--&foo=1")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3)%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'--&foo=1")
-
-        # query_param: foo, escape_quote: true, escape_parens: false, terminate: true
-        expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3&foo=1'%20OR%20\d+=\d+--\z})
-        expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3&foo=1'%20AND%20\d+=\d+--\z})
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1'%20SLEEP(5)--")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1'%3BSELECT%20SLEEP(5)--")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1'%20PG_SLEEP(5)--")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1'%3BSELECT%20PG_SLEEP(5)--")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1'%20WAITFOR%20DELAY%20'0:0:5'--")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1'%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'--")
 
         # query_param: bar, escape_quote: true, escape_parens: false, terminate: true
         expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2'%20OR%20\d+=\d+--&baz=3&foo=1\z})
@@ -1985,26 +910,6 @@ describe Ronin::Vulns::SQLI do
         expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2'%20WAITFOR%20DELAY%20'0:0:5'--&baz=3&foo=1")
         expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2'%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'--&baz=3&foo=1")
 
-        # query_param: baz, escape_quote: true, escape_parens: false, terminate: true
-        expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3'%20OR%20\d+=\d+--&foo=1\z})
-        expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3'%20AND%20\d+=\d+--&foo=1\z})
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3'%20SLEEP(5)--&foo=1")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3'%3BSELECT%20SLEEP(5)--&foo=1")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3'%20PG_SLEEP(5)--&foo=1")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3'%3BSELECT%20PG_SLEEP(5)--&foo=1")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3'%20WAITFOR%20DELAY%20'0:0:5'--&foo=1")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3'%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'--&foo=1")
-
-        # query_param: foo, escape_quote: true, escape_parens: true, terminate: true
-        expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3&foo=1'\)%20OR%20\d+=\d+--\z})
-        expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3&foo=1'\)%20AND%20\d+=\d+--\z})
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1')%20SLEEP(5)--")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1')%3BSELECT%20SLEEP(5)--")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1')%20PG_SLEEP(5)--")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1')%3BSELECT%20PG_SLEEP(5)--")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1')%20WAITFOR%20DELAY%20'0:0:5'--")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=1')%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'--")
-
         # query_param: bar, escape_quote: true, escape_parens: true, terminate: true
         expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2'\)%20OR%20\d+=\d+--&baz=3&foo=1\z})
         expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2'\)%20AND%20\d+=\d+--&baz=3&foo=1\z})
@@ -2014,16 +919,6 @@ describe Ronin::Vulns::SQLI do
         expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2')%3BSELECT%20PG_SLEEP(5)--&baz=3&foo=1")
         expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2')%20WAITFOR%20DELAY%20'0:0:5'--&baz=3&foo=1")
         expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2')%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'--&baz=3&foo=1")
-
-        # query_param: baz, escape_quote: true, escape_parens: true, terminate: true
-        expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3'\)%20OR%20\d+=\d+--&foo=1\z})
-        expect(WebMock).to have_requested(:get,%r{\Ahttps://example\.com/page\?bar=2&baz=3'\)%20AND%20\d+=\d+--&foo=1\z})
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3')%20SLEEP(5)--&foo=1")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3')%3BSELECT%20SLEEP(5)--&foo=1")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3')%20PG_SLEEP(5)--&foo=1")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3')%3BSELECT%20PG_SLEEP(5)--&foo=1")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3')%20WAITFOR%20DELAY%20'0:0:5'--&foo=1")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3')%3BSELECT%20WAITFOR%20DELAY%20'0:0:5'--&foo=1")
       end
     end
   end

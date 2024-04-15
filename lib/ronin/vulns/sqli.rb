@@ -100,10 +100,12 @@ module Ronin
       public
 
       #
-      # Scans the URL for SQL injections.
+      # Tests the URL and a specific query param, header name, cookie param, or
+      # form param for SQL injections by enumerating over various SQLi
+      # configurations.
       #
-      # @param [URI::HTTP, String] url
-      #   The URL to test or exploit.
+      # @param [URI::HTTP] url
+      #   The URL to test.
       #
       # @param [Array<Boolean>, Boolean] escape_quote
       #   Controls whether to escape a quoted string value. If not specified,
@@ -123,40 +125,46 @@ module Ronin
       # @param [Hash{Symbol => Object}] kwargs
       #   Additional keyword arguments for {WebVuln.scan}.
       #
-      # @yield [sqli]
-      #   If a block is given it will be yielded each discovered SQL injection
-      #   vulnerability.
+      # @option kwargs [Symbol, String, nil] :query_param
+      #   The query param name to test.
       #
-      # @yieldparam [SQLI] sqli
-      #   A discovered SQL injection vulnerability in the URL.
+      # @option kwargs [Symbol, String, nil] :header_name
+      #   The header name to test.
       #
-      # @return [Array<SQLI>]
-      #   All discovered SQL injection vulnerabilities.
+      # @option kwargs [Symbol, String, true, nil] :cookie_param
+      #   The cookie param name to test.
       #
-      def self.scan(url, escape_quote:  [false, true],
-                         escape_parens: [false, true],
-                         terminate:     [false, true],
-                         # WebVuln.scan keyword arguments
-                         http: nil, **kwargs, &block)
-        url    = URI(url)
-        http ||= Support::Network::HTTP.connect_uri(url)
-
-        vulns = []
-
+      # @option kwargs [Symbol, String, nil] :form_param
+      #   The form param name to test.
+      #
+      # @return [SQLI] sqli
+      #   The first discovered SQLi vulnerability for the specific query param,
+      #   header name, cookie param, or form param.
+      #
+      # @api private
+      #
+      # @since 0.2.0
+      #
+      def self.test_param(url, escape_quote:  [false, true],
+                               escape_parens: [false, true],
+                               terminate:     [false, true],
+                               # keyword arguments for initialize
+                               http: , **kwargs)
         Array(escape_quote).each do |escape_quote_value|
           Array(escape_parens).each do |escape_parens_value|
             Array(terminate).each do |terminate_value|
-              vulns.concat(super(url, escape_quote:    escape_quote_value,
-                                      escape_parens:   escape_parens_value,
-                                      terminate:       terminate_value,
-                                      http:            http,
-                                      **kwargs,
-                                      &block))
+              vuln = new(url, escape_quote:    escape_quote_value,
+                              escape_parens:   escape_parens_value,
+                              terminate:       terminate_value,
+                              http:            http,
+                              **kwargs)
+
+              return vuln if vuln.vulnerable?
             end
           end
         end
 
-        return vulns
+        return nil
       end
 
       #

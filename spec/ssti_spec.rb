@@ -106,52 +106,75 @@ describe Ronin::Vulns::SSTI do
     described_class::TestExpression.new(test_string,test_result)
   end
 
-  describe ".scan" do
+  describe ".test_param" do
     subject { described_class }
 
-    let(:url) { "https://example.com/page?foo=1&bar=2&baz=3" }
+    let(:url)         { "https://example.com/page?foo=1&bar=2&baz=3" }
+    let(:query_param) { 'bar' }
+    let(:http)        { Ronin::Support::Network::HTTP.connect_uri(url) }
 
-    context "when the escape: keyword argument is not given" do
-      it "must scan the URL using every escape in #{described_class}::ESCAPES" do
-        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=#{test_string}")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo={{#{test_string}}}")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=${#{test_string}}")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=${{#{test_string}}}")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=%23{#{test_string}}")
-        stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=<%= #{test_string} %>")
+    it "must test the URL and param using using every escape in #{described_class}::ESCAPES" do
+      stub_request(:get,"https://example.com/page?bar=#{test_string}&baz=3&foo=1")
+      stub_request(:get,"https://example.com/page?bar={{#{test_string}}}&baz=3&foo=1")
+      stub_request(:get,"https://example.com/page?bar=${#{test_string}}&baz=3&foo=1")
+      stub_request(:get,"https://example.com/page?bar=${{#{test_string}}}&baz=3&foo=1")
+      stub_request(:get,"https://example.com/page?bar=%23{#{test_string}}&baz=3&foo=1")
+      stub_request(:get,"https://example.com/page?bar=<%= #{test_string} %>&baz=3&foo=1")
+
+      subject.test_param(url, query_param: query_param,
+                              test_expr:   test_expr,
+                              http:        http)
+
+      expect(WebMock).to have_requested(:get,"https://example.com/page?bar=#{test_string}&baz=3&foo=1")
+      expect(WebMock).to have_requested(:get,"https://example.com/page?bar={{#{test_string}}}&baz=3&foo=1")
+      expect(WebMock).to have_requested(:get,"https://example.com/page?bar=${#{test_string}}&baz=3&foo=1")
+      expect(WebMock).to have_requested(:get,"https://example.com/page?bar=${{#{test_string}}}&baz=3&foo=1")
+      expect(WebMock).to have_requested(:get,"https://example.com/page?bar=%23{#{test_string}}&baz=3&foo=1")
+      expect(WebMock).to have_requested(:get,"https://example.com/page?bar=<%= #{test_string} %>&baz=3&foo=1")
+    end
+
+    context "and when one of the responses indicates a SSTI vulnerability" do
+      let(:vulnerable_response_body) do
+        <<~HTML
+          <html>
+            <body>
+              <p>example content</p>
+              <p>#{test_expr.result}content</p>
+              <p>more content</p>
+            </body>
+          </html>
+        HTML
+      end
+
+      it "must stop enumerating through the escapes in #{described_class}::ESCAPES,  and return a vulnerable #{described_class} object" do
+        stub_request(:get,"https://example.com/page?bar=#{test_string}&baz=3&foo=1")
+        stub_request(:get,"https://example.com/page?bar={{#{test_string}}}&baz=3&foo=1")
+        stub_request(:get,"https://example.com/page?bar=${#{test_string}}&baz=3&foo=1").to_return(status: 200, body: vulnerable_response_body)
+
+        vuln = subject.test_param(url, query_param: query_param,
+                                       test_expr:   test_expr,
+                                       http:        http)
+
+        expect(vuln).to be_kind_of(described_class)
+        expect(vuln.query_param).to eq(query_param)
+        expect(vuln.escape_type).to eq(:dollar_curly_braces)
+      end
+    end
+
+    context "but none of the responses indicate a SSTI vulnerability" do
+      it "must return nil" do
         stub_request(:get,"https://example.com/page?bar=#{test_string}&baz=3&foo=1")
         stub_request(:get,"https://example.com/page?bar={{#{test_string}}}&baz=3&foo=1")
         stub_request(:get,"https://example.com/page?bar=${#{test_string}}&baz=3&foo=1")
         stub_request(:get,"https://example.com/page?bar=${{#{test_string}}}&baz=3&foo=1")
         stub_request(:get,"https://example.com/page?bar=%23{#{test_string}}&baz=3&foo=1")
         stub_request(:get,"https://example.com/page?bar=<%= #{test_string} %>&baz=3&foo=1")
-        stub_request(:get,"https://example.com/page?bar=2&baz=#{test_string}&foo=1")
-        stub_request(:get,"https://example.com/page?bar=2&baz={{#{test_string}}}&foo=1")
-        stub_request(:get,"https://example.com/page?bar=2&baz=${{#{test_string}}}&foo=1")
-        stub_request(:get,"https://example.com/page?bar=2&baz=${#{test_string}}&foo=1")
-        stub_request(:get,"https://example.com/page?bar=2&baz=%23{#{test_string}}&foo=1")
-        stub_request(:get,"https://example.com/page?bar=2&baz=<%= #{test_string} %>&foo=1")
 
-        subject.scan(url, test_expr: test_expr)
+        vuln = subject.test_param(url, query_param: query_param,
+                                       test_expr:   test_expr,
+                                       http:        http)
 
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=#{test_string}")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo={{#{test_string}}}")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=${#{test_string}}")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=${{#{test_string}}}")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=%23{#{test_string}}")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=<%= #{test_string} %>")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=#{test_string}&baz=3&foo=1")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar={{#{test_string}}}&baz=3&foo=1")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=${#{test_string}}&baz=3&foo=1")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=${{#{test_string}}}&baz=3&foo=1")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=%23{#{test_string}}&baz=3&foo=1")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=<%= #{test_string} %>&baz=3&foo=1")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=#{test_string}&foo=1")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz={{#{test_string}}}&foo=1")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=${{#{test_string}}}&foo=1")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=${#{test_string}}&foo=1")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=%23{#{test_string}}&foo=1")
-        expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=<%= #{test_string} %>&foo=1")
+        expect(vuln).to be(nil)
       end
     end
 
@@ -159,16 +182,15 @@ describe Ronin::Vulns::SSTI do
       context "and it's a Symbol" do
         let(:escape) { :double_curly_braces }
 
-        it "must scan the URL using only the given escape type" do
-          stub_request(:get,"https://example.com/page?bar=2&baz=3&foo={{#{test_string}}}")
+        it "must test the URL and param using only the given escape type" do
           stub_request(:get,"https://example.com/page?bar={{#{test_string}}}&baz=3&foo=1")
-          stub_request(:get,"https://example.com/page?bar=2&baz={{#{test_string}}}&foo=1")
 
-          subject.scan(url, escape: escape, test_expr: test_expr)
+          subject.test_param(url, query_param: query_param,
+                                  escape:      escape,
+                                  test_expr:   test_expr,
+                                  http:        http)
 
-          expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo={{#{test_string}}}")
           expect(WebMock).to have_requested(:get,"https://example.com/page?bar={{#{test_string}}}&baz=3&foo=1")
-          expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz={{#{test_string}}}&foo=1")
         end
       end
 
@@ -177,16 +199,15 @@ describe Ronin::Vulns::SSTI do
           ->(expr) { "{#{expr}}" }
         end
 
-        it "must scan the URL using only the given escape Proc" do
-          stub_request(:get,"https://example.com/page?bar=2&baz=3&foo={#{test_string}}")
+        it "must test the URL and param using only the given escape Proc" do
           stub_request(:get,"https://example.com/page?bar={#{test_string}}&baz=3&foo=1")
-          stub_request(:get,"https://example.com/page?bar=2&baz={#{test_string}}&foo=1")
 
-          subject.scan(url, escape: escape, test_expr: test_expr)
+          subject.test_param(url, query_param: query_param,
+                                  escape:      escape,
+                                  test_expr:   test_expr,
+                                  http:        http)
 
-          expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo={#{test_string}}")
           expect(WebMock).to have_requested(:get,"https://example.com/page?bar={#{test_string}}&baz=3&foo=1")
-          expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz={#{test_string}}&foo=1")
         end
       end
 
@@ -195,22 +216,17 @@ describe Ronin::Vulns::SSTI do
           [:double_curly_braces, :dollar_curly_braces]
         end
 
-        it "must scan the URL using the escape types" do
-          stub_request(:get,"https://example.com/page?bar=2&baz=3&foo={{#{test_string}}}")
+        it "must scan the URL and param using the escape types" do
           stub_request(:get,"https://example.com/page?bar={{#{test_string}}}&baz=3&foo=1")
-          stub_request(:get,"https://example.com/page?bar=2&baz={{#{test_string}}}&foo=1")
-          stub_request(:get,"https://example.com/page?bar=2&baz=3&foo=${#{test_string}}")
           stub_request(:get,"https://example.com/page?bar=${#{test_string}}&baz=3&foo=1")
-          stub_request(:get,"https://example.com/page?bar=2&baz=${#{test_string}}&foo=1")
 
-          subject.scan(url, escape: escape, test_expr: test_expr)
+          subject.test_param(url, query_param: query_param,
+                                  escape:      escape,
+                                  test_expr:   test_expr,
+                                  http:        http)
 
-          expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo={{#{test_string}}}")
           expect(WebMock).to have_requested(:get,"https://example.com/page?bar={{#{test_string}}}&baz=3&foo=1")
-          expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz={{#{test_string}}}&foo=1")
-          expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=3&foo=${#{test_string}}")
           expect(WebMock).to have_requested(:get,"https://example.com/page?bar=${#{test_string}}&baz=3&foo=1")
-          expect(WebMock).to have_requested(:get,"https://example.com/page?bar=2&baz=${#{test_string}}&foo=1")
         end
       end
     end
