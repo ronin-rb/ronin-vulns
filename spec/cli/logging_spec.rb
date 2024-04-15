@@ -116,7 +116,7 @@ describe Ronin::Vulns::CLI::Logging do
         let(:vuln) { Ronin::Vulns::LFI.new(url, query_param: query_param) }
 
         it "must log 'Found LFI on <url> via query param <query_param>!'" do
-          expect(subject).to receive(:log_info).with(
+          expect(subject).to receive(:log_warn).with(
             "Found LFI on #{url} via query param '#{query_param}'!"
           )
 
@@ -129,7 +129,7 @@ describe Ronin::Vulns::CLI::Logging do
         let(:vuln) { Ronin::Vulns::LFI.new(url, header_name: header_name) }
 
         it "must log 'Found LFI on <url> via Header <header_name>!'" do
-          expect(subject).to receive(:log_info).with(
+          expect(subject).to receive(:log_warn).with(
             "Found LFI on #{url} via Header '#{header_name}'!"
           )
 
@@ -142,7 +142,7 @@ describe Ronin::Vulns::CLI::Logging do
         let(:vuln) { Ronin::Vulns::LFI.new(url, cookie_param: cookie_param) }
 
         it "must log 'Found LFI on <url> via Cookie param <cookie_param>!'" do
-          expect(subject).to receive(:log_info).with(
+          expect(subject).to receive(:log_warn).with(
             "Found LFI on #{url} via Cookie param '#{cookie_param}'!"
           )
 
@@ -155,7 +155,7 @@ describe Ronin::Vulns::CLI::Logging do
         let(:vuln) { Ronin::Vulns::LFI.new(url, form_param: form_param) }
 
         it "must log 'Found LFI on <url> via form param <form_param>!'" do
-          expect(subject).to receive(:log_info).with(
+          expect(subject).to receive(:log_warn).with(
             "Found LFI on #{url} via form param '#{form_param}'!"
           )
 
@@ -170,7 +170,7 @@ describe Ronin::Vulns::CLI::Logging do
         let(:vuln) { Ronin::Vulns::RFI.new(url, query_param: query_param) }
 
         it "must log 'Found RFI on <url> via query param <query_param>!'" do
-          expect(subject).to receive(:log_info).with(
+          expect(subject).to receive(:log_warn).with(
             "Found RFI on #{url} via query param '#{query_param}'!"
           )
 
@@ -183,7 +183,7 @@ describe Ronin::Vulns::CLI::Logging do
         let(:vuln) { Ronin::Vulns::RFI.new(url, header_name: header_name) }
 
         it "must log 'Found RFI on <url> via Header <header_name>!'" do
-          expect(subject).to receive(:log_info).with(
+          expect(subject).to receive(:log_warn).with(
             "Found RFI on #{url} via Header '#{header_name}'!"
           )
 
@@ -196,7 +196,7 @@ describe Ronin::Vulns::CLI::Logging do
         let(:vuln) { Ronin::Vulns::RFI.new(url, cookie_param: cookie_param) }
 
         it "must log 'Found RFI on <url> via Cookie param <cookie_param>!'" do
-          expect(subject).to receive(:log_info).with(
+          expect(subject).to receive(:log_warn).with(
             "Found RFI on #{url} via Cookie param '#{cookie_param}'!"
           )
 
@@ -209,7 +209,7 @@ describe Ronin::Vulns::CLI::Logging do
         let(:vuln) { Ronin::Vulns::RFI.new(url, form_param: form_param) }
 
         it "must log 'Found RFI on <url> via form param <form_param>!'" do
-          expect(subject).to receive(:log_info).with(
+          expect(subject).to receive(:log_warn).with(
             "Found RFI on #{url} via form param '#{form_param}'!"
           )
 
@@ -224,7 +224,7 @@ describe Ronin::Vulns::CLI::Logging do
         let(:vuln) { Ronin::Vulns::SQLI.new(url, query_param: query_param) }
 
         it "must log 'Found SQLI on <url> via query param <query_param>!'" do
-          expect(subject).to receive(:log_info).with(
+          expect(subject).to receive(:log_warn).with(
             "Found SQLi on #{url} via query param '#{query_param}'!"
           )
 
@@ -237,7 +237,7 @@ describe Ronin::Vulns::CLI::Logging do
         let(:vuln) { Ronin::Vulns::SQLI.new(url, header_name: header_name) }
 
         it "must log 'Found SQLI on <url> via Header <header_name>!'" do
-          expect(subject).to receive(:log_info).with(
+          expect(subject).to receive(:log_warn).with(
             "Found SQLi on #{url} via Header '#{header_name}'!"
           )
 
@@ -250,7 +250,7 @@ describe Ronin::Vulns::CLI::Logging do
         let(:vuln) { Ronin::Vulns::SQLI.new(url, cookie_param: cookie_param) }
 
         it "must log 'Found SQLI on <url> via Cookie param <cookie_param>!'" do
-          expect(subject).to receive(:log_info).with(
+          expect(subject).to receive(:log_warn).with(
             "Found SQLi on #{url} via Cookie param '#{cookie_param}'!"
           )
 
@@ -263,7 +263,7 @@ describe Ronin::Vulns::CLI::Logging do
         let(:vuln) { Ronin::Vulns::SQLI.new(url, form_param: form_param) }
 
         it "must log 'Found SQLI on <url> via form param <form_param>!'" do
-          expect(subject).to receive(:log_info).with(
+          expect(subject).to receive(:log_warn).with(
             "Found SQLi on #{url} via form param '#{form_param}'!"
           )
 
@@ -278,7 +278,7 @@ describe Ronin::Vulns::CLI::Logging do
         let(:vuln) { Ronin::Vulns::SSTI.new(url, query_param: query_param) }
 
         it "must log 'Found SSTI on <url> via query param <query_param>!'" do
-          expect(subject).to receive(:log_info).with(
+          expect(subject).to receive(:log_warn).with(
             "Found SSTI on #{url} via query param '#{query_param}'!"
           )
 
@@ -291,7 +291,7 @@ describe Ronin::Vulns::CLI::Logging do
         let(:vuln) { Ronin::Vulns::SSTI.new(url, header_name: header_name) }
 
         it "must log 'Found SSTI on <url> via Header <header_name>!'" do
-          expect(subject).to receive(:log_info).with(
+          expect(subject).to receive(:log_warn).with(
             "Found SSTI on #{url} via Header '#{header_name}'!"
           )
 
@@ -304,7 +304,7 @@ describe Ronin::Vulns::CLI::Logging do
         let(:vuln) { Ronin::Vulns::SSTI.new(url, cookie_param: cookie_param) }
 
         it "must log 'Found SSTI on <url> via Cookie param <cookie_param>!'" do
-          expect(subject).to receive(:log_info).with(
+          expect(subject).to receive(:log_warn).with(
             "Found SSTI on #{url} via Cookie param '#{cookie_param}'!"
           )
 
@@ -317,7 +317,7 @@ describe Ronin::Vulns::CLI::Logging do
         let(:vuln) { Ronin::Vulns::SSTI.new(url, form_param: form_param) }
 
         it "must log 'Found SSTI on <url> via form param <form_param>!'" do
-          expect(subject).to receive(:log_info).with(
+          expect(subject).to receive(:log_warn).with(
             "Found SSTI on #{url} via form param '#{form_param}'!"
           )
 
@@ -332,7 +332,7 @@ describe Ronin::Vulns::CLI::Logging do
         let(:vuln) { Ronin::Vulns::OpenRedirect.new(url, query_param: query_param) }
 
         it "must log 'Found Open Redirect on <url> via query param <query_param>!'" do
-          expect(subject).to receive(:log_info).with(
+          expect(subject).to receive(:log_warn).with(
             "Found Open Redirect on #{url} via query param '#{query_param}'!"
           )
 
@@ -345,7 +345,7 @@ describe Ronin::Vulns::CLI::Logging do
         let(:vuln) { Ronin::Vulns::OpenRedirect.new(url, header_name: header_name) }
 
         it "must log 'Found Open Redirect on <url> via Header <header_name>!'" do
-          expect(subject).to receive(:log_info).with(
+          expect(subject).to receive(:log_warn).with(
             "Found Open Redirect on #{url} via Header '#{header_name}'!"
           )
 
@@ -358,7 +358,7 @@ describe Ronin::Vulns::CLI::Logging do
         let(:vuln) { Ronin::Vulns::OpenRedirect.new(url, cookie_param: cookie_param) }
 
         it "must log 'Found Open Redirect on <url> via Cookie param <cookie_param>!'" do
-          expect(subject).to receive(:log_info).with(
+          expect(subject).to receive(:log_warn).with(
             "Found Open Redirect on #{url} via Cookie param '#{cookie_param}'!"
           )
 
@@ -371,7 +371,7 @@ describe Ronin::Vulns::CLI::Logging do
         let(:vuln) { Ronin::Vulns::OpenRedirect.new(url, form_param: form_param) }
 
         it "must log 'Found Open Redirect on <url> via form param <form_param>!'" do
-          expect(subject).to receive(:log_info).with(
+          expect(subject).to receive(:log_warn).with(
             "Found Open Redirect on #{url} via form param '#{form_param}'!"
           )
 
@@ -386,7 +386,7 @@ describe Ronin::Vulns::CLI::Logging do
         let(:vuln) { Ronin::Vulns::ReflectedXSS.new(url, query_param: query_param) }
 
         it "must log 'Found reflected XSS on <url> via query param <query_param>!'" do
-          expect(subject).to receive(:log_info).with(
+          expect(subject).to receive(:log_warn).with(
             "Found reflected XSS on #{url} via query param '#{query_param}'!"
           )
 
@@ -399,7 +399,7 @@ describe Ronin::Vulns::CLI::Logging do
         let(:vuln) { Ronin::Vulns::ReflectedXSS.new(url, header_name: header_name) }
 
         it "must log 'Found reflected XSS on <url> via Header <header_name>!'" do
-          expect(subject).to receive(:log_info).with(
+          expect(subject).to receive(:log_warn).with(
             "Found reflected XSS on #{url} via Header '#{header_name}'!"
           )
 
@@ -412,7 +412,7 @@ describe Ronin::Vulns::CLI::Logging do
         let(:vuln) { Ronin::Vulns::ReflectedXSS.new(url, cookie_param: cookie_param) }
 
         it "must log 'Found reflected XSS on <url> via Cookie param <cookie_param>!'" do
-          expect(subject).to receive(:log_info).with(
+          expect(subject).to receive(:log_warn).with(
             "Found reflected XSS on #{url} via Cookie param '#{cookie_param}'!"
           )
 
@@ -425,7 +425,7 @@ describe Ronin::Vulns::CLI::Logging do
         let(:vuln) { Ronin::Vulns::ReflectedXSS.new(url, form_param: form_param) }
 
         it "must log 'Found reflected XSS on <url> via form param <form_param>!'" do
-          expect(subject).to receive(:log_info).with(
+          expect(subject).to receive(:log_warn).with(
             "Found reflected XSS on #{url} via form param '#{form_param}'!"
           )
 
