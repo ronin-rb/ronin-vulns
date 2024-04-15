@@ -101,8 +101,12 @@ module Ronin
       #
       # Scans the URL for command injections.
       #
-      # @param [URI::HTTP, String] url
-      #   The URL to test or exploit.
+      # Tests the URL and a specific query param, header name, cookie param, or
+      # form param for Command Injection by enumerating over various Command
+      # Injection escape syntaxes.
+      #
+      # @param [URI::HTTP] url
+      #   The URL to test.
       #
       # @param [Array<String, nil>, String, nil] escape_quote
       #   The optional escape quote character(s) to test.
@@ -117,42 +121,48 @@ module Ronin
       #   An HTTP session to use for testing the URL.
       #
       # @param [Hash{Symbol => Object}] kwargs
-      #   Additional keyword arguments for {WebVuln.scan}.
+      #   Additional keyword arguments for {#initialize}.
       #
-      # @yield [command_injection]
-      #   If a block is given it will be yielded each discovered command
-      #   injection vulnerability.
+      # @option kwargs [Symbol, String, true, nil] :query_param
+      #   The query param name to test.
       #
-      # @yieldparam [CommandInjection] command_injection
-      #   A discovered command injection vulnerability in the URL.
+      # @option kwargs [Symbol, String, nil] :header_name
+      #   The header name to test.
       #
-      # @return [Array<CommandInjection>]
-      #   All discovered SQL injection vulnerabilities.
+      # @option kwargs [Symbol, String, true, nil] :cookie_param
+      #   The cookie param name to test.
       #
-      def self.scan(url, escape_quote:    [nil, "'", '"', '`'],
-                         escape_operator: [';', '|', '&', "\n"],
-                         terminator:      [nil, ';', '#', "\n"],
-                         # WebVuln.scan keyword arguments
-                         http: nil, **kwargs, &block)
-        url    = URI(url)
-        http ||= Support::Network::HTTP.connect_uri(url)
-
-        vulns = []
-
+      # @option kwargs [Symbol, String, nil] :form_param
+      #   The form param name to test.
+      #
+      # @return [CommandInjection, nil]
+      #   The first discovered Command Injection vulnerability for the specific
+      #   query param, header name, cookie param, or form param.
+      #
+      # @api private
+      #
+      # @since 0.2.0
+      #
+      def self.test_param(url, escape_quote:    [nil, "'", '"', '`'],
+                               escape_operator: [';', '|', '&', "\n"],
+                               terminator:      [nil, ';', '#', "\n"],
+                               # keyword arguments for initialize
+                               http: , **kwargs)
         Array(escape_quote).each do |escape_quote_char|
           Array(escape_operator).each do |escape_operator_char|
             Array(terminator).each do |terminator_char|
-              vulns.concat(super(url, escape_quote:    escape_quote_char,
-                                      escape_operator: escape_operator_char,
-                                      terminator:      terminator_char,
-                                      http:            http,
-                                      **kwargs,
-                                      &block))
+              vuln = new(url, escape_quote:    escape_quote_char,
+                              escape_operator: escape_operator_char,
+                              terminator:      terminator_char,
+                              http:            http,
+                              **kwargs)
+
+              return vuln if vuln.vulnerable?
             end
           end
         end
 
-        return vulns
+        return nil
       end
 
       #

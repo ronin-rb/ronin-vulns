@@ -206,6 +206,45 @@ module Ronin
       end
 
       #
+      # Internal method that tests combinations of configurations for a specific
+      # query param, header name, cookie param, or form param.
+      #
+      # @param [URI::HTTP] url
+      #   The URL to test.
+      #
+      # @param [Ronin::Support::Network::HTTP, nil] http
+      #   An HTTP session to use for testing the URL.
+      #
+      # @param [Hash{Symbol => Object}] kwargs
+      #   Additional keyword arguments for {#initialize}.
+      #
+      # @option kwargs [Symbol, String, nil] :query_param
+      #   The query param name to test.
+      #
+      # @option kwargs [Symbol, String, nil] :header_name
+      #   The header name to test.
+      #
+      # @option kwargs [Symbol, String, true, nil] :cookie_param
+      #   The cookie param name to test.
+      #
+      # @option kwargs [Symbol, String, nil] :form_param
+      #   The form param name to test.
+      #
+      # @return [WebVuln, nil]
+      #   The first discovered web vulnerability for the specific query param,
+      #   header name, cookie param, or form param.
+      #
+      # @api private
+      #
+      # @since 0.2.0
+      #
+      def self.test_param(url, http: , **kwargs)
+        vuln = new(url, http: http, **kwargs)
+
+        return vuln if vuln.vulnerable?
+      end
+
+      #
       # Scans the query parameters of the URL.
       #
       # @param [URI::HTTP, String] url
@@ -236,9 +275,7 @@ module Ronin
         vulns          = []
 
         query_params.each do |param|
-          vuln = new(url, query_param: param, http: http, **kwargs)
-
-          if vuln.vulnerable?
+          if (vuln = test_param(url, query_param: param, http: http, **kwargs))
             yield vuln if block_given?
             vulns << vuln
           end
@@ -276,9 +313,7 @@ module Ronin
         vulns = []
 
         header_names.each do |header_name|
-          vuln = new(url, header_name: header_name, http: http, **kwargs)
-
-          if vuln.vulnerable?
+          if (vuln = test_param(url, header_name: header_name, http: http, **kwargs))
             yield vuln if block_given?
             vulns << vuln
           end
@@ -327,9 +362,7 @@ module Ronin
         vulns = []
 
         cookie_params.each do |cookie_param|
-          vuln = new(url, cookie_param: cookie_param, http: http, **kwargs)
-
-          if vuln.vulnerable?
+          if (vuln = test_param(url, cookie_param: cookie_param, http: http, **kwargs))
             yield vuln if block_given?
             vulns << vuln
           end
@@ -367,9 +400,7 @@ module Ronin
         vulns = []
 
         form_params.each do |form_param|
-          vuln = new(url, form_param: form_param, http: http, **kwargs)
-
-          if vuln.vulnerable?
+          if (vuln = test_param(url, form_param: form_param, http: http, **kwargs))
             yield vuln if block_given?
             vulns << vuln
           end

@@ -122,62 +122,53 @@ module Ronin
       end
 
       #
-      # Scans the URL for Server Side Template Injection (SSTI) vulnerabilities.
+      # Tests the URL and a specific query param, header name, cookie param, or
+      # form param for a Server Side Template Injection (SSTI) vulnerability
+      # by enumerating over various SSTI syntaxes.
       #
-      # @param [URI::HTTP, String] url
-      #   The URL to scan.
+      # @param [URI::HTTP] url
+      #   The URL to test.
       #
       # @param [Array<Symbol, Proc>, Symbol, Proc, nil] escape
       #   The escape method to use. If `escape:` is not given, then all escapes
       #   names in {ESCAPES} will be tested..
       #
+      # @param [Ronin::Support::Network::HTTP] http
+      #   The HTTP session to use for testing the URL.
+      #
       # @param [Hash{Symbol => Object}] kwargs
       #   Additional keyword arguments for {#initialize}.
       #
-      # @option kwargs [Array<Symbol, String>, Symbol, String, true, nil] :query_params
-      #   The query param name(s) to test.
+      # @option kwargs [Symbol, String, true, nil] :query_param
+      #   The query param name to test.
       #
-      # @option kwargs [Array<Symbol, String>, Symbol, String, nil] :header_names
-      #   The header name(s) to test.
+      # @option kwargs [Symbol, String, nil] :header_name
+      #   The header name to test.
       #
-      # @option kwargs [Array<Symbol, String>, Symbol, String, true, nil] :cookie_params
-      #   The cookie param name(s) to test.
+      # @option kwargs [Symbol, String, true, nil] :cookie_param
+      #   The cookie param name to test.
       #
-      # @option kwargs [Array<Symbol, String>, Symbol, String, nil] :form_params
-      #   The form param name(s) to test.
+      # @option kwargs [Symbol, String, nil] :form_param
+      #   The form param name to test.
       #
-      # @option kwargs [Ronin::Support::Network::HTTP, nil] :http
-      #   An HTTP session to use for testing the LFI.
+      # @return [SSTI, nil]
+      #   The first discovered web vulnerability for the specific query param,
+      #   header name, cookie param, or form param.
       #
-      # @option kwargs [Hash{String => String}, nil] :headers
-      #   Additional headers to send with requests.
+      # @api private
       #
-      # @option kwargs [String, Ronin::Support::Network::HTTP::Cookie, nil] :cookie
-      #   Additional cookie params to send with requests.
+      # @since 0.2.0
       #
-      # @option kwargs [String, nil] :referer
-      #   Optional `Referer` header to send with requests.
-      #
-      # @option kwargs [Hash{String => String}, nil] :form_data
-      #   Additional form data to send with requests.
-      #
-      # @yield [vuln]
-      #   If a block is given it will be yielded each discovered vulnerability.
-      #
-      # @yieldparam [SSTI] vuln
-      #   A discovered SSTI vulnerability in the URL.
-      #
-      # @return [Array<SSTI>]
-      #   All discovered SSTI vulnerabilities.
-      #
-      def self.scan(url, escape: ESCAPES.keys, **kwargs,&block)
-        vulns = []
-
+      def self.test_param(url, escape: ESCAPES.keys,
+                               # initialize keyword arguments
+                               http: , **kwargs)
         Array(escape).each do |escape_value|
-          vulns.concat(super(url, escape: escape_value, **kwargs, &block))
+          vuln = new(url, escape: escape_value, http: http, **kwargs)
+
+          return vuln if vuln.vulnerable?
         end
 
-        return vulns
+        return nil
       end
 
       #

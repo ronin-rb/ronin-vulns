@@ -305,6 +305,152 @@ describe Ronin::Vulns::WebVuln do
 
   end
 
+  describe ".test_param" do
+    let(:base_url) { URI("https://example.com/page") }
+    let(:url)      { "#{base_url}?foo=1&bar=2&baz=3" }
+    let(:payload)  { 'injection' }
+
+    subject { TestWebVuln }
+
+    let(:http) { Ronin::Support::Network::HTTP.connect_uri(url) }
+
+    context "when the query_param: keyword argument is not given" do
+      let(:query_param) { 'bar' }
+
+      it "must test the URL for the given query_param: keyword argument" do
+        stub_request(:get, "#{base_url}?foo=1&bar=#{payload}&baz=3")
+
+        subject.test_param(url, query_param: query_param,
+                                http:        http)
+      end
+
+      context "and the response indicates a vulnerability" do
+        it "must return the vulnerability object for the given query_param: keyword argument" do
+          stub_request(:get, "#{base_url}?foo=1&bar=#{payload}&baz=3").to_return(status: 200, body: "<html>#{payload}</html>")
+
+          vuln = subject.test_param(url, query_param: query_param,
+                                         http:        http)
+
+          expect(vuln).to be_kind_of(subject)
+          expect(vuln.query_param).to eq(query_param)
+        end
+      end
+
+      context "but the response does not indicate a vulnerability" do
+        it "must return nil" do
+          stub_request(:get, "#{base_url}?foo=1&bar=#{payload}&baz=3").to_return(status: 200, body: "<html><body>hello world</body></html>")
+
+          vuln = subject.test_param(url, query_param: query_param,
+                                         http:        http)
+
+          expect(vuln).to be(nil)
+        end
+      end
+    end
+
+    context "when the header_name: keyword argument is not given" do
+      let(:header_name) { 'X-Bar' }
+
+      it "must test the URL for the given header_name: keyword argument" do
+        stub_request(:get, url).with(headers: {header_name => payload})
+
+        subject.test_param(url, header_name: header_name,
+                                http:        http)
+      end
+
+      context "and the response indicates a vulnerability" do
+        it "must return the vulnerability object for the given header_name: keyword argument" do
+          stub_request(:get, url).to_return(status: 200, body: "<html>#{payload}</html>")
+
+          vuln = subject.test_param(url, header_name: header_name,
+                                         http:        http)
+
+          expect(vuln).to be_kind_of(subject)
+          expect(vuln.header_name).to eq(header_name)
+        end
+      end
+
+      context "but the response does not indicate a vulnerability" do
+        it "must return nil" do
+          stub_request(:get, url).to_return(status: 200, body: "<html><body>hello world</body></html>")
+
+          vuln = subject.test_param(url, header_name: header_name,
+                                         http:        http)
+
+          expect(vuln).to be(nil)
+        end
+      end
+    end
+
+    context "when the cookie_param: keyword argument is not given" do
+      let(:cookie_param) { 'bar' }
+
+      it "must test the URL for the given cookie_param: keyword argument" do
+        stub_request(:get, url).with(headers: {'Cookie' => "bar=#{payload}"})
+
+        subject.test_param(url, cookie_param: cookie_param,
+                                http:         http)
+      end
+
+      context "and the response indicates a vulnerability" do
+        it "must return the vulnerability object for the given cookie_param: keyword argument" do
+          stub_request(:get, url).with(headers: {'Cookie' => "bar=#{payload}"}).to_return(status: 200, body: "<html>#{payload}</html>")
+
+          vuln = subject.test_param(url, cookie_param: cookie_param,
+                                         http:         http)
+
+          expect(vuln).to be_kind_of(subject)
+          expect(vuln.cookie_param).to eq(cookie_param)
+        end
+      end
+
+      context "but the response does not indicate a vulnerability" do
+        it "must return nil" do
+          stub_request(:get, url).with(headers: {'Cookie' => "bar=#{payload}"}).to_return(status: 200, body: "<html><body>hello world</body></html>")
+
+          vuln = subject.test_param(url, cookie_param: cookie_param,
+                                         http:         http)
+
+          expect(vuln).to be(nil)
+        end
+      end
+    end
+
+    context "when the form_param: keyword argument is not given" do
+      let(:form_param) { 'bar' }
+
+      it "must test the URL for the given form_param: keyword argument" do
+        stub_request(:get, url).with(body: "bar=#{payload}")
+
+        subject.test_param(url, form_param: form_param,
+                                http:       http)
+      end
+
+      context "and the response indicates a vulnerability" do
+        it "must return the vulnerability object for the given form_param: keyword argument" do
+          stub_request(:get, url).with(body: "bar=#{payload}").to_return(status: 200, body: "<html>#{payload}</html>")
+
+          vuln = subject.test_param(url, form_param: form_param,
+                                         http:       http)
+
+          expect(vuln).to be_kind_of(subject)
+          expect(vuln.form_param).to eq(form_param)
+        end
+      end
+
+      context "but the response does not indicate a vulnerability" do
+        it "must return nil" do
+          stub_request(:get, url).with(body: "bar=#{payload}").to_return(status: 200, body: "<html><body>hello world</body></html>")
+
+          vuln = subject.test_param(url, form_param: form_param,
+                                         http:       http)
+
+          expect(vuln).to be(nil)
+        end
+      end
+    end
+  end
+
   describe ".scan_query_params" do
     let(:base_url) { "https://example.com/page"      }
     let(:url)      { "#{base_url}?foo=1&bar=2&baz=3" }
