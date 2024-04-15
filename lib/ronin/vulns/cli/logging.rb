@@ -84,9 +84,9 @@ module Ronin
           location  = vuln_location(vuln)
 
           if location
-            log_info "Found #{vuln_name} on #{vuln.url} via #{location}!"
+            log_warn "Found #{vuln_name} on #{vuln.url} via #{location}!"
           else
-            log_info "Found #{vuln_name} on #{vuln.url}!"
+            log_warn "Found #{vuln_name} on #{vuln.url}!"
           end
         end
       end
