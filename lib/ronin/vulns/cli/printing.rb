@@ -24,9 +24,12 @@ module Ronin
   module Vulns
     class CLI
       #
-      # Mixin that adds methods for logging discovered web vulnerabilities.
+      # Mixin that adds methods for logging and printing discovered web
+      # vulnerabilities.
       #
-      module Logging
+      # @since 0.2.0
+      #
+      module Printing
         include Core::CLI::Logging
 
         # Known vulnerability types and their printable names.
@@ -53,40 +56,50 @@ module Ronin
         end
 
         #
-        # Determines the location of the web vulnerability.
+        # Determines the param type that the web vulnerability occurs in.
         #
         # @param [WebVuln] vuln
         #
         # @return [String, nil]
         #
-        # @since 0.2.0
-        #
-        def vuln_location(vuln)
-          if vuln.query_param
-            "query param '#{vuln.query_param}'"
-          elsif vuln.header_name
-            "Header '#{vuln.header_name}'"
-          elsif vuln.cookie_param
-            "Cookie param '#{vuln.cookie_param}'"
-          elsif vuln.form_param
-            "form param '#{vuln.form_param}'"
+        def vuln_param_type(vuln)
+          if    vuln.query_param  then 'query param'
+          elsif vuln.header_name  then 'Header'
+          elsif vuln.cookie_param then 'Cookie param'
+          elsif vuln.form_param   then 'form param'
           end
         end
 
         #
-        # Prints a web vulnerability.
+        # Determines the param name that the web vulnerability occurs in.
         #
         # @param [WebVuln] vuln
-        #   The web vulnerability to print.
+        #
+        # @return [String, nil]
+        #
+        def vuln_param_name(vuln)
+          if    vuln.query_param  then vuln.query_param
+          elsif vuln.header_name  then vuln.header_name
+          elsif vuln.cookie_param then vuln.cookie_param
+          elsif vuln.form_param   then vuln.form_param
+          end
+        end
+
+        #
+        # Prints a log message about a newly discovered web vulnerability.
+        #
+        # @param [WebVuln] vuln
+        #   The web vulnerability to log.
         #
         def log_vuln(vuln)
-          vuln_name = vuln_type(vuln)
-          location  = vuln_location(vuln)
+          vuln_type  = vuln_type(vuln)
+          param_type = vuln_param_type(vuln)
+          param_name = vuln_param_name(vuln)
 
-          if location
-            log_warn "Found #{vuln_name} on #{vuln.url} via #{location}!"
+          if (param_type && param_name)
+            log_warn "Found #{vuln_type} on #{vuln.url} via #{param_type} '#{param_name}'!"
           else
-            log_warn "Found #{vuln_name} on #{vuln.url}!"
+            log_warn "Found #{vuln_type} on #{vuln.url}!"
           end
         end
       end
