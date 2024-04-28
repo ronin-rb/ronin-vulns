@@ -1,5 +1,5 @@
 require 'spec_helper'
-require 'ronin/vulns/cli/logging'
+require 'ronin/vulns/cli/printing'
 
 require 'ronin/vulns/cli/command'
 require 'ronin/vulns/lfi'
@@ -9,12 +9,12 @@ require 'ronin/vulns/ssti'
 require 'ronin/vulns/reflected_xss'
 require 'ronin/vulns/open_redirect'
 
-describe Ronin::Vulns::CLI::Logging do
+describe Ronin::Vulns::CLI::Printing do
   let(:url) { 'https://example.com/page.php?id=1' }
 
   module TestCLIPrinting
     class TestCommand < Ronin::Vulns::CLI::Command
-      include Ronin::Vulns::CLI::Logging
+      include Ronin::Vulns::CLI::Printing
     end
   end
 
@@ -71,13 +71,13 @@ describe Ronin::Vulns::CLI::Logging do
     end
   end
 
-  describe "#vuln_location" do
+  describe "#vuln_param_type" do
     context "and the #query_param attribute is set" do
       let(:query_param) { 'id' }
       let(:vuln) { Ronin::Vulns::WebVuln.new(url, query_param: query_param) }
 
-      it "must log 'Found LFI on <url> via query param <query_param>!'" do
-        expect(subject.vuln_location(vuln)).to eq("query param '#{query_param}'")
+      it "must return 'query param''" do
+        expect(subject.vuln_param_type(vuln)).to eq("query param")
       end
     end
 
@@ -85,8 +85,8 @@ describe Ronin::Vulns::CLI::Logging do
       let(:header_name) { 'X-Foo' }
       let(:vuln) { Ronin::Vulns::LFI.new(url, header_name: header_name) }
 
-      it "must log 'Found LFI on <url> via Header <header_name>!'" do
-        expect(subject.vuln_location(vuln)).to eq("Header '#{header_name}'")
+      it "must return 'Header'" do
+        expect(subject.vuln_param_type(vuln)).to eq("Header")
       end
     end
 
@@ -94,8 +94,8 @@ describe Ronin::Vulns::CLI::Logging do
       let(:cookie_param) { 'X-Foo' }
       let(:vuln) { Ronin::Vulns::LFI.new(url, cookie_param: cookie_param) }
 
-      it "must log 'Found LFI on <url> via Cookie param <cookie_param>!'" do
-        expect(subject.vuln_location(vuln)).to eq("Cookie param '#{cookie_param}'")
+      it "must return 'Cookie param'" do
+        expect(subject.vuln_param_type(vuln)).to eq("Cookie param")
       end
     end
 
@@ -103,8 +103,46 @@ describe Ronin::Vulns::CLI::Logging do
       let(:form_param) { 'X-Foo' }
       let(:vuln) { Ronin::Vulns::LFI.new(url, form_param: form_param) }
 
-      it "must log 'Found LFI on <url> via form param <form_param>!'" do
-        expect(subject.vuln_location(vuln)).to eq("form param '#{form_param}'")
+      it "must return 'form param'" do
+        expect(subject.vuln_param_type(vuln)).to eq("form param")
+      end
+    end
+  end
+
+  describe "#vuln_param_name" do
+    context "and the #query_param attribute is set" do
+      let(:query_param) { 'id' }
+      let(:vuln) { Ronin::Vulns::WebVuln.new(url, query_param: query_param) }
+
+      it "must return the vuln's #query_param" do
+        expect(subject.vuln_param_name(vuln)).to eq(query_param)
+      end
+    end
+
+    context "and the #header_name attribute is set" do
+      let(:header_name) { 'X-Foo' }
+      let(:vuln) { Ronin::Vulns::LFI.new(url, header_name: header_name) }
+
+      it "must return the vuln's #header_name" do
+        expect(subject.vuln_param_name(vuln)).to eq(header_name)
+      end
+    end
+
+    context "and the #cookie_param attribute is set" do
+      let(:cookie_param) { 'X-Foo' }
+      let(:vuln) { Ronin::Vulns::LFI.new(url, cookie_param: cookie_param) }
+
+      it "must return the vuln's #cookie_param" do
+        expect(subject.vuln_param_name(vuln)).to eq(cookie_param)
+      end
+    end
+
+    context "and the #form_param attribute is set" do
+      let(:form_param) { 'X-Foo' }
+      let(:vuln) { Ronin::Vulns::LFI.new(url, form_param: form_param) }
+
+      it "must return the vuln's #form_param" do
+        expect(subject.vuln_param_name(vuln)).to eq(form_param)
       end
     end
   end

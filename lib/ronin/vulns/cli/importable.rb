@@ -19,7 +19,7 @@
 #
 
 require 'ronin/vulns/importer'
-require 'ronin/vulns/cli/logging'
+require 'ronin/vulns/cli/printing'
 require 'ronin/db/cli/database_options'
 require 'ronin/db/cli/printing'
 
@@ -36,7 +36,7 @@ module Ronin
       #
       module Importable
         include DB::CLI::Printing
-        include Logging
+        include Printing
 
         #
         # Includes `Ronin::DB::CLI::DatabaseOptions` into the including command
@@ -60,13 +60,14 @@ module Ronin
         def import_vuln(vuln)
           Importer.import(vuln)
 
-          vuln_name = vuln_type(vuln)
-          location  = vuln_location(vuln)
+          vuln_type  = vuln_type(vuln)
+          param_type = vuln_param_type(vuln)
+          param_name = vuln_param_name(vuln)
 
-          if location
-            log_info "Imported #{vuln_name} vulnerability on URL #{vuln.url} and #{location}"
+          if (param_type && param_name)
+            log_info "Imported #{vuln_type} vulnerability on URL #{vuln.url} and #{param_type} '#{param_name}'"
           else
-            log_info "Imported #{vuln_name} vulnerability on URL #{vuln.url}"
+            log_info "Imported #{vuln_type} vulnerability on URL #{vuln.url}"
           end
         end
       end

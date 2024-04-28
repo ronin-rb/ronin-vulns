@@ -20,7 +20,7 @@
 
 require 'ronin/vulns/cli/command'
 require 'ronin/vulns/cli/importable'
-require 'ronin/vulns/cli/logging'
+require 'ronin/vulns/cli/printing'
 
 require 'ronin/support/network/http/cookie'
 require 'ronin/support/network/http/user_agents'
@@ -35,7 +35,7 @@ module Ronin
       #
       class WebVulnCommand < Command
 
-        include Logging
+        include Printing
         include Importable
 
         option :import, desc: 'Imports discovered vulnerabilities into the database'
