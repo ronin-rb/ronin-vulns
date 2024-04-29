@@ -24,7 +24,6 @@ require 'ronin/vulns/cli/printing'
 
 require 'ronin/support/network/http/cookie'
 require 'ronin/support/network/http/user_agents'
-require 'command_kit/printing/indent'
 
 require 'set'
 
@@ -36,7 +35,6 @@ module Ronin
       #
       class WebVulnCommand < Command
 
-        include CommandKit::Printing::Indent
         include Printing
         include Importable
 
