@@ -24,6 +24,7 @@ require 'ronin/vulns/cli/printing'
 
 require 'ronin/support/network/http/cookie'
 require 'ronin/support/network/http/user_agents'
+require 'command_kit/printing/indent'
 
 require 'set'
 
@@ -35,6 +36,7 @@ module Ronin
       #
       class WebVulnCommand < Command
 
+        include CommandKit::Printing::Indent
         include Printing
         include Importable
 
@@ -250,23 +252,66 @@ module Ronin
 
           db_connect if options[:import]
 
-          vulns_discovered = false
+          vulns = []
 
           if options[:input]
             File.open(options[:input]) do |file|
               file.each_line(chomp: true) do |url|
-                vulns_discovered ||= process_url(url)
+                process_url(url) do |vuln|
+                  vulns << vuln
+                end
               end
             end
           elsif !urls.empty?
             urls.each do |url|
-              vulns_discovered ||= process_url(url)
+              process_url(url) do |vuln|
+                vulns << vuln
+              end
             end
           end
 
-          unless vulns_discovered
-            puts colors.green("No vulnerabilities found")
-          end
+          puts unless vulns.empty?
+          print_vulns(vulns)
+        end
+
+        #
+        # Print a summary of all web vulnerabilities found.
+        #
+        # @param [Array<WebVuln>] vulns
+        #   The discovered web vulnerabilities.
+        #
+        # @param [Boolean] print_curl
+        #   Prints an example `curl` command to trigger the web vulnerability.
+        #
+        # @param [Boolean] print_http
+        #   Prints an example HTTP request to trigger the web vulnerability.
+        #
+        # @since 0.2.0
+        #
+        def print_vulns(vulns, print_curl: options[:print_curl],
+                               print_http: options[:print_http])
+          super(vulns, print_curl: print_curl,
+                       print_http: print_http)
+        end
+
+        #
+        # Prints detailed information about a discovered web vulnerability.
+        #
+        # @param [WebVuln] vuln
+        #   The web vulnerability to log.
+        #
+        # @param [Boolean] print_curl
+        #   Prints an example `curl` command to trigger the web vulnerability.
+        #
+        # @param [Boolean] print_http
+        #   Prints an example HTTP request to trigger the web vulnerability.
+        #
+        # @since 0.2.0
+        #
+        def print_vuln(vuln, print_curl: options[:print_curl],
+                             print_http: options[:print_http])
+          super(vuln, print_curl: print_curl,
+                      print_http: print_http)
         end
 
         #
@@ -275,8 +320,12 @@ module Ronin
         # @param [String] url
         #   A URL to scan.
         #
-        # @return [Boolean]
-        #   Indicates whether a vulnerability was discovered in the URL.
+        # @yield [vuln]
+        #   The given block will be passed each newly discovered web
+        #   vulnerability.
+        #
+        # @yieldparam [WebVuln] vuln
+        #   A newly discovered web vulnerability.
         #
         def process_url(url)
           unless url.start_with?('http://') || url.start_with?('https://')
@@ -284,23 +333,17 @@ module Ronin
             exit(-1)
           end
 
-          vuln_discovered = false
-
           if @scan_mode == :first
             if (first_vuln = test_url(url))
               process_vuln(first_vuln)
-
-              vuln_discovered = true
+              yield first_vuln
             end
           else
             scan_url(url) do |vuln|
               process_vuln(vuln)
-
-              vuln_discovered = true
+              yield vuln
             end
           end
-
-          return vuln_discovered
         end
 
         #
@@ -314,30 +357,6 @@ module Ronin
         def process_vuln(vuln)
           log_vuln(vuln)
           import_vuln(vuln) if options[:import]
-        end
-
-        #
-        # Logs a discovered web vulnerability.
-        #
-        # @param [WebVuln] vuln
-        #   The discovered web vulnerability.
-        #
-        # @since 0.2.0
-        #
-        def log_vuln(vuln)
-          super(vuln)
-
-          if options[:print_curl]
-            puts
-            puts "    #{vuln.to_curl}"
-            puts
-          elsif options[:print_http]
-            puts
-            vuln.to_http.each_line do |line|
-              puts "    #{line}"
-            end
-            puts
-          end
         end
 
         #

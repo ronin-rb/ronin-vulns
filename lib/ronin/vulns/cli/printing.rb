@@ -20,6 +20,8 @@
 
 require 'ronin/core/cli/logging'
 
+require 'command_kit/printing/indent'
+
 module Ronin
   module Vulns
     class CLI
@@ -31,6 +33,7 @@ module Ronin
       #
       module Printing
         include Core::CLI::Logging
+        include CommandKit::Printing::Indent
 
         # Known vulnerability types and their printable names.
         VULN_TYPES = {
@@ -100,6 +103,79 @@ module Ronin
             log_warn "Found #{vuln_type} on #{vuln.url} via #{param_type} '#{param_name}'!"
           else
             log_warn "Found #{vuln_type} on #{vuln.url}!"
+          end
+        end
+
+        #
+        # Prints detailed information about a discovered web vulnerability.
+        #
+        # @param [WebVuln] vuln
+        #   The web vulnerability to log.
+        #
+        # @param [Boolean] print_curl
+        #   Prints an example `curl` command to trigger the web vulnerability.
+        #
+        # @param [Boolean] print_http
+        #   Prints an example HTTP request to trigger the web vulnerability.
+        #
+        # @since 0.2.0
+        #
+        def print_vuln(vuln, print_curl: false, print_http: false)
+          vuln_type  = vuln_type(vuln)
+          param_type = vuln_param_type(vuln)
+          param_name = vuln_param_name(vuln)
+
+          if (param_type && param_name)
+            puts "#{colors.bold(colors.bright_red(vuln_type))} on #{colors.bold(colors.bright_white(vuln.url))} via #{colors.bold(colors.bright_white(param_type))} '#{colors.bold(colors.bright_red(param_name))}'"
+          else
+            puts "#{colors.bold(colors.red(vuln_type))} on #{colors.bold(colors.bright_white(vuln.url))}"
+          end
+
+          if print_curl || print_http
+            puts
+
+            if print_curl
+              puts "  #{vuln.to_curl}"
+              puts
+            end
+
+            if print_http
+              vuln.to_http.each_line(chomp: true) do |line|
+                puts "  #{line}"
+              end
+              puts
+            end
+          end
+        end
+
+        #
+        # Print a summary of all web vulnerabilities found.
+        #
+        # @param [Array<WebVuln>] vulns
+        #   The discovered web vulnerabilities.
+        #
+        # @param [Boolean] print_curl
+        #   Prints an example `curl` command to trigger the web vulnerability.
+        #
+        # @param [Boolean] print_http
+        #   Prints an example HTTP request to trigger the web vulnerability.
+        #
+        # @since 0.2.0
+        #
+        def print_vulns(vulns, print_curl: false, print_http: false)
+          if vulns.empty?
+            puts colors.green("No vulnerabilities found")
+          else
+            puts colors.bold(colors.bright_red('Vulnerabilities found!'))
+            puts
+
+            indent do
+              vulns.each do |vuln|
+                print_vuln(vuln, print_curl: print_curl,
+                                 print_http: print_http)
+              end
+            end
+            puts unless (print_curl || print_http)
           end
         end
       end

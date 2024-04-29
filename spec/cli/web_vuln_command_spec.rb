@@ -1,6 +1,8 @@
 require 'spec_helper'
 require 'ronin/vulns/cli/web_vuln_command'
+require 'ronin/vulns/sqli'
 
+require 'stringio'
 require 'tempfile'
 
 describe Ronin::Vulns::CLI::WebVulnCommand do
@@ -507,12 +509,243 @@ describe Ronin::Vulns::CLI::WebVulnCommand do
     end
   end
 
+  describe "#print_vulns" do
+    let(:stdout) { StringIO.new }
+
+    subject { described_class.new(stdout: stdout) }
+    before { allow(stdout).to receive(:tty?).and_return(true) }
+
+    let(:green)             { CommandKit::Colors::ANSI::GREEN }
+    let(:bright_red)        { CommandKit::Colors::ANSI::BRIGHT_RED }
+    let(:bright_white)      { CommandKit::Colors::ANSI::BRIGHT_WHITE }
+    let(:bold)              { CommandKit::Colors::ANSI::BOLD }
+    let(:bold_bright_red)   { bold + bright_red }
+    let(:bold_bright_white) { bold + bright_white }
+    let(:reset_intensity)   { CommandKit::Colors::ANSI::RESET_INTENSITY }
+    let(:reset_color)       { CommandKit::Colors::ANSI::RESET_COLOR }
+    let(:reset)             { reset_color + reset_intensity }
+
+    context "when given an empty Array" do
+      let(:vulns) { [] }
+
+      it "must print 'No vulnerabilities found' in green" do
+        subject.print_vulns(vulns)
+
+        expect(stdout.string).to eq(
+          "#{green}No vulnerabilities found#{reset_color}#{$/}"
+        )
+      end
+    end
+
+    context "when given an Array of Ronin::Vulns::WebVuln objects" do
+      let(:query_param1) { 'a' }
+      let(:query_param2) { 'b' }
+      let(:url) { URI.parse("https://example.com/page.php?#{query_param1}=foo&#{query_param2}=bar") }
+
+      let(:vuln1) { Ronin::Vulns::SQLI.new(url, query_param: query_param1) }
+      let(:vuln2) { Ronin::Vulns::SQLI.new(url, query_param: query_param2) }
+      let(:vulns) { [vuln1, vuln2] }
+
+      it "must print 'No vulnerabilities found' in green" do
+        subject.print_vulns(vulns)
+
+        expect(stdout.string).to eq(
+          [
+            "#{bold_bright_red}Vulnerabilities found!#{reset}",
+            '',
+            "  #{bold_bright_red}SQLi#{reset} on #{bold_bright_white}#{url}#{reset} via #{bold_bright_white}query param#{reset} '#{bold_bright_red}#{query_param1}#{reset}'",
+            "  #{bold_bright_red}SQLi#{reset} on #{bold_bright_white}#{url}#{reset} via #{bold_bright_white}query param#{reset} '#{bold_bright_red}#{query_param2}#{reset}'",
+            '',
+            ''
+          ].join($/)
+        )
+      end
+
+      context "and when the '--print-curl' option is given" do
+        before { subject.options[:print_curl] = true }
+
+        it "must print an indented example curl command for each web vulnerability" do
+          subject.print_vulns(vulns)
+
+          expect(stdout.string).to eq(
+            [
+              "#{bold_bright_red}Vulnerabilities found!#{reset}",
+              '',
+              "  #{bold_bright_red}SQLi#{reset} on #{bold_bright_white}#{url}#{reset} via #{bold_bright_white}query param#{reset} '#{bold_bright_red}#{query_param1}#{reset}'",
+              '',
+              "    #{vuln1.to_curl}",
+              '',
+              "  #{bold_bright_red}SQLi#{reset} on #{bold_bright_white}#{url}#{reset} via #{bold_bright_white}query param#{reset} '#{bold_bright_red}#{query_param2}#{reset}'",
+              '',
+              "    #{vuln2.to_curl}",
+              '',
+              ''
+            ].join($/)
+          )
+        end
+      end
+
+      context "and when the '--print'http' option is given" do
+        before { subject.options[:print_http] = true }
+
+        it "must print an indented example HTTP request for each web vulnerability" do
+          subject.print_vulns(vulns)
+
+          expect(stdout.string).to eq(
+            [
+              "#{bold_bright_red}Vulnerabilities found!#{reset}",
+              '',
+              "  #{bold_bright_red}SQLi#{reset} on #{bold_bright_white}#{url}#{reset} via #{bold_bright_white}query param#{reset} '#{bold_bright_red}#{query_param1}#{reset}'",
+              '',
+              *vuln1.to_http.each_line(chomp: true).map { |line|
+                "    #{line}"
+              },
+              '',
+              "  #{bold_bright_red}SQLi#{reset} on #{bold_bright_white}#{url}#{reset} via #{bold_bright_white}query param#{reset} '#{bold_bright_red}#{query_param2}#{reset}'",
+              '',
+              *vuln2.to_http.each_line(chomp: true).map { |line|
+                "    #{line}"
+              },
+              '',
+              ''
+            ].join($/)
+          )
+        end
+      end
+
+      context "and when given both the '--print'curl' and '--print-http' options are given" do
+        before do
+          subject.options[:print_curl] = true
+          subject.options[:print_http] = true
+        end
+
+        it "must print an indented example curl command and then an example HTTP request for each web vulnerability" do
+          subject.print_vulns(vulns)
+
+          expect(stdout.string).to eq(
+            [
+              "#{bold_bright_red}Vulnerabilities found!#{reset}",
+              '',
+              "  #{bold_bright_red}SQLi#{reset} on #{bold_bright_white}#{url}#{reset} via #{bold_bright_white}query param#{reset} '#{bold_bright_red}#{query_param1}#{reset}'",
+              '',
+              "    #{vuln1.to_curl}",
+              '',
+              *vuln1.to_http.each_line(chomp: true).map { |line|
+                "    #{line}"
+              },
+              '',
+              "  #{bold_bright_red}SQLi#{reset} on #{bold_bright_white}#{url}#{reset} via #{bold_bright_white}query param#{reset} '#{bold_bright_red}#{query_param2}#{reset}'",
+              '',
+              "    #{vuln2.to_curl}",
+              '',
+              *vuln2.to_http.each_line(chomp: true).map { |line|
+                "    #{line}"
+              },
+              '',
+              ''
+            ].join($/)
+          )
+        end
+      end
+    end
+  end
+
+  describe "#print_vuln" do
+    let(:stdout) { StringIO.new }
+
+    subject { described_class.new(stdout: stdout) }
+    before { allow(stdout).to receive(:tty?).and_return(true) }
+
+    let(:bright_red)        { CommandKit::Colors::ANSI::BRIGHT_RED }
+    let(:bright_white)      { CommandKit::Colors::ANSI::BRIGHT_WHITE }
+    let(:bold)              { CommandKit::Colors::ANSI::BOLD }
+    let(:bold_bright_red)   { bold + bright_red }
+    let(:bold_bright_white) { bold + bright_white }
+    let(:reset_intensity)   { CommandKit::Colors::ANSI::RESET_INTENSITY }
+    let(:reset_color)       { CommandKit::Colors::ANSI::RESET_COLOR     }
+    let(:reset)             { reset_color + reset_intensity }
+
+    context "when the '--print-curl' option is given" do
+      let(:query_param) { 'id' }
+      let(:vuln) { Ronin::Vulns::SQLI.new(url, query_param: query_param) }
+
+      before { subject.options[:print_curl] = true }
+
+      it "must print an indented example curl command for the web vulnerability" do
+        subject.print_vuln(vuln)
+
+        expect(stdout.string).to eq(
+          [
+            "#{bold_bright_red}SQLi#{reset} on #{bold_bright_white}#{url}#{reset} via #{bold_bright_white}query param#{reset} '#{bold_bright_red}#{query_param}#{reset}'",
+            '',
+            "  #{vuln.to_curl}",
+            '',
+            ''
+          ].join($/)
+        )
+      end
+    end
+
+    context "when the '--print'http' option is given" do
+      let(:query_param) { 'id' }
+      let(:vuln) { Ronin::Vulns::SQLI.new(url, query_param: query_param) }
+
+      before { subject.options[:print_http] = true }
+
+      it "must print an indented example HTTP request for the web vulnerability" do
+        subject.print_vuln(vuln)
+
+        expect(stdout.string).to eq(
+          [
+            "#{bold_bright_red}SQLi#{reset} on #{bold_bright_white}#{url}#{reset} via #{bold_bright_white}query param#{reset} '#{bold_bright_red}#{query_param}#{reset}'",
+            '',
+            *vuln.to_http.each_line(chomp: true).map { |line|
+              "  #{line}"
+            },
+            '',
+            ''
+          ].join($/)
+        )
+      end
+    end
+
+    context "when given both the '--print'curl' and '--print-http' options are given" do
+      let(:query_param) { 'id' }
+      let(:vuln) { Ronin::Vulns::SQLI.new(url, query_param: query_param) }
+
+      before do
+        subject.options[:print_curl] = true
+        subject.options[:print_http] = true
+      end
+
+      it "must print an indented example curl command and then an example HTTP request for the web vulnerability" do
+        subject.print_vuln(vuln)
+
+        expect(stdout.string).to eq(
+          [
+            "#{bold_bright_red}SQLi#{reset} on #{bold_bright_white}#{url}#{reset} via #{bold_bright_white}query param#{reset} '#{bold_bright_red}#{query_param}#{reset}'",
+            '',
+            "  #{vuln.to_curl}",
+            '',
+            *vuln.to_http.each_line(chomp: true).map { |line|
+              "  #{line}"
+            },
+            '',
+            ''
+          ].join($/)
+        )
+      end
+    end
+  end
+
   describe "#process_url" do
     context "when #scan_mode is :first" do
       it "must call #test_url with the given URL" do
         expect(subject).to receive(:test_url).with(url)
 
-        subject.process_url(url)
+        expect { |b|
+          subject.process_url(url,&b)
+        }.to_not yield_control
       end
 
       context "and #test_url returns a WebVuln object" do
@@ -522,7 +755,9 @@ describe Ronin::Vulns::CLI::WebVulnCommand do
           expect(subject).to receive(:test_url).with(url).and_return(vuln)
           expect(subject).to receive(:process_vuln).with(vuln)
 
-          subject.process_url(url)
+          expect { |b|
+            subject.process_url(url,&b)
+          }.to yield_with_args(vuln)
         end
       end
     end
@@ -546,7 +781,9 @@ describe Ronin::Vulns::CLI::WebVulnCommand do
           expect(subject).to receive(:process_vuln).with(vuln1)
           expect(subject).to receive(:process_vuln).with(vuln2)
 
-          subject.process_url(url)
+          expect { |b|
+            subject.process_url(url,&b)
+          }.to yield_successive_args(vuln1,vuln2)
         end
       end
     end
