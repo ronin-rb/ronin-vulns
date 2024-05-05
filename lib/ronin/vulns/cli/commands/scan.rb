@@ -45,6 +45,7 @@ module Ronin
         #         --test-header-names NAME     Tests the HTTP Header name
         #         --test-cookie-params NAME    Tests the HTTP Cookie name
         #         --test-form-params NAME      Tests the form param name
+        #         --test-all-form-params       Test all form param names
         #     -i, --input FILE                 Reads URLs from the list file
         #         --lfi-os unix|windows        Sets the OS to test for
         #         --lfi-depth COUNT            Sets the directory depth to escape up
