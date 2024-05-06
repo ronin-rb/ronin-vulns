@@ -296,7 +296,7 @@ module Ronin
       #
       def check_for_sql_errors(response)
         if response.code == '500'
-          ERROR_PATTERNS.each do |database,error_pattern|
+          ERROR_PATTERNS.each_value do |error_pattern|
             if error_pattern =~ response.body
               return true
             end
