@@ -103,13 +103,53 @@ describe Ronin::Vulns::CLI::Commands::Scan do
     end
 
     context "when the '--lfi-filter-bypass' option is parsed" do
-      let(:filter_bypass) { :base64 }
-      let(:argv) { ['--lfi-filter-bypass', filter_bypass.to_s] }
+      let(:argv) { ['--lfi-filter-bypass', option_value] }
 
       before { subject.option_parser.parse(argv) }
 
-      it "must set the :filter_bypass key in the Hash" do
-        expect(subject.lfi_kwargs[:filter_bypass]).to eq(filter_bypass)
+      context "and it's value is 'null-byte'" do
+        let(:option_value)  { 'null-byte' }
+        let(:filter_bypass) { :null_byte }
+
+        it "must set the :filter_bypass key in #lfi_kwargs to :null_byte" do
+          expect(subject.lfi_kwargs[:filter_bypass]).to eq(filter_bypass)
+        end
+      end
+
+      context "and it's value is 'double-escape'" do
+        let(:option_value)  { 'double-escape' }
+        let(:filter_bypass) { :double_escape }
+
+        it "must set the :filter_bypass key in #lfi_kwargs to :double_escape" do
+          expect(subject.lfi_kwargs[:filter_bypass]).to eq(filter_bypass)
+        end
+      end
+
+      context "and it's value is 'base64'" do
+        let(:option_value)  { 'base64' }
+        let(:filter_bypass) { :base64 }
+
+        it "must set the :filter_bypass key in #lfi_kwargs to :base64" do
+          expect(subject.lfi_kwargs[:filter_bypass]).to eq(filter_bypass)
+        end
+      end
+
+      context "and it's value is 'rot13'" do
+        let(:option_value)  { 'rot13' }
+        let(:filter_bypass) { :rot13 }
+
+        it "must set the :filter_bypass key in #lfi_kwargs to :rot13" do
+          expect(subject.lfi_kwargs[:filter_bypass]).to eq(filter_bypass)
+        end
+      end
+
+      context "and it's value is 'zlib'" do
+        let(:option_value)  { 'zlib' }
+        let(:filter_bypass) { :zlib }
+
+        it "must set the :filter_bypass key in #lfi_kwargs to :zlib" do
+          expect(subject.lfi_kwargs[:filter_bypass]).to eq(filter_bypass)
+        end
       end
     end
 

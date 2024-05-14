@@ -59,7 +59,7 @@ module Ronin
         #     -i, --input FILE                 Reads URLs from the list file
         #         --lfi-os unix|windows        Sets the OS to test for
         #         --lfi-depth COUNT            Sets the directory depth to escape up
-        #         --lfi-filter-bypass null_byte|double_escape|base64|rot13|zlib
+        #         --lfi-filter-bypass null-byte|double-escape|base64|rot13|zlib
         #                                      Sets the filter bypass strategy to use
         #         --rfi-filter-bypass double-encode|suffix-escape|null-byte
         #                                      Optional filter-bypass strategy to use
@@ -98,13 +98,13 @@ module Ronin
                              end
 
           option :lfi_filter_bypass, value: {
-                                       type: [
-                                         :null_byte,
-                                         :double_escape,
-                                         :base64,
-                                         :rot13,
-                                         :zlib
-                                       ]
+                                       type: {
+                                         'null-byte'     => :null_byte,
+                                         'double-escape' => :double_escape,
+                                         'base64'        => :base64,
+                                         'rot13'         => :rot13,
+                                         'zlib'          => :zlib
+                                       }
                                      },
                                      desc: 'Sets the filter bypass strategy to use' do |filter_bypass|
                                        lfi_kwargs[:filter_bypass] = filter_bypass

@@ -96,7 +96,7 @@ additional arguments or read from a file using the `--input` option.
 `--lfi-depth` *NUM*
 : Sets the directory depth to escape up.
 
-`--lfi-filter-bypass` `null_byte`\|`double_escape`\|`base64`\|`rot13`\|`zlib`
+`--lfi-filter-bypass` `null-byte`\|`double-escape`\|`base64`\|`rot13`\|`zlib`
 : Sets the filter bypass strategy to use.
 
 `--rfi-filter-bypass` `double-encode`\|`suffix-escape`\|`null-byte`

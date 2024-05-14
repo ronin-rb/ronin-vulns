@@ -61,7 +61,7 @@ module Ronin
         #     -i, --input FILE                 Reads URLs from the list file
         #     -O, --os unix|windows            Sets the OS to test for
         #     -D, --depth COUNT                Sets the directory depth to escape up
-        #     -B null_byte|double_escape|base64|rot13|zlib,
+        #     -B null-byte|double-escape|base64|rot13|zlib,
         #         --filter-bypass              Sets the filter bypass strategy to use
         #     -h, --help                       Print help information
         #
@@ -92,13 +92,13 @@ module Ronin
 
           option :filter_bypass, short: '-B',
                                  value: {
-                                   type: [
-                                     :null_byte,
-                                     :double_escape,
-                                     :base64,
-                                     :rot13,
-                                     :zlib
-                                   ]
+                                   type: {
+                                     'null-byte'     => :null_byte,
+                                     'double-escape' => :double_escape,
+                                     'base64'        => :base64,
+                                     'rot13'         => :rot13,
+                                     'zlib'          => :zlib
+                                   }
                                  },
                                  desc: 'Sets the filter bypass strategy to use' do |filter_bypass|
                                    scan_kwargs[:filter_bypass] = filter_bypass
