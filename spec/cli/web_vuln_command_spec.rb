@@ -964,6 +964,15 @@ describe Ronin::Vulns::CLI::WebVulnCommand do
       end
     end
 
+    context "when #test_all_form_params is set" do
+      let(:argv) { %w[--test-all-form-param] }
+      before { subject.option_parser.parse(argv) }
+
+      it "must set the :form_params key in the Hash to true" do
+        expect(subject.scan_kwargs[:form_params]).to be(true)
+      end
+    end
+
     context "when #test_form_params is set" do
       let(:form_param) { 'id' }
 

@@ -59,6 +59,7 @@ module Ronin
         #         --test-cookie-param NAME     Tests the HTTP Cookie name
         #         --test-all-cookie-params     Test all Cookie param names
         #         --test-form-param NAME       Tests the form param name
+        #         --test-all-form-params       Test all form param names
         #     -i, --input FILE                 Reads URLs from the list file
         #     -T {X*Y | X/Z | X+Y | X-Y},      Optional numeric test to use
         #         --test-expr

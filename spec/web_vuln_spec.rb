@@ -676,6 +676,25 @@ describe Ronin::Vulns::WebVuln do
 
         subject.scan_form_params(url,form_params, form_data: form_data)
       end
+
+      context "and a form_params value is not given" do
+        let(:form_params) { nil }
+        let(:form_data) do
+          {
+            'foo' => '1',
+            'bar' => '2',
+            'baz' => '3'
+          }
+        end
+
+        it "must send requests with each Cookie param overridden with the payload" do
+          stub_request(:get, url).with(body: "foo=#{payload}&bar=2&baz=3")
+          stub_request(:get, url).with(body: "foo=1&bar=#{payload}&baz=3")
+          stub_request(:get, url).with(body: "foo=1&bar=2&baz=#{payload}")
+
+          subject.scan_form_params(url,form_params, form_data: form_data)
+        end
+      end
     end
 
     context "when one of the responses indicates it's vulnerable" do
@@ -839,6 +858,27 @@ describe Ronin::Vulns::WebVuln do
           stub_request(:get, url).with(body: "foo=1&bar=2&baz=#{payload}")
 
           subject.scan(url, form_params: form_params, form_data: form_data)
+        end
+      end
+
+      context "and it's true" do
+        context "and a form_data: value is given" do
+          let(:form_params) { nil }
+          let(:form_data) do
+            {
+              'foo' => '1',
+              'bar' => '2',
+              'baz' => '3'
+            }
+          end
+
+          it "must send requests with each Cookie param overridden with the payload" do
+            stub_request(:get, url).with(body: "foo=#{payload}&bar=2&baz=3")
+            stub_request(:get, url).with(body: "foo=1&bar=#{payload}&baz=3")
+            stub_request(:get, url).with(body: "foo=1&bar=2&baz=#{payload}")
+
+            subject.scan(url, form_params: true, form_data: form_data)
+          end
         end
       end
     end

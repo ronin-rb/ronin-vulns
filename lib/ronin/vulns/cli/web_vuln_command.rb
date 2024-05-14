@@ -199,6 +199,10 @@ module Ronin
                                    self.test_form_params << name
                                  end
 
+        option :test_all_form_params, desc: 'Tests all form param names' do
+          self.test_form_params = true
+        end
+
         option :input, short: '-i',
                        value: {
                          type:  String,
@@ -536,6 +540,18 @@ module Ronin
         #
         def test_form_params
           @scan_kwargs[:form_params] ||= Set.new
+        end
+
+        #
+        # Sets the form params to test.
+        #
+        # @param [Set<String>, true] new_form_params
+        #   The new form param names to test.
+        #
+        # @return [Set<String>, true]
+        #
+        def test_form_params=(new_form_params)
+          @scan_kwargs[:form_params] = new_form_params
         end
 
         #

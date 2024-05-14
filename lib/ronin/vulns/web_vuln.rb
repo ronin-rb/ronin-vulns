@@ -393,14 +393,15 @@ module Ronin
       # @return [Array<Web>]
       #   All discovered web vulnerabilities.
       #
-      def self.scan_form_params(url,form_params, http: nil, **kwargs)
+      def self.scan_form_params(url,form_params=nil, http: nil, form_data: {}, **kwargs)
         url    = URI(url)
         http ||= Support::Network::HTTP.connect_uri(url)
 
-        vulns = []
+        form_params ||= form_data.keys
+        vulns         = []
 
         form_params.each do |form_param|
-          if (vuln = test_param(url, form_param: form_param, http: http, **kwargs))
+          if (vuln = test_param(url, form_param: form_param, form_data: form_data, http: http, **kwargs))
             yield vuln if block_given?
             vulns << vuln
           end
@@ -513,7 +514,12 @@ module Ronin
 
           if form_params
             vulns.concat(
-              scan_form_params(url,form_params, http: http, **kwargs,&block)
+              case form_params
+              when true
+                scan_form_params(url, http: http, **kwargs,&block)
+              else
+                scan_form_params(url,form_params, http: http, **kwargs,&block)
+              end
             )
           end
         end

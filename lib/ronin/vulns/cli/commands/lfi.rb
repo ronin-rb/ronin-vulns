@@ -58,6 +58,7 @@ module Ronin
         #         --test-cookie-param NAME     Tests the HTTP Cookie name
         #         --test-all-cookie-params     Test all Cookie param names
         #         --test-form-param NAME       Tests the form param name
+        #         --test-all-form-params       Test all form param names
         #     -i, --input FILE                 Reads URLs from the list file
         #     -O, --os unix|windows            Sets the OS to test for
         #     -D, --depth COUNT                Sets the directory depth to escape up
