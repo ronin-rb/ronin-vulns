@@ -13,7 +13,7 @@ describe Ronin::Vulns::CLI::Commands::CommandInjection do
 
       before { subject.option_parser.parse(argv) }
 
-      it "must set the :escape_quote key in the Hash" do
+      it "must set the :escape_quote key in #scan_kwargs" do
         expect(subject.scan_kwargs[:escape_quote]).to eq("'")
       end
     end
@@ -23,7 +23,7 @@ describe Ronin::Vulns::CLI::Commands::CommandInjection do
 
       before { subject.option_parser.parse(argv) }
 
-      it "must set the :escape_operator key in the Hash" do
+      it "must set the :escape_operator key in #scan_kwargs" do
         expect(subject.scan_kwargs[:escape_operator]).to eq(';')
       end
     end
@@ -33,7 +33,7 @@ describe Ronin::Vulns::CLI::Commands::CommandInjection do
 
       before { subject.option_parser.parse(argv) }
 
-      it "must set the :terminator key in the Hash" do
+      it "must set the :terminator key in #scan_kwargs" do
         expect(subject.scan_kwargs[:terminator]).to eq(';')
       end
     end

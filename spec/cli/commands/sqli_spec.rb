@@ -13,7 +13,7 @@ describe Ronin::Vulns::CLI::Commands::Sqli do
 
       before { subject.option_parser.parse(argv) }
 
-      it "must set the :escape_quote key in the Hash" do
+      it "must set the :escape_quote key in #scan_kwargs" do
         expect(subject.scan_kwargs[:escape_quote]).to be(true)
       end
     end
@@ -23,7 +23,7 @@ describe Ronin::Vulns::CLI::Commands::Sqli do
 
       before { subject.option_parser.parse(argv) }
 
-      it "must set the :escape_parens key in the Hash" do
+      it "must set the :escape_parens key in #scan_kwargs" do
         expect(subject.scan_kwargs[:escape_parens]).to be(true)
       end
     end
@@ -33,7 +33,7 @@ describe Ronin::Vulns::CLI::Commands::Sqli do
 
       before { subject.option_parser.parse(argv) }
 
-      it "must set the :terminate key in the Hash" do
+      it "must set the :terminate key in #scan_kwargs" do
         expect(subject.scan_kwargs[:terminate]).to be(true)
       end
     end

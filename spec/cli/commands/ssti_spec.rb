@@ -14,7 +14,7 @@ describe Ronin::Vulns::CLI::Commands::Ssti do
 
       before { subject.option_parser.parse(argv) }
 
-      it "must set the :test_expr key in the Hash" do
+      it "must set the :test_expr key in #scan_kwargs" do
         kwargs = subject.scan_kwargs
 
         expect(kwargs[:test_expr]).to be_kind_of(Ronin::Vulns::SSTI::TestExpression)

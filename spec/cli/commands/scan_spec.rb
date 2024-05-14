@@ -154,24 +154,95 @@ describe Ronin::Vulns::CLI::Commands::Scan do
     end
 
     context "when the '--rfi-filter-bypass' option is parsed" do
-      let(:filter_bypass) { :suffix_escape }
-      let(:argv) { ['--rfi-filter-bypass', 'suffix-escape'] }
+      let(:argv) { ['--rfi-filter-bypass', option_value] }
 
       before { subject.option_parser.parse(argv) }
 
-      it "must set the :filter_bypass key in the Hash" do
-        expect(subject.rfi_kwargs[:filter_bypass]).to eq(filter_bypass)
+      context "when the option value is 'double-encode'" do
+        let(:option_value)  { 'double-encode' }
+        let(:filter_bypass) { :double_encode }
+
+        it "must set the :filter_bypass key in the #rfi_kwargs to :double_encode" do
+          expect(subject.rfi_kwargs[:filter_bypass]).to eq(filter_bypass)
+        end
+      end
+
+      context "when the option value is 'suffix-escape'" do
+        let(:option_value)  { 'suffix-escape' }
+        let(:filter_bypass) { :suffix_escape }
+
+        it "must set the :filter_bypass key in the #rfi_kwargs to :suffix_escape" do
+          expect(subject.rfi_kwargs[:filter_bypass]).to eq(filter_bypass)
+        end
+      end
+
+      context "when the option value is 'null-byte'" do
+        let(:option_value)  { 'null-byte' }
+        let(:filter_bypass) { :null_byte }
+
+        it "must set the :filter_bypass key in the #rfi_kwargs to :null_byte" do
+          expect(subject.rfi_kwargs[:filter_bypass]).to eq(filter_bypass)
+        end
       end
     end
 
     context "when the '--rfi-script-lang' option is parsed" do
-      let(:script_lang) { :asp_net }
-      let(:argv) { ['--rfi-script-lang', 'asp.net'] }
+      let(:argv) { ['--rfi-script-lang', option_value] }
 
       before { subject.option_parser.parse(argv) }
 
-      it "must set the :script_lang key in the Hash" do
-        expect(subject.rfi_kwargs[:script_lang]).to eq(script_lang)
+      context "when the option value is 'asp'" do
+        let(:option_value) { 'asp' }
+        let(:script_lang)  { :asp }
+
+        it "must set the :script_lang key in #rfi_kwargs to :asp" do
+          expect(subject.rfi_kwargs[:script_lang]).to eq(script_lang)
+        end
+      end
+
+      context "when the option value is 'asp.net'" do
+        let(:option_value) { 'asp.net' }
+        let(:script_lang)  { :asp_net }
+
+        it "must set the :script_lang key in #rfi_kwargs to :asp_net" do
+          expect(subject.rfi_kwargs[:script_lang]).to eq(script_lang)
+        end
+      end
+
+      context "when the option value is 'coldfusion'" do
+        let(:option_value) { 'coldfusion' }
+        let(:script_lang)  { :cold_fusion }
+
+        it "must set the :script_lang key in #rfi_kwargs to :cold_fusion" do
+          expect(subject.rfi_kwargs[:script_lang]).to eq(script_lang)
+        end
+      end
+
+      context "when the option value is 'jsp'" do
+        let(:option_value) { 'jsp' }
+        let(:script_lang)  { :jsp }
+
+        it "must set the :script_lang key in #rfi_kwargs to :jsp" do
+          expect(subject.rfi_kwargs[:script_lang]).to eq(script_lang)
+        end
+      end
+
+      context "when the option value is 'php'" do
+        let(:option_value) { 'php' }
+        let(:script_lang)  { :php }
+
+        it "must set the :script_lang key in #rfi_kwargs to :php" do
+          expect(subject.rfi_kwargs[:script_lang]).to eq(script_lang)
+        end
+      end
+
+      context "when the option value is 'perl'" do
+        let(:option_value) { 'perl' }
+        let(:script_lang)  { :perl }
+
+        it "must set the :script_lang key in #rfi_kwargs to :perl" do
+          expect(subject.rfi_kwargs[:script_lang]).to eq(script_lang)
+        end
       end
     end
 

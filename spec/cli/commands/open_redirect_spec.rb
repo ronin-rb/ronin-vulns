@@ -14,7 +14,7 @@ describe Ronin::Vulns::CLI::Commands::OpenRedirect do
 
       before { subject.option_parser.parse(argv) }
 
-      it "must set the :test_url key in the Hash" do
+      it "must set the :test_url key in #scan_kwargs" do
         expect(subject.scan_kwargs[:test_url]).to eq(test_url)
       end
     end

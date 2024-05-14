@@ -14,7 +14,7 @@ describe Ronin::Vulns::CLI::Commands::Lfi do
 
       before { subject.option_parser.parse(argv) }
 
-      it "must set the :os key in the Hash" do
+      it "must set the :os key in #scan_kwargs" do
         expect(subject.scan_kwargs[:os]).to eq(os)
       end
     end
@@ -25,7 +25,7 @@ describe Ronin::Vulns::CLI::Commands::Lfi do
 
       before { subject.option_parser.parse(argv) }
 
-      it "must set the :depth key in the Hash" do
+      it "must set the :depth key in #scan_kwargs" do
         expect(subject.scan_kwargs[:depth]).to eq(depth)
       end
     end
@@ -39,7 +39,7 @@ describe Ronin::Vulns::CLI::Commands::Lfi do
         let(:option_value)  { 'null-byte' }
         let(:filter_bypass) { :null_byte }
 
-        it "must set the :filter_bypass key in the Hash to :null_byte" do
+        it "must set the :filter_bypass key in #scan_kwargs to :null_byte" do
           expect(subject.scan_kwargs[:filter_bypass]).to eq(filter_bypass)
         end
       end
@@ -48,7 +48,7 @@ describe Ronin::Vulns::CLI::Commands::Lfi do
         let(:option_value)  { 'double-escape' }
         let(:filter_bypass) { :double_escape }
 
-        it "must set the :filter_bypass key in the Hash to :double_escape" do
+        it "must set the :filter_bypass key in #scan_kwargs to :double_escape" do
           expect(subject.scan_kwargs[:filter_bypass]).to eq(filter_bypass)
         end
       end
@@ -57,7 +57,7 @@ describe Ronin::Vulns::CLI::Commands::Lfi do
         let(:option_value)  { 'base64' }
         let(:filter_bypass) { :base64 }
 
-        it "must set the :filter_bypass key in the Hash to :base64" do
+        it "must set the :filter_bypass key in #scan_kwargs to :base64" do
           expect(subject.scan_kwargs[:filter_bypass]).to eq(filter_bypass)
         end
       end
@@ -66,7 +66,7 @@ describe Ronin::Vulns::CLI::Commands::Lfi do
         let(:option_value)  { 'rot13' }
         let(:filter_bypass) { :rot13 }
 
-        it "must set the :filter_bypass key in the Hash to :rot13" do
+        it "must set the :filter_bypass key in #scan_kwargs to :rot13" do
           expect(subject.scan_kwargs[:filter_bypass]).to eq(filter_bypass)
         end
       end
@@ -75,7 +75,7 @@ describe Ronin::Vulns::CLI::Commands::Lfi do
         let(:option_value)  { 'zlib' }
         let(:filter_bypass) { :zlib }
 
-        it "must set the :filter_bypass key in the Hash to :zlib" do
+        it "must set the :filter_bypass key in #scan_kwargs to :zlib" do
           expect(subject.scan_kwargs[:filter_bypass]).to eq(filter_bypass)
         end
       end
