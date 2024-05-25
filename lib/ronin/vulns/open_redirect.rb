@@ -80,7 +80,7 @@ module Ronin
         when '301', '302', '303', '307', '308'
           if (locations = response.get_fields('Location'))
             escaped_test_url = Regexp.escape(@test_url)
-            regexp           = /\A#{escaped_test_url}(?:[\?&].+)?\z/
+            regexp           = /\A#{escaped_test_url}.*\z/
 
             locations.last =~ regexp
           end
@@ -99,26 +99,26 @@ module Ronin
                   "\s*\d+\s*;\s*url\s*=\s*
                   (?:
                     # content="0; url='...'"
-                    '\s*#{escaped_test_url}(?:(?:\?|&(amp;)?)[^\s'"]+)?\s*' |
+                    '\s*#{escaped_test_url}[^'"]*' |
                     # content="0; url=..."
-                    #{escaped_test_url}(?:(?:\?|&(amp;)?)[^\s"]+)?
+                    #{escaped_test_url}[^"]*
                   )\s*" |
                   # content='...'
                   '\s*\d+\s*;\s*url\s*=\s*
                   (?:
                     # content='0; url="..."'
-                    "\s*#{escaped_test_url}(?:(?:\?|&(amp;)?)[^\s"']+)?\s*" |
+                    "\s*#{escaped_test_url}[^"']*" |
                     # content='0; url=...'
-                    #{escaped_test_url}(?:(?:\?|&(amp;)?)[^\s']+)?
+                    #{escaped_test_url}[^']*
                   )\s*' |
                   # content=...
                   \s*\d+;url=(?:
                     # content=0;url="..."
-                    "\s*#{escaped_test_url}(?:(?:\?|&(amp;)?)[^\s"]+)?\s*" |
+                    "\s*#{escaped_test_url}[^\s"]*" |
                     # content=0;url='...'
-                    '\s*#{escaped_test_url}(?:(?:\?|&(amp;)?)[^\s']+)?\s*' |
+                    '\s*#{escaped_test_url}[^\s']*' |
                     # content=0;url=...
-                    #{escaped_test_url}(?:(?:\?|&(amp;)?)[^\s/>]+)?
+                    #{escaped_test_url}[^\s/>]*
                   )
                 )
                 \s*

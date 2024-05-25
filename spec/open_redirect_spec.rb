@@ -115,6 +115,18 @@ describe Ronin::Vulns::OpenRedirect do
             end
           end
 
+          context "and it starts with #test_url but with an additional appended string" do
+            let(:location) { "#{subject.test_url}.html" }
+
+            before do
+              allow(response).to receive(:get_fields).with('Location').and_return([location])
+            end
+
+            it "must return true" do
+              expect(subject.vulnerable?).to be_truthy
+            end
+          end
+
           context "but it does not match #test_url" do
             let(:location) { "https://example.com/" }
 
@@ -499,6 +511,27 @@ describe Ronin::Vulns::OpenRedirect do
                   end
                 end
               end
+
+              context "and the url value has an additional appended string" do
+                let(:response_body) do
+                  <<~HTML
+                    <html>
+                      <head>
+                        <meta http-equiv="refresh" content='0;url="#{subject.test_url}.html"'/>
+                      </head>
+                      <body>
+                        <p>example content</p>
+                        <p>included content</p>
+                        <p>more content</p>
+                      </body>
+                    </html>
+                  HTML
+                end
+
+                it "must return true" do
+                  expect(subject.vulnerable?).to be_truthy
+                end
+              end
             end
 
             context "and the url value is not quoted" do
@@ -581,6 +614,27 @@ describe Ronin::Vulns::OpenRedirect do
                   it "must return true" do
                     expect(subject.vulnerable?).to be_truthy
                   end
+                end
+              end
+
+              context "and the url value has an additional appended string" do
+                let(:response_body) do
+                  <<~HTML
+                    <html>
+                      <head>
+                        <meta http-equiv="refresh" content='0;url=#{subject.test_url}.html'/>
+                      </head>
+                      <body>
+                        <p>example content</p>
+                        <p>included content</p>
+                        <p>more content</p>
+                      </body>
+                    </html>
+                  HTML
+                end
+
+                it "must return true" do
+                  expect(subject.vulnerable?).to be_truthy
                 end
               end
             end
@@ -669,6 +723,27 @@ describe Ronin::Vulns::OpenRedirect do
                   end
                 end
               end
+
+              context "and the url value has an additional appended string" do
+                let(:response_body) do
+                  <<~HTML
+                    <html>
+                      <head>
+                        <meta http-equiv="refresh" content="0;url='#{subject.test_url}.html'"/>
+                      </head>
+                      <body>
+                        <p>example content</p>
+                        <p>included content</p>
+                        <p>more content</p>
+                      </body>
+                    </html>
+                  HTML
+                end
+
+                it "must return true" do
+                  expect(subject.vulnerable?).to be_truthy
+                end
+              end
             end
 
             context "and the url value is not quoted" do
@@ -751,6 +826,27 @@ describe Ronin::Vulns::OpenRedirect do
                   it "must return true" do
                     expect(subject.vulnerable?).to be_truthy
                   end
+                end
+              end
+
+              context "and the url value has an additional appended string" do
+                let(:response_body) do
+                  <<~HTML
+                    <html>
+                      <head>
+                        <meta http-equiv="refresh" content="0;url=#{subject.test_url}.html"/>
+                      </head>
+                      <body>
+                        <p>example content</p>
+                        <p>included content</p>
+                        <p>more content</p>
+                      </body>
+                    </html>
+                  HTML
+                end
+
+                it "must return true" do
+                  expect(subject.vulnerable?).to be_truthy
                 end
               end
             end
@@ -839,6 +935,27 @@ describe Ronin::Vulns::OpenRedirect do
                   end
                 end
               end
+
+              context "and the url value has an additional appended string" do
+                let(:response_body) do
+                  <<~HTML
+                    <html>
+                      <head>
+                        <meta http-equiv="refresh" content=0;url="#{subject.test_url}.html"/>
+                      </head>
+                      <body>
+                        <p>example content</p>
+                        <p>included content</p>
+                        <p>more content</p>
+                      </body>
+                    </html>
+                  HTML
+                end
+
+                it "must return true" do
+                  expect(subject.vulnerable?).to be_truthy
+                end
+              end
             end
 
             context "and the url value is single quoted" do
@@ -923,6 +1040,27 @@ describe Ronin::Vulns::OpenRedirect do
                   end
                 end
               end
+
+              context "and the url value has an additional appended string" do
+                let(:response_body) do
+                  <<~HTML
+                    <html>
+                      <head>
+                        <meta http-equiv="refresh" content=0;url='#{subject.test_url}.html'/>
+                      </head>
+                      <body>
+                        <p>example content</p>
+                        <p>included content</p>
+                        <p>more content</p>
+                      </body>
+                    </html>
+                  HTML
+                end
+
+                it "must return true" do
+                  expect(subject.vulnerable?).to be_truthy
+                end
+              end
             end
 
             context "and the url value is not quoted" do
@@ -1005,6 +1143,27 @@ describe Ronin::Vulns::OpenRedirect do
                   it "must return true" do
                     expect(subject.vulnerable?).to be_truthy
                   end
+                end
+              end
+
+              context "and the url value has an additional appended string" do
+                let(:response_body) do
+                  <<~HTML
+                    <html>
+                      <head>
+                        <meta http-equiv="refresh" content=0;url=#{subject.test_url}.html/>
+                      </head>
+                      <body>
+                        <p>example content</p>
+                        <p>included content</p>
+                        <p>more content</p>
+                      </body>
+                    </html>
+                  HTML
+                end
+
+                it "must return true" do
+                  expect(subject.vulnerable?).to be_truthy
                 end
               end
             end
