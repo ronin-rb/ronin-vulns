@@ -95,10 +95,34 @@ module Ronin
                 http-equiv\s*=\s*(?: "refresh" | 'refresh' | refresh )\s+
                 content\s*=\s*
                 (?:
-                 "\s*\d+\s*;\s*url\s*=\s*(?: '\s*#{escaped_test_url}\s*' | #{escaped_test_url} )\s*"|
-                 '\s*\d+\s*;\s*url\s*=\s*(?: "\s*#{escaped_test_url}\s*" | #{escaped_test_url} )\s*'|
-                 \s*\d+;url=(?: "#{escaped_test_url}" | '#{escaped_test_url}' | #{escaped_test_url} )
-                )\s*
+                  # content="..."
+                  "\s*\d+\s*;\s*url\s*=\s*
+                  (?:
+                    # content="0; url='...'"
+                    '\s*#{escaped_test_url}(?:(?:\?|&(amp;)?)[^\s'"]+)?\s*' |
+                    # content="0; url=..."
+                    #{escaped_test_url}(?:(?:\?|&(amp;)?)[^\s"]+)?
+                  )\s*" |
+                  # content='...'
+                  '\s*\d+\s*;\s*url\s*=\s*
+                  (?:
+                    # content='0; url="..."'
+                    "\s*#{escaped_test_url}(?:(?:\?|&(amp;)?)[^\s"']+)?\s*" |
+                    # content='0; url=...'
+                    #{escaped_test_url}(?:(?:\?|&(amp;)?)[^\s']+)?
+                  )\s*' |
+                  # content=...
+                  \s*\d+;url=(?:
+                    # content=0;url="..."
+                    "\s*#{escaped_test_url}(?:(?:\?|&(amp;)?)[^\s"]+)?\s*" |
+                    # content=0;url='...'
+                    '\s*#{escaped_test_url}(?:(?:\?|&(amp;)?)[^\s']+)?\s*' |
+                    # content=0;url=...
+                    #{escaped_test_url}(?:(?:\?|&(amp;)?)[^\s/>]+)?
+                  )
+                )
+                \s*
+                # /> or / >
                 (?:/\s*)?>
             }xi
 

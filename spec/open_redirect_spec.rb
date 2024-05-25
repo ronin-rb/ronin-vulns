@@ -436,6 +436,69 @@ describe Ronin::Vulns::OpenRedirect do
               it "must return true" do
                 expect(subject.vulnerable?).to be_truthy
               end
+
+              context "and the url value has additional ?params" do
+                let(:response_body) do
+                  <<~HTML
+                    <html>
+                      <head>
+                        <meta http-equiv="refresh" content='0;url="#{subject.test_url}?foo=bar"'/>
+                      </head>
+                      <body>
+                        <p>example content</p>
+                        <p>included content</p>
+                        <p>more content</p>
+                      </body>
+                    </html>
+                  HTML
+                end
+
+                it "must return true" do
+                  expect(subject.vulnerable?).to be_truthy
+                end
+              end
+
+              context "and the url value has additional &params" do
+                let(:response_body) do
+                  <<~HTML
+                    <html>
+                      <head>
+                        <meta http-equiv="refresh" content='0;url="#{subject.test_url}&foo=bar"'/>
+                      </head>
+                      <body>
+                        <p>example content</p>
+                        <p>included content</p>
+                        <p>more content</p>
+                      </body>
+                    </html>
+                  HTML
+                end
+
+                it "must return true" do
+                  expect(subject.vulnerable?).to be_truthy
+                end
+
+                context "but the '&' is escaped as '&amp;'" do
+                  let(:response_body) do
+                    <<~HTML
+                      <html>
+                        <head>
+                          <meta http-equiv="refresh" content='0;url="#{subject.test_url}&amp;foo=bar"'/>
+                        </head>
+                        <body>
+                          <p>example content</p>
+                          <p>included content</p>
+                          <p>more content</p>
+                        </body>
+                      </html>
+                    HTML
+                  end
+
+                  it "must return true" do
+                    expect(subject.vulnerable?).to be_truthy
+                  end
+                end
+              end
             end
 
             context "and the url value is not quoted" do
@@ -456,6 +519,69 @@ describe Ronin::Vulns::OpenRedirect do
 
               it "must return true" do
                 expect(subject.vulnerable?).to be_truthy
+              end
+
+              context "and the url value has additional ?params" do
+                let(:response_body) do
+                  <<~HTML
+                    <html>
+                      <head>
+                        <meta http-equiv="refresh" content='0;url=#{subject.test_url}?foo=bar'/>
+                      </head>
+                      <body>
+                        <p>example content</p>
+                        <p>included content</p>
+                        <p>more content</p>
+                      </body>
+                    </html>
+                  HTML
+                end
+
+                it "must return true" do
+                  expect(subject.vulnerable?).to be_truthy
+                end
+              end
+
+              context "and the url value has additional &params" do
+                let(:response_body) do
+                  <<~HTML
+                    <html>
+                      <head>
+                        <meta http-equiv="refresh" content='0;url=#{subject.test_url}&foo=bar'/>
+                      </head>
+                      <body>
+                        <p>example content</p>
+                        <p>included content</p>
+                        <p>more content</p>
+                      </body>
+                    </html>
+                  HTML
+                end
+
+                it "must return true" do
+                  expect(subject.vulnerable?).to be_truthy
+                end
+
+                context "but the '&' is escaped as '&amp;'" do
+                  let(:response_body) do
+                    <<~HTML
+                      <html>
+                        <head>
+                          <meta http-equiv="refresh" content='0;url=#{subject.test_url}&amp;foo=bar'/>
+                        </head>
+                        <body>
+                          <p>example content</p>
+                          <p>included content</p>
+                          <p>more content</p>
+                        </body>
+                      </html>
+                    HTML
+                  end
+
+                  it "must return true" do
+                    expect(subject.vulnerable?).to be_truthy
+                  end
+                end
               end
             end
           end
@@ -480,6 +606,69 @@ describe Ronin::Vulns::OpenRedirect do
               it "must return true" do
                 expect(subject.vulnerable?).to be_truthy
               end
+
+              context "and the url value has additional ?params" do
+                let(:response_body) do
+                  <<~HTML
+                    <html>
+                      <head>
+                        <meta http-equiv="refresh" content="0;url='#{subject.test_url}?foo=bar'"/>
+                      </head>
+                      <body>
+                        <p>example content</p>
+                        <p>included content</p>
+                        <p>more content</p>
+                      </body>
+                    </html>
+                  HTML
+                end
+
+                it "must return true" do
+                  expect(subject.vulnerable?).to be_truthy
+                end
+              end
+
+              context "and the url value has additional &params" do
+                let(:response_body) do
+                  <<~HTML
+                    <html>
+                      <head>
+                        <meta http-equiv="refresh" content="0;url='#{subject.test_url}&foo=bar'"/>
+                      </head>
+                      <body>
+                        <p>example content</p>
+                        <p>included content</p>
+                        <p>more content</p>
+                      </body>
+                    </html>
+                  HTML
+                end
+
+                it "must return true" do
+                  expect(subject.vulnerable?).to be_truthy
+                end
+
+                context "but the '&' is escaped as '&amp;'" do
+                  let(:response_body) do
+                    <<~HTML
+                      <html>
+                        <head>
+                          <meta http-equiv="refresh" content="0;url='#{subject.test_url}&amp;foo=bar'"/>
+                        </head>
+                        <body>
+                          <p>example content</p>
+                          <p>included content</p>
+                          <p>more content</p>
+                        </body>
+                      </html>
+                    HTML
+                  end
+
+                  it "must return true" do
+                    expect(subject.vulnerable?).to be_truthy
+                  end
+                end
+              end
             end
 
             context "and the url value is not quoted" do
@@ -500,6 +689,69 @@ describe Ronin::Vulns::OpenRedirect do
 
               it "must return true" do
                 expect(subject.vulnerable?).to be_truthy
+              end
+
+              context "and the url value has additional ?params" do
+                let(:response_body) do
+                  <<~HTML
+                    <html>
+                      <head>
+                        <meta http-equiv="refresh" content="0;url=#{subject.test_url}?foo=bar"/>
+                      </head>
+                      <body>
+                        <p>example content</p>
+                        <p>included content</p>
+                        <p>more content</p>
+                      </body>
+                    </html>
+                  HTML
+                end
+
+                it "must return true" do
+                  expect(subject.vulnerable?).to be_truthy
+                end
+              end
+
+              context "and the url value has additional &params" do
+                let(:response_body) do
+                  <<~HTML
+                    <html>
+                      <head>
+                        <meta http-equiv="refresh" content="0;url=#{subject.test_url}&foo=bar"/>
+                      </head>
+                      <body>
+                        <p>example content</p>
+                        <p>included content</p>
+                        <p>more content</p>
+                      </body>
+                    </html>
+                  HTML
+                end
+
+                it "must return true" do
+                  expect(subject.vulnerable?).to be_truthy
+                end
+
+                context "but the '&' is escaped as '&amp;'" do
+                  let(:response_body) do
+                    <<~HTML
+                      <html>
+                        <head>
+                          <meta http-equiv="refresh" content="0;url=#{subject.test_url}&amp;foo=bar"/>
+                        </head>
+                        <body>
+                          <p>example content</p>
+                          <p>included content</p>
+                          <p>more content</p>
+                        </body>
+                      </html>
+                    HTML
+                  end
+
+                  it "must return true" do
+                    expect(subject.vulnerable?).to be_truthy
+                  end
+                end
               end
             end
           end
@@ -524,6 +776,69 @@ describe Ronin::Vulns::OpenRedirect do
               it "must return true" do
                 expect(subject.vulnerable?).to be_truthy
               end
+
+              context "and the url value has additional ?params" do
+                let(:response_body) do
+                  <<~HTML
+                    <html>
+                      <head>
+                        <meta http-equiv="refresh" content=0;url="#{subject.test_url}?foo=bar"/>
+                      </head>
+                      <body>
+                        <p>example content</p>
+                        <p>included content</p>
+                        <p>more content</p>
+                      </body>
+                    </html>
+                  HTML
+                end
+
+                it "must return true" do
+                  expect(subject.vulnerable?).to be_truthy
+                end
+              end
+
+              context "and the url value has additional &params" do
+                let(:response_body) do
+                  <<~HTML
+                    <html>
+                      <head>
+                        <meta http-equiv="refresh" content=0;url="#{subject.test_url}&foo=bar"/>
+                      </head>
+                      <body>
+                        <p>example content</p>
+                        <p>included content</p>
+                        <p>more content</p>
+                      </body>
+                    </html>
+                  HTML
+                end
+
+                it "must return true" do
+                  expect(subject.vulnerable?).to be_truthy
+                end
+
+                context "but the '&' is escaped as '&amp;'" do
+                  let(:response_body) do
+                    <<~HTML
+                      <html>
+                        <head>
+                          <meta http-equiv="refresh" content=0;url="#{subject.test_url}&amp;foo=bar"/>
+                        </head>
+                        <body>
+                          <p>example content</p>
+                          <p>included content</p>
+                          <p>more content</p>
+                        </body>
+                      </html>
+                    HTML
+                  end
+
+                  it "must return true" do
+                    expect(subject.vulnerable?).to be_truthy
+                  end
+                end
+              end
             end
 
             context "and the url value is single quoted" do
@@ -545,6 +860,69 @@ describe Ronin::Vulns::OpenRedirect do
               it "must return true" do
                 expect(subject.vulnerable?).to be_truthy
               end
+
+              context "and the url value has additional ?params" do
+                let(:response_body) do
+                  <<~HTML
+                    <html>
+                      <head>
+                        <meta http-equiv="refresh" content=0;url='#{subject.test_url}?foo=bar'/>
+                      </head>
+                      <body>
+                        <p>example content</p>
+                        <p>included content</p>
+                        <p>more content</p>
+                      </body>
+                    </html>
+                  HTML
+                end
+
+                it "must return true" do
+                  expect(subject.vulnerable?).to be_truthy
+                end
+              end
+
+              context "and the url value has additional &params" do
+                let(:response_body) do
+                  <<~HTML
+                    <html>
+                      <head>
+                        <meta http-equiv="refresh" content=0;url='#{subject.test_url}&foo=bar'/>
+                      </head>
+                      <body>
+                        <p>example content</p>
+                        <p>included content</p>
+                        <p>more content</p>
+                      </body>
+                    </html>
+                  HTML
+                end
+
+                it "must return true" do
+                  expect(subject.vulnerable?).to be_truthy
+                end
+
+                context "but the '&' is escaped as '&amp;'" do
+                  let(:response_body) do
+                    <<~HTML
+                      <html>
+                        <head>
+                          <meta http-equiv="refresh" content=0;url='#{subject.test_url}&amp;foo=bar'/>
+                        </head>
+                        <body>
+                          <p>example content</p>
+                          <p>included content</p>
+                          <p>more content</p>
+                        </body>
+                      </html>
+                    HTML
+                  end
+
+                  it "must return true" do
+                    expect(subject.vulnerable?).to be_truthy
+                  end
+                end
+              end
             end
 
             context "and the url value is not quoted" do
@@ -565,6 +943,69 @@ describe Ronin::Vulns::OpenRedirect do
 
               it "must return true" do
                 expect(subject.vulnerable?).to be_truthy
+              end
+
+              context "and the url value has additional ?params" do
+                let(:response_body) do
+                  <<~HTML
+                    <html>
+                      <head>
+                        <meta http-equiv="refresh" content=0;url=#{subject.test_url}?foo=bar/>
+                      </head>
+                      <body>
+                        <p>example content</p>
+                        <p>included content</p>
+                        <p>more content</p>
+                      </body>
+                    </html>
+                  HTML
+                end
+
+                it "must return true" do
+                  expect(subject.vulnerable?).to be_truthy
+                end
+              end
+
+              context "and the url value has additional &params" do
+                let(:response_body) do
+                  <<~HTML
+                    <html>
+                      <head>
+                        <meta http-equiv="refresh" content=0;url=#{subject.test_url}&foo=bar/>
+                      </head>
+                      <body>
+                        <p>example content</p>
+                        <p>included content</p>
+                        <p>more content</p>
+                      </body>
+                    </html>
+                  HTML
+                end
+
+                it "must return true" do
+                  expect(subject.vulnerable?).to be_truthy
+                end
+
+                context "but the '&' is escaped as '&amp;'" do
+                  let(:response_body) do
+                    <<~HTML
+                      <html>
+                        <head>
+                          <meta http-equiv="refresh" content=0;url=#{subject.test_url}&amp;foo=bar/>
+                        </head>
+                        <body>
+                          <p>example content</p>
+                          <p>included content</p>
+                          <p>more content</p>
+                        </body>
+                      </html>
+                    HTML
+                  end
+
+                  it "must return true" do
+                    expect(subject.vulnerable?).to be_truthy
+                  end
+                end
               end
             end
           end
