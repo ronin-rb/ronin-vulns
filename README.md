@@ -302,10 +302,11 @@ gem.add_dependency 'ronin-vulns', '~> 0.1'
 2. Clone It!
 3. `cd ronin-vulns/`
 4. `bundle install`
-5. `git checkout -b my_feature`
-6. Code It!
-7. `bundle exec rake spec`
-8. `git push origin my_feature`
+5. `bundle exec rake setup`
+6. `git checkout -b my_feature`
+7. Code It!
+8. `bundle exec rake spec`
+9. `git push origin my_feature`
 
 ## License
 
