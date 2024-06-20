@@ -1,3 +1,12 @@
+### 0.1.5 / 2024-06-19
+
+* Improve the accuracy of {Ronin::Vulns::OpenRedirect#vulnerable?} when
+  detecting open redirects in meta-refresh HTML tags.
+  * Match the test URL when it ends with `?...`, `&...`, or `&amp;...`.
+  * Detect when the test URL has an additional string appended to it
+    (ex: `.html`). The appended string can easily be bypassed by adding a
+    `?`, `&`, or `#` character to the end of the test URL.
+
 ### 0.1.4 / 2023-09-19
 
 #### CLI
