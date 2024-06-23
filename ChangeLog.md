@@ -1,3 +1,45 @@
+### 0.2.0 / 2024-XX-XX
+
+* Require [ronin-db] ~> 0.2
+* Added {Ronin::Vulns::Importer}.
+* Added the `user_agent:` keyword argument to
+  {Ronin::Vulns::WebVuln#initialize}.
+* Added {Ronin::Vulns::WebVuln#user_agent}.
+* Added {Ronin::Vulns::CommandInjection}.
+* Added the `command_injection:` keyword argument to
+  {Ronin::Vulns::URLScanner.scan}.
+* Added {Ronin::Vulns::RFI#script_lang}.
+* Support inferring the {Ronin::Vulns::RFI#script_lang} from the URL given to
+  {Ronin::Vulns::RFI#initialize}.
+* Bruteforce test every different kind of RFI test URL in
+  {Ronin::Vulns::RFI#vulnerable?} if a test script URL was not given or the
+  {Ronin::Vulns::RFI#script_lang} cannot be inferred from the given URL.
+* Allow the `escape_type:` keyword argument for {Ronin::Vulns::SSTI#initialize}
+  to accept a Symbol value to specify the specific
+  Server-Side-Template-Injection interpolation syntax:
+  * `:double_curly_braces` - `{{expression}}`
+  * `:dollar_curly_braces` - `${expression}`
+  * `:dollar_double_curly_braces` - `${{expression}}`
+  * `:pound_curly_braces` - `#{expression}`
+  * `:angle_brackets_percent` - `<%= expression %>`
+
+#### CLI
+
+* Added the `ronin-vulns command-injection` command.
+* Added the `ronin-vulns irb` command.
+* Added the `ronin-vulns completion` command to install shell completion files
+  for all `ronin-vulns` commands for Bash and Zsh shells.
+* Added the `-H,--request-method` option to all commands.
+* Added the `--user-agent` and `--user-agent-string` options to all commands.
+* Added the `--test-all-form-params` option to all commands.
+* Added the `--print-curl` and `--print-http` options to all commands.
+* Added the `--import` option to all commands.
+* Print a summary of all vulnerabilities found after scanning a URL, in addition
+  to logging messages indicating when a new vulnerability has just been found.
+* Use hyphenated values for the `--lfi-filter-bypass` option in the
+  `ronin-vulns scan` command and `--filter-bypass` option in the
+  `ronin-vulns lfi` command.
+
 ### 0.1.5 / 2024-06-19
 
 * Improve the accuracy of {Ronin::Vulns::OpenRedirect#vulnerable?} when
@@ -68,3 +110,4 @@
     * HTTP `Cookie` parameters.
     * Form parameters.
 
+[ronin-db]: https://github.com/ronin-rb/ronin-db#readme
