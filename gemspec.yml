@@ -40,8 +40,8 @@ generated_files:
 
 dependencies:
   ronin-support: ~> 1.0, >= 1.0.1
-  ronin-core: ~> 0.2.0.rc1
-  ronin-db: ~> 0.2.0.rc1
+  ronin-core: ~> 0.2
+  ronin-db: ~> 0.2
 
 development_dependencies:
   bundler: ~> 2.0
