@@ -18,8 +18,8 @@
 # along with ronin-vulns.  If not, see <https://www.gnu.org/licenses/>.
 #
 
-require 'ronin/vulns/cli/command'
-require 'ronin/vulns/cli/ruby_shell'
+require_relative '../command'
+require_relative '../ruby_shell'
 
 module Ronin
   module Vulns

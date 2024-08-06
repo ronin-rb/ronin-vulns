@@ -18,8 +18,9 @@
 # along with ronin-vulns.  If not, see <https://www.gnu.org/licenses/>.
 #
 
-require 'ronin/vulns/importer'
-require 'ronin/vulns/cli/printing'
+require_relative 'printing'
+require_relative '../importer'
+
 require 'ronin/db/cli/database_options'
 require 'ronin/db/cli/printing'
 

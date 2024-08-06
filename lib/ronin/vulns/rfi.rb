@@ -18,8 +18,8 @@
 # along with ronin-vulns.  If not, see <https://www.gnu.org/licenses/>.
 #
 
-require 'ronin/vulns/web_vuln'
-require 'ronin/vulns/version'
+require_relative 'web_vuln'
+require_relative 'version'
 
 require 'ronin/support/network/http'
 require 'uri/query_params'

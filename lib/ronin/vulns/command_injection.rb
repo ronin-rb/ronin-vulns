@@ -18,7 +18,7 @@
 # along with ronin-vulns.  If not, see <https://www.gnu.org/licenses/>.
 #
 
-require 'ronin/vulns/web_vuln'
+require_relative 'web_vuln'
 
 require 'time'
 

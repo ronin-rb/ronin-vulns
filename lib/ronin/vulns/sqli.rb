@@ -18,8 +18,8 @@
 # along with ronin-vulns.  If not, see <https://www.gnu.org/licenses/>.
 #
 
-require 'ronin/vulns/web_vuln'
-require 'ronin/vulns/sqli/error_pattern'
+require_relative 'web_vuln'
+require_relative 'sqli/error_pattern'
 
 require 'time'
 

@@ -18,9 +18,9 @@
 # along with ronin-vulns.  If not, see <https://www.gnu.org/licenses/>.
 #
 
-require 'ronin/vulns/cli/command'
-require 'ronin/vulns/cli/importable'
-require 'ronin/vulns/cli/printing'
+require_relative 'command'
+require_relative 'importable'
+require_relative 'printing'
 
 require 'ronin/support/network/http/cookie'
 require 'ronin/support/network/http/user_agents'

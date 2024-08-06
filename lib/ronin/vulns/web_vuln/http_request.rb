@@ -18,7 +18,8 @@
 # along with ronin-vulns.  If not, see <https://www.gnu.org/licenses/>.
 #
 
-require 'ronin/vulns/vuln'
+require_relative '../vuln'
+
 require 'ronin/support/network/http/cookie'
 require 'ronin/support/network/http/user_agents'
 

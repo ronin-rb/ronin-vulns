@@ -18,8 +18,8 @@
 # along with ronin-vulns.  If not, see <https://www.gnu.org/licenses/>.
 #
 
-require 'ronin/vulns/web_vuln'
-require 'ronin/vulns/ssti/test_expression'
+require_relative 'web_vuln'
+require_relative 'ssti/test_expression'
 
 module Ronin
   module Vulns

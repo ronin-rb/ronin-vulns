@@ -18,12 +18,13 @@
 # along with ronin-vulns.  If not, see <https://www.gnu.org/licenses/>.
 #
 
-require 'ronin/vulns/web_vuln'
-require 'ronin/vulns/lfi/test_file'
+require_relative 'web_vuln'
+require_relative 'lfi/test_file'
 
 require 'ronin/support/text/patterns'
 require 'ronin/support/crypto'
 require 'ronin/support/compression'
+
 require 'uri/query_params'
 require 'base64'
 

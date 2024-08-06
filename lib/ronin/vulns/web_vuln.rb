@@ -18,10 +18,10 @@
 # along with ronin-vulns.  If not, see <https://www.gnu.org/licenses/>.
 #
 
-require 'ronin/vulns/vuln'
-require 'ronin/vulns/web_vuln/http_request'
-require 'ronin/support/network/http'
+require_relative 'vuln'
+require_relative 'web_vuln/http_request'
 
+require 'ronin/support/network/http'
 require 'chars'
 
 module Ronin

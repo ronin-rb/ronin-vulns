@@ -18,8 +18,8 @@
 # along with ronin-vulns.  If not, see <https://www.gnu.org/licenses/>.
 #
 
-require 'ronin/vulns/cli/web_vuln_command'
-require 'ronin/vulns/lfi'
+require_relative '../web_vuln_command'
+require_relative '../../lfi'
 
 module Ronin
   module Vulns

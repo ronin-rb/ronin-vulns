@@ -18,9 +18,9 @@
 # along with ronin-vulns.  If not, see <https://www.gnu.org/licenses/>.
 #
 
-require 'ronin/vulns/web_vuln'
-require 'ronin/vulns/reflected_xss/test_string'
-require 'ronin/vulns/reflected_xss/context'
+require_relative 'web_vuln'
+require_relative 'reflected_xss/test_string'
+require_relative 'reflected_xss/context'
 
 require 'set'
 

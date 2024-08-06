@@ -18,13 +18,13 @@
 # along with ronin-vulns.  If not, see <https://www.gnu.org/licenses/>.
 #
 
-require 'ronin/vulns/lfi'
-require 'ronin/vulns/rfi'
-require 'ronin/vulns/sqli'
-require 'ronin/vulns/ssti'
-require 'ronin/vulns/reflected_xss'
-require 'ronin/vulns/open_redirect'
-require 'ronin/vulns/command_injection'
+require_relative 'lfi'
+require_relative 'rfi'
+require_relative 'sqli'
+require_relative 'ssti'
+require_relative 'reflected_xss'
+require_relative 'open_redirect'
+require_relative 'command_injection'
 
 module Ronin
   module Vulns
