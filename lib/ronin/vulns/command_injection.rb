@@ -114,7 +114,7 @@ module Ronin
       # @param [Array<String, nil>, String, nil] escape_operator
       #   The optional escape operator character(s) to test.
       #
-      # @param [Array<String, nil>, Stirng, nil] terminator
+      # @param [Array<String, nil>, String, nil] terminator
       #   The optional command termination character(s) to test.
       #
       # @param [Ronin::Support::Network::HTTP, nil] http
