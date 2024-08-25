@@ -271,6 +271,25 @@ end
 # => [#<Ronin::Vulns::OpenRedirect: ...>, ...]
 ```
 
+### Core Extensions
+
+Finds all vulnerabilities for a given URI:
+
+```ruby
+require 'ronin/vulns/core_ext'
+
+URI('https://example.com/page.php?lang=en').vulns
+# => [#<Ronin::Vulns::RFI: ...>, ...]
+
+```
+
+Check if a URI contains any vulnerabilities:
+
+```ruby
+URI('https://example.com/page.php?lang=en').has_vulns?
+# => true
+```
+
 ## Requirements
 
 * [Ruby] >= 3.0.0
