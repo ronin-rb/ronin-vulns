@@ -47,6 +47,8 @@ module URI
     #
     # @see Ronin::Vulns::URLScanner.scan
     #
+    # @since 0.3.0
+    #
     def vulns(**kwargs)
       Ronin::Vulns::URLScanner.scan(self, **kwargs)
     end
@@ -65,6 +67,8 @@ module URI
     #   # => true
     #
     # @see Ronin::Vulns::URLScanner.test
+    #
+    # @since 0.3.0
     #
     def has_vulns?(**kwargs)
       Ronin::Vulns::URLScanner.test(self, **kwargs) != nil
