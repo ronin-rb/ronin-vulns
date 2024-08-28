@@ -42,7 +42,7 @@ module URI
     #   All discovered Web vulnerabilities
     #
     # @example
-    #   URI('https://testphp.vulnweb.com/').vulns
+    #   URI('http://testphp.vulnweb.com/listproducts.php?cat=1').vulns
     #   # => [#<Ronin::Vulns::RFI: ...>, ...]
     #
     # @see Ronin::Vulns::URLScanner.scan
@@ -63,7 +63,7 @@ module URI
     # @return [Boolean]
     #
     # @example
-    #   URI('https://testphp.vulnweb.com/').has_vulns?
+    #   URI('http://testphp.vulnweb.com/listproducts.php?cat=1').has_vulns?
     #   # => true
     #
     # @see Ronin::Vulns::URLScanner.test

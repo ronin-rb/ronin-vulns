@@ -278,7 +278,7 @@ Finds all vulnerabilities for a given URI:
 ```ruby
 require 'ronin/vulns/core_ext'
 
-URI('https://example.com/page.php?lang=en').vulns
+URI('http://testphp.vulnweb.com/listproducts.php?cat=1').vulns
 # => [#<Ronin::Vulns::RFI: ...>, ...]
 
 ```
@@ -286,7 +286,7 @@ URI('https://example.com/page.php?lang=en').vulns
 Check if a URI contains any vulnerabilities:
 
 ```ruby
-URI('https://example.com/page.php?lang=en').has_vulns?
+URI('http://testphp.vulnweb.com/listproducts.php?cat=1').has_vulns?
 # => true
 ```
 
