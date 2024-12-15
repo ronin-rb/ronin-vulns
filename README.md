@@ -274,6 +274,7 @@ end
 ## Requirements
 
 * [Ruby] >= 3.0.0
+* [base64] ~> 0.1
 * [ronin-support] ~> 1.0
 * [ronin-core] ~> 0.2
 * [ronin-db] ~> 0.2
@@ -327,6 +328,7 @@ along with ronin-vulns.  If not, see <https://www.gnu.org/licenses/>.
 [Ruby]: https://www.ruby-lang.org
 [ronin-rb]: https://ronin-rb.dev
 
+[base64]: https://github.com/ruby/base64#readme
 [ronin-support]: https://github.com/ronin-rb/ronin-support#readme
 [ronin-core]: https://github.com/ronin-rb/ronin-core#readme
 [ronin-db]: https://github.com/ronin-rb/ronin-db#readme

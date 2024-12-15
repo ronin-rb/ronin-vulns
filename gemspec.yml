@@ -39,6 +39,8 @@ generated_files:
   - man/ronin-vulns-scan.1
 
 dependencies:
+  base64: ~> 0.1
+  # Ronin dependencies:
   ronin-support: ~> 1.0, >= 1.0.1
   ronin-core: ~> 0.2
   ronin-db: ~> 0.2
