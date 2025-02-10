@@ -18,8 +18,9 @@
 # along with ronin-vulns.  If not, see <https://www.gnu.org/licenses/>.
 #
 
-require 'ronin/core/cli/logging'
+require_relative 'text'
 
+require 'ronin/core/cli/logging'
 require 'command_kit/printing/indent'
 
 module Ronin
@@ -32,61 +33,9 @@ module Ronin
       # @since 0.2.0
       #
       module Printing
+        include Text
         include Core::CLI::Logging
         include CommandKit::Printing::Indent
-
-        # Known vulnerability types and their printable names.
-        VULN_TYPES = {
-          command_injection: 'Command Injection',
-          open_redirect:     'Open Redirect',
-          reflected_xss:     'reflected XSS',
-
-          lfi:  'LFI',
-          rfi:  'RFI',
-          sqli: 'SQLi',
-          ssti: 'SSTI'
-        }
-
-        #
-        # Returns the printable vulnerability type for the vulnerability object.
-        #
-        # @param [Vuln] vuln
-        #
-        # @return [String]
-        #
-        def vuln_type(vuln)
-          VULN_TYPES.fetch(vuln.class.vuln_type)
-        end
-
-        #
-        # Determines the param type that the web vulnerability occurs in.
-        #
-        # @param [WebVuln] vuln
-        #
-        # @return [String, nil]
-        #
-        def vuln_param_type(vuln)
-          if    vuln.query_param  then 'query param'
-          elsif vuln.header_name  then 'Header'
-          elsif vuln.cookie_param then 'Cookie param'
-          elsif vuln.form_param   then 'form param'
-          end
-        end
-
-        #
-        # Determines the param name that the web vulnerability occurs in.
-        #
-        # @param [WebVuln] vuln
-        #
-        # @return [String, nil]
-        #
-        def vuln_param_name(vuln)
-          if    vuln.query_param  then vuln.query_param
-          elsif vuln.header_name  then vuln.header_name
-          elsif vuln.cookie_param then vuln.cookie_param
-          elsif vuln.form_param   then vuln.form_param
-          end
-        end
 
         #
         # Prints a log message about a newly discovered web vulnerability.
