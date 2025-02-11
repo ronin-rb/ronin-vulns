@@ -295,7 +295,7 @@ URI('http://testphp.vulnweb.com/listproducts.php?cat=1').has_vulns?
 * [Ruby] >= 3.0.0
 * [base64] ~> 0.1
 * [ronin-support] ~> 1.0
-* [ronin-core] ~> 0.2
+* [ronin-core] ~> 0.3
 * [ronin-db] ~> 0.2
 
 ## Install
