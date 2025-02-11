@@ -28,7 +28,7 @@ module Ronin
       #
       module Text
         # Known vulnerability types and their display names.
-        VULN_TYPES = {
+        VULN_TYPE_NAMES = {
           command_injection: 'Command Injection',
           open_redirect:     'Open Redirect',
           reflected_xss:     'reflected XSS',
@@ -47,8 +47,8 @@ module Ronin
         #
         # @return [String]
         #
-        def vuln_type(vuln)
-          VULN_TYPES.fetch(vuln.class.vuln_type)
+        def vuln_type_name(vuln)
+          VULN_TYPE_NAMES.fetch(vuln.class.vuln_type)
         end
 
         #

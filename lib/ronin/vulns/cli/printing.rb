@@ -44,7 +44,7 @@ module Ronin
         #   The web vulnerability to log.
         #
         def log_vuln(vuln)
-          vuln_type  = vuln_type(vuln)
+          vuln_type  = vuln_type_name(vuln)
           param_type = vuln_param_type(vuln)
           param_name = vuln_param_name(vuln)
 
@@ -70,7 +70,7 @@ module Ronin
         # @since 0.2.0
         #
         def print_vuln(vuln, print_curl: false, print_http: false)
-          vuln_type  = vuln_type(vuln)
+          vuln_type  = vuln_type_name(vuln)
           param_type = vuln_param_type(vuln)
           param_name = vuln_param_name(vuln)
 

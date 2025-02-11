@@ -61,7 +61,7 @@ module Ronin
         def import_vuln(vuln)
           Importer.import(vuln)
 
-          vuln_type  = vuln_type(vuln)
+          vuln_type  = vuln_type_name(vuln)
           param_type = vuln_param_type(vuln)
           param_name = vuln_param_name(vuln)
 
