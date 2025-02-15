@@ -1,3 +1,15 @@
+### 0.2.1 / 2025-02-14
+
+* Added the `base64` gem as a dependency for Bundler and Ruby 3.4.0.
+* Added missing `ronin/vulns` Ruby file.
+* Use `require_relative` to improve load times.
+* Documentation fixes.
+
+#### CLI
+
+* Fixed a bug in the `ronin-vulns irb` command where the `ronin/vulns` Ruby file
+  was missing.
+
 ### 0.2.0 / 2024-07-22
 
 * Require [ronin-db] ~> 0.2
