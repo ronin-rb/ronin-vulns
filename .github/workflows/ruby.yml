@@ -24,6 +24,7 @@ jobs:
         with:
           ruby-version: ${{ matrix.ruby }}
           bundler-cache: true
+          bundler: latest
       - name: Install libsqlite3
         run: |
           sudo apt update -y && \
