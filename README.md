@@ -95,7 +95,7 @@ $ ronin-vulns sqli "http://testphp.vulnweb.com/listproducts.php?cat=1"
 Test a URL for Server Side Template Injection (SSTI):
 
 ```shell
-$ ronin-vulns sqli "http://www.example.com/page.php?lang=en"
+$ ronin-vulns ssti "http://www.example.com/page.php?lang=en"
 ```
 
 Test a URL for Open Redirects:
