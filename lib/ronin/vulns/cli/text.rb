@@ -2,7 +2,7 @@
 #
 # ronin-vulns - A Ruby library for blind vulnerability testing.
 #
-# Copyright (c) 2022-2025 Hal Brodigan (postmodern.mod3 at gmail.com)
+# Copyright (c) 2022-2026 Hal Brodigan (postmodern.mod3 at gmail.com)
 #
 # ronin-vulns is free software: you can redistribute it and/or modify
 # it under the terms of the GNU Lesser General Public License as published
