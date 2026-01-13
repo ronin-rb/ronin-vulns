@@ -26,3 +26,9 @@ Lint/EmptyBlock:
 Lint/MissingSuper:
   Exclude:
     - 'lib/ronin/vulns/web_vuln.rb'
+
+# ignore false positives
+Lint/UselessConstantScoping:
+  Exclude:
+    - 'lib/ronin/vulns/command_injection.rb'
+    - 'lib/ronin/vulns/sqli.rb'
